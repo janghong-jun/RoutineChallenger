@@ -11,6 +11,12 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.15.0",
+    "@routine-challenger/core": "workspace:*",
+    "@routine-challenger/data": "workspace:*",
+    "@routine-challenger/storage": "workspace:*",
+    "@routine-challenger/store": "workspace:*",
+    "@routine-challenger/types": "workspace:*",
+    "@routine-challenger/ui": "workspace:*",
     "echarts": "^6.1.0",
     "echarts-for-react": "^3.1.0",
     "idb": "^8.0.4",

@@ -1,0 +1,80 @@
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 12px 20px;
+  background-color: var(--bg-surface-elevated);
+  border-bottom: 1px solid var(--border-subtle);
+  overflow-x: auto;
+
+  @media (max-width: 640px) {
+    padding: 10px 14px;
+  }
+}
+
+.dayCard {
+  flex: 1;
+  min-width: 44px;
+  max-width: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 4px;
+  border-radius: 12px;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: var(--brand-primary);
+    transform: translateY(-2px);
+  }
+
+  &.isSelected {
+    background: rgba(99, 102, 241, 0.15);
+    border-color: var(--brand-primary);
+    box-shadow: var(--glow-indigo);
+  }
+
+  &.isToday {
+    .dateNum {
+      color: var(--brand-primary);
+      font-weight: 800;
+    }
+  }
+}
+
+.dayName {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+
+  &.isWeekend {
+    color: #f87171;
+  }
+}
+
+.dateNum {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.indicator {
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background-color: transparent;
+
+  &.hasDone {
+    background-color: #10b981;
+    box-shadow: 0 0 6px rgba(16, 185, 129, 0.8);
+  }
+
+  &.isHoliday {
+    background-color: #f43f5e;
+  }
+}
