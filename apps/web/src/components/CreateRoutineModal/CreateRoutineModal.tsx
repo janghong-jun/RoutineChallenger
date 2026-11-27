@@ -20,8 +20,7 @@ interface CreateRoutineModalProps {
   selectedDate: string;
 }
 
-const createRoutineId = () =>
-  `routine_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+const createRoutineId = () => `routine_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
 
 export const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({
   isOpen,
@@ -150,11 +149,11 @@ export const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({
                 <div key={tpl.templateId} className={styles.templateCard}>
                   <div className={styles.tplInfo}>
                     <div className={styles.tplHeader}>
+                      <CategoryBadge category={tpl.category} />
                       <div style={{ flex: 'none', width: '100%' }}>
                         <span>{tpl.icon}</span>
                         <span className={styles.tplTitle}>{tpl.title}</span>
                       </div>
-                      <CategoryBadge category={tpl.category} />
                     </div>
                     {tpl.description && <span className={styles.tplDesc}>{tpl.description}</span>}
                   </div>
