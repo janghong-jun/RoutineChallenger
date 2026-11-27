@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "routines": [
+    {
+      "id": "routine_1795795181344_3hx7x",
+      "title": "상체 근력 운동",
+      "description": "기초 대사량을 높이고 상체를 강화합니다.",
+      "category": "EXERCISE",
+      "difficultyLevel": 1,
+      "targetType": "COUNT",
+      "targetValue": 30,
+      "targetUnit": "회",
+      "frequencyType": "DAILY",
+      "targetDaysOfWeek": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "startDate": "2026-11-28",
+      "status": "ACTIVE",
+      "createdAt": "2026-11-27T15:59:41.344Z",
+      "updatedAt": "2026-11-27T15:59:41.344Z"
+    }
+  ],
+  "records": [],
+  "expHistory": [],
+  "userProfile": null,
+  "customHolidays": []
+}
