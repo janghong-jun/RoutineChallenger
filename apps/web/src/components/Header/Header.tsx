@@ -10,11 +10,16 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ onOpenTitleModal }) => {
   const { totalExp, selectedTitleId, titles, currentStreak } = useAppSelector(state => state.user);
-  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+  const [theme, setTheme] = useState<'dark' | 'light'>('light');
 
   useEffect(() => {
-    const currentTheme = (document.documentElement.getAttribute('data-theme') as 'dark' | 'light') || 'dark';
-    setTheme(currentTheme);
+    const frame = window.requestAnimationFrame(() => {
+      const currentTheme =
+        document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+      setTheme(currentTheme);
+    });
+
+    return () => window.cancelAnimationFrame(frame);
   }, []);
 
   const toggleTheme = () => {
@@ -43,7 +48,10 @@ export const Header: React.FC<HeaderProps> = ({ onOpenTitleModal }) => {
           <span>{currentTitle?.name || '첫걸음'}</span>
         </button>
 
-        <div className={styles.expPill} title="현재 보유 경험치 (성공 시 획득, 일반일 미실천 시 차감)">
+        <div
+          className={styles.expPill}
+          title="현재 보유 경험치 (성공 시 획득, 일반일 미실천 시 차감)"
+        >
           <span>✨</span>
           <span>{totalExp.toLocaleString()} EXP</span>
         </div>

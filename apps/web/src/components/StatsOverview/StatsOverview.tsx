@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import dynamic from 'next/dynamic';
 import { useAppSelector } from '@routine-challenger/store';
 import { filterRoutinesForDate } from '@routine-challenger/core';
@@ -10,15 +10,10 @@ import styles from './StatsOverview.module.scss';
 const ReactECharts = dynamic(() => import('echarts-for-react'), { ssr: false });
 
 export const StatsOverview: React.FC = () => {
-  const [mounted, setMounted] = useState(false);
   const { totalExp, currentStreak, totalActiveDays } = useAppSelector(state => state.user);
   const routines = useAppSelector(state => state.routine.routines);
   const recordsMap = useAppSelector(state => state.record.recordsMap);
   const { selectedDate } = useAppSelector(state => state.date);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   const scheduledToday = filterRoutinesForDate(routines, selectedDate);
   const completedToday = scheduledToday.filter(
@@ -108,13 +103,11 @@ export const StatsOverview: React.FC = () => {
       </div>
 
       <div className={styles.chartWrapper}>
-        {mounted && (
-          <ReactECharts
-            option={chartOption}
-            style={{ height: '100%', width: '100%' }}
-            opts={{ renderer: 'svg' }}
-          />
-        )}
+        <ReactECharts
+          option={chartOption}
+          style={{ height: '100%', width: '100%' }}
+          opts={{ renderer: 'svg' }}
+        />
       </div>
     </div>
   );

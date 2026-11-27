@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Provider } from 'react-redux';
 import {
   makeStore,
@@ -17,19 +17,16 @@ import { calculateStreaks } from '@routine-challenger/core';
 import { Routine } from '@routine-challenger/types';
 
 export function StoreProvider({ children }: { children: React.ReactNode }) {
-  const storeRef = useRef<AppStore | null>(null);
-  if (!storeRef.current) {
-    storeRef.current = makeStore();
-  }
+  const [store] = useState<AppStore>(() => makeStore());
 
   useEffect(() => {
     // 테마 설정 복원
-    const savedTheme = localStorage.getItem('rc_theme') || 'dark';
-    document.documentElement.setAttribute('data-theme', savedTheme);
+    const savedTheme = localStorage.getItem('rc_theme');
+    const theme = savedTheme === 'dark' ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', theme);
 
     // IndexedDB로부터 데이터 로드 및 초기화
     async function initData() {
-      if (!storeRef.current) return;
       const storage = getStorageContainer();
 
       try {
@@ -63,15 +60,15 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
           routines = await storage.routines.getAll();
         }
 
-        storeRef.current.dispatch(setRoutines(routines));
+        store.dispatch(setRoutines(routines));
 
         // 실천 기록 로드
         const records = await storage.records.getAll();
-        storeRef.current.dispatch(setRecords(records));
+        store.dispatch(setRecords(records));
 
         // 경험치 변동 이력 로드
         const expHistory = await storage.exp.getAll();
-        storeRef.current.dispatch(setExpHistory(expHistory));
+        store.dispatch(setExpHistory(expHistory));
 
         // 유저 프로필 로드
         let profile = await storage.userProfile.get();
@@ -86,20 +83,20 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
           };
           await storage.userProfile.save(profile);
         }
-        storeRef.current.dispatch(setUserProfile(profile));
+        store.dispatch(setUserProfile(profile));
 
         // 스트릭 계산
         const completedDates = records.filter(r => r.completed).map(r => r.date);
         const todayStr = new Date().toISOString().slice(0, 10);
         const streakResult = calculateStreaks(completedDates, todayStr);
-        storeRef.current.dispatch(setStreaks(streakResult));
+        store.dispatch(setStreaks(streakResult));
       } catch (err) {
         console.error('Failed to initialize local data from IndexedDB:', err);
       }
     }
 
     initData();
-  }, []);
+  }, [store]);
 
-  return <Provider store={storeRef.current}>{children}</Provider>;
+  return <Provider store={store}>{children}</Provider>;
 }
