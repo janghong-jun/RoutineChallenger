@@ -2,24 +2,27 @@
   "schemaVersion": 1,
   "routines": [
     {
-      "id": "routine_1795795322447_dltij",
-      "title": "가벼운 유산소 / 파워워킹",
-      "description": "심폐 지구력을 기르고 머리를 상쾌하게 비워냅니다.",
+      "id": "routine_1795795375120_nwt77",
+      "title": "test",
       "category": "EXERCISE",
       "difficultyLevel": 1,
       "targetType": "TIME",
-      "targetValue": 20,
+      "targetValue": 15,
       "targetUnit": "분",
       "frequencyType": "DAILY",
       "targetDaysOfWeek": [
+        0,
         1,
+        2,
         3,
-        5
+        4,
+        5,
+        6
       ],
       "startDate": "2026-11-28",
       "status": "ACTIVE",
-      "createdAt": "2026-11-27T16:02:02.447Z",
-      "updatedAt": "2026-11-27T16:02:02.447Z"
+      "createdAt": "2026-11-27T16:02:55.120Z",
+      "updatedAt": "2026-11-27T16:02:55.120Z"
     }
   ],
   "records": [],
