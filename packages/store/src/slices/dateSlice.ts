@@ -5,14 +5,21 @@ import { defaultHolidayService } from '@routine-challenger/core';
  * 대한민국 시간대(Asia/Seoul, UTC+9) 기준의 YYYY-MM-DD 문자열 생성
  */
 export function getKoreaTodayDateString(): string {
-  const now = new Date();
-  const kstOffset = 9 * 60; // 9 hours in minutes
-  const utc = now.getTime() + now.getTimezoneOffset() * 60000;
-  const kstDate = new Date(utc + kstOffset * 60000);
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Seoul',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).formatToParts(new Date());
 
-  const year = kstDate.getFullYear();
-  const month = String(kstDate.getMonth() + 1).padStart(2, '0');
-  const day = String(kstDate.getDate()).padStart(2, '0');
+  const year = parts.find(part => part.type === 'year')?.value;
+  const month = parts.find(part => part.type === 'month')?.value;
+  const day = parts.find(part => part.type === 'day')?.value;
+
+  if (!year || !month || !day) {
+    return '';
+  }
+
   return `${year}-${month}-${day}`;
 }
 

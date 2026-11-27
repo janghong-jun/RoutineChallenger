@@ -83,6 +83,8 @@ export const WeeklyTracker: React.FC = () => {
           </span>
           <span className={styles.dateNum}>{day.dayNumber}</span>
           <div
+            title={day.hasCompleted ? '루틴 완료' : day.isHoliday ? '휴일' : '미완료'}
+            aria-label={day.hasCompleted ? '루틴 완료' : day.isHoliday ? '휴일' : '미완료'}
             className={`${styles.indicator} ${
               day.hasCompleted
                 ? styles.hasDone

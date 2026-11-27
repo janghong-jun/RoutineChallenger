@@ -41,9 +41,30 @@
 
   &.isToday {
     .dateNum {
+      position: relative;
       color: var(--brand-primary);
       font-weight: 800;
     }
+
+    .dateNum::after {
+      position: absolute;
+      right: 50%;
+      bottom: -0.45rem;
+      width: 0.35rem;
+      height: 0.35rem;
+      border-radius: 999.9rem;
+      background: var(--brand-primary);
+      content: '';
+      transform: translateX(50%);
+    }
+
+    border-color: var(--brand-primary);
+  }
+
+  &.isToday.isSelected {
+    box-shadow:
+      var(--glow-indigo),
+      inset 0 0 0 0.1rem var(--brand-primary);
   }
 }
 
