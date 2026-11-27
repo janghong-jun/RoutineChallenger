@@ -28,6 +28,16 @@
   border-radius: 1.2rem;
   transition: all 0.2s ease;
 
+  &:first-child {
+    .dayName {
+      color: #f87171;
+    }
+  }
+  &:last-child {
+    .dayName {
+      color: #818cf8;
+    }
+  }
   &:hover {
     border-color: var(--brand-primary);
     transform: translateY(-0.2rem);
@@ -40,12 +50,6 @@
   }
 
   &.isToday {
-    .dateNum {
-      position: relative;
-      color: var(--brand-primary);
-      font-weight: 800;
-    }
-
     .dateNum::after {
       position: absolute;
       right: 50%;
@@ -72,13 +76,10 @@
   font-size: 1.1rem;
   font-weight: 600;
   color: var(--text-secondary);
-
-  &.isWeekend {
-    color: #f87171;
-  }
 }
 
 .dateNum {
+  position: relative;
   font-size: 1.5rem;
   font-weight: 700;
   color: var(--text-primary);

@@ -93,9 +93,11 @@
   font-size: 1.4rem;
 }
 
-.calendar :global(.react-datepicker__day-name:first-of-type),
-.calendar :global(.react-datepicker__day-name:last-of-type) {
+.calendar :global(.react-datepicker__day-name:first-of-type) {
   color: #f87171;
+}
+.calendar :global(.react-datepicker__day-name:last-of-type) {
+  color: #818cf8;
 }
 
 .calendar :global(.react-datepicker__day:hover) {
