@@ -15,10 +15,65 @@
       "status": "ACTIVE",
       "createdAt": "2026-11-27T16:14:12.797Z",
       "updatedAt": "2026-11-27T16:14:12.797Z"
+    },
+    {
+      "id": "routine_1795796312789_lzov8",
+      "title": "고옹부",
+      "category": "LEARNING",
+      "difficultyLevel": 1,
+      "targetType": "TIME",
+      "targetValue": 15,
+      "targetUnit": "분",
+      "frequencyType": "DAILY",
+      "targetDaysOfWeek": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "startDate": "2026-11-28",
+      "status": "ACTIVE",
+      "createdAt": "2026-11-27T16:18:32.789Z",
+      "updatedAt": "2026-11-27T16:18:32.789Z"
     }
   ],
-  "records": [],
-  "expHistory": [],
-  "userProfile": null,
+  "records": [
+    {
+      "id": "routine_1795796312789_lzov8_2026-11-28",
+      "routineId": "routine_1795796312789_lzov8",
+      "date": "2026-11-28",
+      "completed": true,
+      "actualValue": 15,
+      "expGained": 10,
+      "expDeducted": 0,
+      "isHoliday": false,
+      "completedAt": "2026-11-27T16:20:43.050Z"
+    }
+  ],
+  "expHistory": [
+    {
+      "id": "exp_1795796443050_39ogg8i",
+      "routineId": "routine_1795796312789_lzov8",
+      "date": "2026-11-28",
+      "type": "EARN_NORMAL",
+      "amount": 10,
+      "balanceAfter": 10,
+      "reason": "고옹부 실천 완료",
+      "timestamp": "2026-11-27T16:20:43.050Z"
+    }
+  ],
+  "userProfile": {
+    "id": "current_user_profile",
+    "totalExp": 10,
+    "selectedTitleId": "first_step",
+    "unlockedTitleIds": [
+      "first_step"
+    ],
+    "createdAt": "2026-11-27T16:20:47.415Z",
+    "updatedAt": "2026-11-27T16:20:47.857Z"
+  },
   "customHolidays": []
 }
