@@ -43,14 +43,50 @@ export class HolidayService {
     if (isNaN(year)) return undefined;
 
     const yearHolidays = getHolidaysForYear(year, this.customHolidays);
-    return yearHolidays.find(h => h.date === dateString);
+    const holiday = yearHolidays.find(h => h.date === dateString);
+    if (holiday) return holiday;
+
+    return this.getWeekendHoliday(dateString);
   }
 
   /**
    * 특정 연도의 모든 공휴일 목록 반환
    */
   public getYearHolidays(year: number): Holiday[] {
-    return getHolidaysForYear(year, this.customHolidays);
+    const holidays = getHolidaysForYear(year, this.customHolidays);
+    const holidayDates = new Set(holidays.map(holiday => holiday.date));
+
+    for (let month = 1; month <= 12; month++) {
+      const lastDay = new Date(Date.UTC(year, month, 0)).getUTCDate();
+      for (let day = 1; day <= lastDay; day++) {
+        const dateString = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const weekendHoliday = this.getWeekendHoliday(dateString);
+        if (weekendHoliday && !holidayDates.has(dateString)) {
+          holidays.push(weekendHoliday);
+        }
+      }
+    }
+
+    return holidays.sort((a, b) => a.date.localeCompare(b.date));
+  }
+
+  private getWeekendHoliday(dateString: string): Holiday | undefined {
+    const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateString);
+    if (!match) return undefined;
+
+    const year = Number(match[1]);
+    const month = Number(match[2]);
+    const day = Number(match[3]);
+    const date = new Date(Date.UTC(year, month - 1, day));
+    if (date.toISOString().slice(0, 10) !== dateString) return undefined;
+
+    const weekday = date.getUTCDay();
+    if (weekday !== 0 && weekday !== 6) return undefined;
+
+    return {
+      date: dateString,
+      name: weekday === 6 ? '토요일 휴식일' : '일요일 휴식일',
+    };
   }
 }
 

@@ -1,7 +1,16 @@
 'use client';
 
 import React from 'react';
-import { useAppDispatch, useAppSelector, goToPreviousDay, goToNextDay, goToToday } from '@routine-challenger/store';
+import DatePicker from 'react-datepicker';
+import { ko } from 'date-fns/locale';
+import {
+  useAppDispatch,
+  useAppSelector,
+  goToPreviousDay,
+  goToNextDay,
+  goToToday,
+  setSelectedDate,
+} from '@routine-challenger/store';
 import { HolidayBadge } from '@routine-challenger/ui';
 import styles from './DateNavigator.module.scss';
 
@@ -9,15 +18,8 @@ export const DateNavigator: React.FC = () => {
   const dispatch = useAppDispatch();
   const { selectedDate, todayDate, isHoliday, holidayName } = useAppSelector(state => state.date);
 
-  const formatKoreanDate = (dateString: string) => {
-    const [year, month, day] = dateString.split('-').map(Number);
-    if (!year || !month || !day) return dateString;
-    const dateObj = new Date(year, month - 1, day);
-    const dayNames = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
-    const dayName = dayNames[dateObj.getDay()];
-    return `${year}년 ${month}월 ${day}일 (${dayName})`;
-  };
-
+  const [year, month, day] = selectedDate.split('-').map(Number);
+  const selectedDateValue = new Date(year, month - 1, day);
   const isToday = selectedDate === todayDate;
 
   return (
@@ -31,9 +33,28 @@ export const DateNavigator: React.FC = () => {
           ‹
         </button>
 
-        <span className={styles.dateText} suppressHydrationWarning>
-          {formatKoreanDate(selectedDate)}
-        </span>
+        <DatePicker
+          className={styles.datePicker}
+          selected={selectedDateValue}
+          onChange={(date: Date | null) => {
+            if (!date) return;
+            const dateString = [
+              date.getFullYear(),
+              String(date.getMonth() + 1).padStart(2, '0'),
+              String(date.getDate()).padStart(2, '0'),
+            ].join('-');
+            dispatch(setSelectedDate(dateString));
+          }}
+          dateFormat="yyyy년 M월 d일 (EEEE)"
+          locale={ko}
+          calendarStartDay={0}
+          calendarClassName={styles.calendar}
+          popperClassName={styles.calendarPopper}
+          calendarIconClassName={styles.calendarIcon}
+          ariaLabel="날짜 선택"
+          toggleCalendarOnIconClick
+          showPopperArrow={false}
+        />
 
         <button
           className={styles.navButton}

@@ -101,6 +101,23 @@ describe('HolidayService', () => {
     expect(holidayService.isHoliday('2026-01-02')).toBe(false);
   });
 
+  it('토요일과 일요일은 휴식일로 판정하고 휴식일 EXP 정책을 적용한다', () => {
+    const calculator = new ExpCalculator();
+    const normalReward = calculator.getSuccessExp(false).amount;
+
+    expect(holidayService.isHoliday('2026-11-21')).toBe(true);
+    expect(holidayService.getHoliday('2026-11-21')?.name).toBe('토요일 휴식일');
+    expect(holidayService.isHoliday('2026-11-22')).toBe(true);
+    expect(holidayService.getHoliday('2026-11-22')?.name).toBe('일요일 휴식일');
+    expect(calculator.getSuccessExp(holidayService.isHoliday('2026-11-21')).amount).toBe(
+      normalReward * 2
+    );
+    expect(calculator.getSuccessExp(holidayService.isHoliday('2026-11-22')).amount).toBe(
+      normalReward * 2
+    );
+    expect(calculator.getFailureDeduction(holidayService.isHoliday('2026-11-22')).amount).toBe(-2);
+  });
+
   it('임시공휴일을 수동 추가하면 즉시 공휴일로 반영된다', () => {
     expect(holidayService.isHoliday('2026-10-02')).toBe(false);
     holidayService.addCustomHoliday({

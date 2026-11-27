@@ -15,25 +15,21 @@ export const WeeklyTracker: React.FC = () => {
   const { selectedDate, todayDate } = useAppSelector(state => state.date);
   const recordsMap = useAppSelector(state => state.record.recordsMap);
 
-  // 선택된 날짜가 속한 주의 월요일 ~ 일요일 7일 계산
+  // 선택된 날짜가 속한 주의 일요일 ~ 토요일 7일 계산
   const getWeekDays = (targetDateStr: string) => {
     const [year, month, day] = targetDateStr.split('-').map(Number);
     if (!year || !month || !day) return [];
 
     const d = new Date(year, month - 1, day);
-    // JS: 0=일, 1=월 ... 6=토 -> 월요일(1) 기준 시작으로 보정
-    const currentDay = d.getDay();
-    const distanceToMonday = currentDay === 0 ? -6 : 1 - currentDay;
-
-    const monday = new Date(d);
-    monday.setDate(d.getDate() + distanceToMonday);
+    const sunday = new Date(d);
+    sunday.setDate(d.getDate() - d.getDay());
 
     const week = [];
-    const dayLabels = ['월', '화', '수', '목', '금', '토', '일'];
+    const dayLabels = ['일', '월', '화', '수', '목', '금', '토'];
 
     for (let i = 0; i < 7; i++) {
-      const cur = new Date(monday);
-      cur.setDate(monday.getDate() + i);
+      const cur = new Date(sunday);
+      cur.setDate(sunday.getDate() + i);
 
       const y = cur.getFullYear();
       const m = String(cur.getMonth() + 1).padStart(2, '0');
@@ -51,7 +47,7 @@ export const WeeklyTracker: React.FC = () => {
         dateString,
         dayNumber: cur.getDate(),
         dayLabel: dayLabels[i],
-        isWeekend: i === 5 || i === 6,
+        isWeekend: i === 0 || i === 6,
         isToday: dateString === todayDate,
         isSelected: dateString === selectedDate,
         hasCompleted,
