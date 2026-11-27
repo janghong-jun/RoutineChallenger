@@ -30,8 +30,7 @@ SCSS와 CSS의 style 속성은 다음 순서로 작성한다.
 ## 데이터 저장
 
 - 테마 설정만 브라우저 localStorage에 저장한다.
-- 루틴, 실천 기록, 경험치, 타이틀, 휴일 등 나머지 앱 데이터는 `data/routine-challenger.json`을 통해 GitHub Contents API로 관리한다.
-- 사용자가 요청한 경우에만 GitHub 개인 액세스 토큰을 브라우저 localStorage에 저장한다.
-- 토큰 저장 시 보안 위험을 알리고, 데이터 JSON과 소스 코드에 포함하지 않는다.
+- 루틴, 실천 기록, 경험치, 타이틀, 휴일 등 나머지 웹 앱 데이터는 IndexedDB에 저장한다.
+- GitHub API나 Git에 앱 사용자 데이터를 저장하지 않는다.
 - JSON 내보내기와 가져오기 기능을 유지한다.
 - 가져오기 전 스키마를 검증하고 사용자 확인을 받는다.

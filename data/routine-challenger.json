@@ -10,15 +10,7 @@
       "targetValue": 15,
       "targetUnit": "분",
       "frequencyType": "DAILY",
-      "targetDaysOfWeek": [
-        0,
-        1,
-        2,
-        3,
-        4,
-        5,
-        6
-      ],
+      "targetDaysOfWeek": [0, 1, 2, 3, 4, 5, 6],
       "startDate": "2026-11-28",
       "status": "ACTIVE",
       "createdAt": "2026-11-27T16:14:12.797Z",

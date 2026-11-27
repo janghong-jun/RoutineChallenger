@@ -9,3 +9,5 @@ coverage/
 .DS_Store
 Thumbs.db
 *.log
+data/routine-challenger.json
+apps/web/public/data/routine-challenger.json

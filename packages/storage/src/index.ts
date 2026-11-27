@@ -1,21 +1,24 @@
 import {
+  AppDataSnapshot,
+  Holiday,
   IRoutineRepository,
   IRecordRepository,
   IExpRepository,
   IUserProfileRepository,
   IHolidayRepository,
-  AppDataSnapshot,
 } from '@routine-challenger/types';
 import {
-  GitHubExpRepository,
-  GitHubHolidayRepository,
-  GitHubJsonRepository,
-  GitHubRecordRepository,
-  GitHubRoutineRepository,
-  GitHubUserProfileRepository,
-} from './github/repository';
+  IndexedDbExpRepository,
+  IndexedDbHolidayRepository,
+  IndexedDbRecordRepository,
+  IndexedDbRoutineRepository,
+  IndexedDbUserProfileRepository,
+  replaceDatabaseData,
+} from './indexeddb/repositories';
+import { getDatabase } from './indexeddb/db';
 
-export * from './github/repository';
+export * from './indexeddb/db';
+export * from './indexeddb/repositories';
 
 export interface StorageContainer {
   routines: IRoutineRepository;
@@ -27,19 +30,58 @@ export interface StorageContainer {
   importSnapshot(snapshot: AppDataSnapshot): Promise<void>;
 }
 
+export function isAppDataSnapshot(value: unknown): value is AppDataSnapshot {
+  if (!value || typeof value !== 'object') return false;
+  const snapshot = value as Partial<AppDataSnapshot>;
+  return (
+    snapshot.schemaVersion === 1 &&
+    Array.isArray(snapshot.routines) &&
+    Array.isArray(snapshot.records) &&
+    Array.isArray(snapshot.expHistory) &&
+    Array.isArray(snapshot.customHolidays) &&
+    (snapshot.userProfile === null || typeof snapshot.userProfile === 'object')
+  );
+}
+
 let activeStorageContainer: StorageContainer | null = null;
 
 export function getStorageContainer(): StorageContainer {
   if (!activeStorageContainer) {
-    const repository = new GitHubJsonRepository();
+    const routines = new IndexedDbRoutineRepository();
+    const records = new IndexedDbRecordRepository();
+    const exp = new IndexedDbExpRepository();
+    const userProfile = new IndexedDbUserProfileRepository();
+    const holidays = new IndexedDbHolidayRepository();
+
     activeStorageContainer = {
-      routines: new GitHubRoutineRepository(repository),
-      records: new GitHubRecordRepository(repository),
-      exp: new GitHubExpRepository(repository),
-      userProfile: new GitHubUserProfileRepository(repository),
-      holidays: new GitHubHolidayRepository(repository),
-      exportSnapshot: () => repository.exportSnapshot(),
-      importSnapshot: snapshot => repository.importSnapshot(snapshot),
+      routines,
+      records,
+      exp,
+      userProfile,
+      holidays,
+      async exportSnapshot() {
+        const [allRoutines, allRecords, expHistory, profile, customHolidays] = await Promise.all([
+          routines.getAll(),
+          records.getAll(),
+          exp.getAll(),
+          userProfile.get(),
+          (await getDatabase()).getAll('custom_holidays'),
+        ]);
+        return {
+          schemaVersion: 1,
+          routines: allRoutines,
+          records: allRecords,
+          expHistory,
+          userProfile: profile ?? null,
+          customHolidays,
+        };
+      },
+      async importSnapshot(snapshot) {
+        if (!isAppDataSnapshot(snapshot)) {
+          throw new Error('가져올 JSON 데이터의 형식이 올바르지 않습니다.');
+        }
+        await replaceDatabaseData(snapshot);
+      },
     };
   }
   return activeStorageContainer;

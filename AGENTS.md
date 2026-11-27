@@ -234,15 +234,12 @@ Android에서는 React Native WebView를 통해 ECharts를 표시하는 방식�
 
 ### 공통 정책
 
-- 테마 설정만 브라우저 localStorage에 저장한다.
-- 루틴, 실천 기록, 경험치, 타이틀, 휴일 등 앱 데이터는 GitHub에 JSON 파일로 관리한다.
-- 앱 데이터의 기본 파일은 `data/routine-challenger.json`이다.
-- GitHub Contents API로 데이터 읽기와 쓰기를 수행한다.
-- 사용자가 요청한 경우에 한해 GitHub 개인 액세스 토큰을 브라우저 localStorage에 저장할 수 있다.
-- 토큰을 저장할 때 localStorage의 보안 위험을 알리고, 데이터 JSON이나 소스 코드에는 절대 포함하지 않는다.
+- 테마 설정은 브라우저 localStorage에 저장한다.
+- 루틴, 실천 기록, 경험치, 타이틀, 휴일 등 웹 앱 데이터는 IndexedDB에 저장한다.
+- GitHub API나 Git에 앱 사용자 데이터를 저장하지 않는다.
 - JSON 내보내기와 가져오기 기능을 제공한다.
 - 가져오기 전 JSON 형식과 스키마 버전을 검증하고 사용자 확인을 받는다.
-- IndexedDB를 앱 데이터 저장소로 사용하지 않는다.
+- IndexedDB가 비어 있을 때만 로컬 초기 데이터 JSON을 1회 불러올 수 있다.
 - 웹과 Android에서 공통 데이터 구조 유지
 - JSON 데이터 내보내기 기능 제공
 - JSON 데이터 가져오기 기능 제공

@@ -12,7 +12,7 @@ import {
   setStreaks,
   goToToday,
 } from '@routine-challenger/store';
-import { getStorageContainer } from '@routine-challenger/storage';
+import { getStorageContainer, isAppDataSnapshot } from '@routine-challenger/storage';
 import { calculateStreaks } from '@routine-challenger/core';
 import { getKoreaTodayDateString } from '@routine-challenger/store';
 
@@ -24,27 +24,51 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
 
     // 테마 설정 복원
     const savedTheme = localStorage.getItem('rc_theme');
+    localStorage.removeItem('rc_github_token');
     const theme = savedTheme === 'dark' ? 'dark' : 'light';
     document.documentElement.setAttribute('data-theme', theme);
 
-    // 공개 GitHub JSON 데이터 로드 및 초기화
+    // IndexedDB 데이터 로드 및 초기화
     async function initData() {
       const storage = getStorageContainer();
 
       try {
-        const routines = await storage.routines.getAll();
+        let [routines, records, expHistory] = await Promise.all([
+          storage.routines.getAll(),
+          storage.records.getAll(),
+          storage.exp.getAll(),
+        ]);
+
+        let profile = await storage.userProfile.get();
+        if (routines.length === 0 && records.length === 0 && expHistory.length === 0 && !profile) {
+          const response = await fetch('/data/routine-challenger.json', { cache: 'no-store' });
+          if (response.ok) {
+            const snapshot: unknown = await response.json();
+            if (!isAppDataSnapshot(snapshot)) {
+              throw new Error('초기 JSON 데이터의 형식이 올바르지 않습니다.');
+            }
+            if (
+              snapshot.routines.length > 0 ||
+              snapshot.records.length > 0 ||
+              snapshot.expHistory.length > 0 ||
+              snapshot.userProfile ||
+              snapshot.customHolidays.length > 0
+            ) {
+              await storage.importSnapshot(snapshot);
+              [routines, records, expHistory] = await Promise.all([
+                storage.routines.getAll(),
+                storage.records.getAll(),
+                storage.exp.getAll(),
+              ]);
+              profile = await storage.userProfile.get();
+            }
+          }
+        }
+
         store.dispatch(setRoutines(routines));
-
-        // 실천 기록 로드
-        const records = await storage.records.getAll();
         store.dispatch(setRecords(records));
-
-        // 경험치 변동 이력 로드
-        const expHistory = await storage.exp.getAll();
         store.dispatch(setExpHistory(expHistory));
 
-        // 유저 프로필 로드
-        let profile = await storage.userProfile.get();
         if (!profile) {
           profile = {
             id: 'current_user_profile',
@@ -54,6 +78,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
           };
+          await storage.userProfile.save(profile);
         }
         store.dispatch(setUserProfile(profile));
 
@@ -63,7 +88,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         const streakResult = calculateStreaks(completedDates, todayStr);
         store.dispatch(setStreaks(streakResult));
       } catch (err) {
-        console.error('Failed to initialize data from GitHub JSON:', err);
+        console.error('Failed to initialize data from IndexedDB:', err);
       }
     }
 

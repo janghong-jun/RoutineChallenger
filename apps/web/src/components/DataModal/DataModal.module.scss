@@ -55,29 +55,6 @@
   color: var(--text-secondary);
 }
 
-.tokenLabel {
-  font-size: 1.3rem;
-  font-weight: 700;
-  color: var(--text-primary);
-}
-
-.tokenInput {
-  width: 100%;
-  min-width: 0;
-  padding: 1rem 1.2rem;
-  font: inherit;
-  font-size: 1.4rem;
-  color: var(--text-primary);
-  background: var(--bg-surface-elevated);
-  border: 0.1rem solid var(--border-medium);
-  border-radius: 0.8rem;
-}
-
-.tokenActions {
-  display: flex;
-  gap: 1rem;
-}
-
 .actionButton,
 .importButton {
   display: flex;
@@ -101,15 +78,4 @@
   input {
     display: none;
   }
-}
-
-.removeButton {
-  padding: 1rem 1.6rem;
-  font-size: 1.3rem;
-  font-weight: 700;
-  color: var(--text-secondary);
-  cursor: pointer;
-  background: var(--bg-surface-elevated);
-  border: 0.1rem solid var(--border-subtle);
-  border-radius: 1rem;
 }
