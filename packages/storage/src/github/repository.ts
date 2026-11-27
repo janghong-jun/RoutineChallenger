@@ -60,7 +60,7 @@ const encodeBase64 = (value: string): string => {
   return btoa(binary);
 };
 
-const isSnapshot = (value: unknown): value is AppDataSnapshot => {
+export const isAppDataSnapshot = (value: unknown): value is AppDataSnapshot => {
   if (!value || typeof value !== 'object') return false;
   const snapshot = value as Partial<AppDataSnapshot>;
   return (
@@ -73,25 +73,42 @@ const isSnapshot = (value: unknown): value is AppDataSnapshot => {
   );
 };
 
+const decodeBase64Json = (content: string): unknown => {
+  const binary = atob(content.replace(/\s/g, ''));
+  const bytes = Uint8Array.from(binary, character => character.charCodeAt(0));
+  return JSON.parse(new TextDecoder().decode(bytes)) as unknown;
+};
+
 export class GitHubJsonRepository {
   private async readRemote(): Promise<AppDataSnapshot> {
-    if (typeof window !== 'undefined') {
-      const isLocalDevelopment =
-        window.location.hostname === 'localhost' ||
-        window.location.hostname === '127.0.0.1';
+    const token = localStorage.getItem(TOKEN_STORAGE_KEY);
+    if (token) {
+      const apiResponse = await fetch(`${API_URL}?ref=${BRANCH}&t=${Date.now()}`, {
+        headers: {
+          Accept: 'application/vnd.github+json',
+          Authorization: `Bearer ${token}`,
+          'X-GitHub-Api-Version': '2022-11-28',
+        },
+        cache: 'no-store',
+      });
 
-      if (isLocalDevelopment) {
-        const localResponse = await fetch('/data/routine-challenger.json', {
-          headers: { Accept: 'application/json' },
-          cache: 'no-store',
-        });
-
-        if (localResponse.ok) {
-          const localValue: unknown = await localResponse.json();
-          if (isSnapshot(localValue)) {
-            return localValue;
-          }
+      if (apiResponse.ok) {
+        const file = (await apiResponse.json()) as { content?: string; encoding?: string };
+        if (file.encoding !== 'base64' || !file.content) {
+          throw new Error('GitHub 데이터 파일의 인코딩 형식이 올바르지 않습니다.');
         }
+        const value = decodeBase64Json(file.content);
+        if (!isAppDataSnapshot(value)) {
+          throw new Error('GitHub 데이터 JSON의 형식이 올바르지 않습니다.');
+        }
+        return value;
+      }
+
+      if (apiResponse.status !== 404) {
+        const detail = await apiResponse.text();
+        throw new Error(
+          `GitHub 데이터 파일을 읽지 못했습니다. (${apiResponse.status}) ${detail}`,
+        );
       }
     }
 
@@ -100,13 +117,33 @@ export class GitHubJsonRepository {
       cache: 'no-store',
     });
 
-    if (response.status === 404) return emptySnapshot();
+    if (response.status === 404) {
+      if (typeof window !== 'undefined') {
+        const isLocalDevelopment =
+          window.location.hostname === 'localhost' ||
+          window.location.hostname === '127.0.0.1';
+
+        if (isLocalDevelopment) {
+          const localResponse = await fetch('/data/routine-challenger.json', {
+            headers: { Accept: 'application/json' },
+            cache: 'no-store',
+          });
+          if (localResponse.ok) {
+            const localValue: unknown = await localResponse.json();
+            if (isAppDataSnapshot(localValue)) return localValue;
+            throw new Error('로컬 초기 JSON 데이터의 형식이 올바르지 않습니다.');
+          }
+        }
+        return emptySnapshot();
+      }
+      return emptySnapshot();
+    }
     if (!response.ok) {
       throw new Error(`데이터 JSON을 불러오지 못했습니다. (${response.status})`);
     }
 
     const value: unknown = await response.json();
-    if (!isSnapshot(value)) {
+    if (!isAppDataSnapshot(value)) {
       throw new Error('데이터 JSON의 형식이 올바르지 않습니다.');
     }
     return value;
@@ -290,7 +327,7 @@ export class GitHubJsonRepository {
   }
 
   async importSnapshot(snapshot: AppDataSnapshot): Promise<void> {
-    if (!isSnapshot(snapshot)) {
+    if (!isAppDataSnapshot(snapshot)) {
       throw new Error('데이터 JSON의 형식이 올바르지 않습니다.');
     }
     await this.writeRemote(current => {

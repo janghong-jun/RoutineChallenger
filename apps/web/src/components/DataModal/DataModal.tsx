@@ -1,10 +1,10 @@
 'use client';
 
 import React, { useState } from 'react';
-import { AppDataSnapshot } from '@routine-challenger/types';
 import {
   getStorageContainer,
   hasSavedGitHubToken,
+  isAppDataSnapshot,
   removeSavedGitHubToken,
   saveGitHubToken,
 } from '@routine-challenger/storage';
@@ -69,11 +69,25 @@ export const DataModal: React.FC<DataModalProps> = ({ onClose }) => {
 
     try {
       const parsed: unknown = JSON.parse(await file.text());
-      if (!window.confirm('현재 데이터를 가져온 JSON 데이터로 교체하시겠습니까?')) {
+      if (!isAppDataSnapshot(parsed)) {
+        throw new Error('가져올 JSON 데이터의 형식이 올바르지 않습니다.');
+      }
+
+      const isEmpty =
+        parsed.routines.length === 0 &&
+        parsed.records.length === 0 &&
+        parsed.expHistory.length === 0 &&
+        parsed.customHolidays.length === 0 &&
+        parsed.userProfile === null;
+      const confirmationMessage = isEmpty
+        ? '가져온 JSON에는 저장된 데이터가 없습니다. 기존 GitHub 데이터를 모두 빈 데이터로 바꿀까요?'
+        : `루틴 ${parsed.routines.length}개, 실천 기록 ${parsed.records.length}개, 경험치 내역 ${parsed.expHistory.length}개를 가져올까요? 현재 GitHub 데이터는 이 파일 내용으로 교체됩니다.`;
+
+      if (!window.confirm(confirmationMessage)) {
         return;
       }
 
-      await getStorageContainer().importSnapshot(parsed as AppDataSnapshot);
+      await getStorageContainer().importSnapshot(parsed);
       setStatus('JSON 데이터를 가져왔습니다. 화면을 새로고침합니다.');
       window.location.reload();
     } catch (error) {
