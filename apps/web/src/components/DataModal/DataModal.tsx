@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   getStorageContainer,
   isAppDataSnapshot,
 } from '@routine-challenger/storage';
+import { useModalAccessibility } from '@/hooks/useModalAccessibility';
 import styles from './DataModal.module.scss';
 
 interface DataModalProps {
@@ -12,8 +13,11 @@ interface DataModalProps {
 }
 
 export const DataModal: React.FC<DataModalProps> = ({ onClose }) => {
+  const dialogRef = useRef<HTMLDivElement>(null);
   const [status, setStatus] = useState('');
   const [busy, setBusy] = useState(false);
+
+  useModalAccessibility(true, dialogRef, onClose);
 
   const handleExport = async () => {
     setBusy(true);
@@ -77,34 +81,68 @@ export const DataModal: React.FC<DataModalProps> = ({ onClose }) => {
   };
 
   return (
-    <div className={styles.overlay} onClick={onClose}>
-      <div className={styles.modal} onClick={event => event.stopPropagation()}>
+    <div className={styles.overlay} role="presentation" onClick={onClose}>
+      <div
+        ref={dialogRef}
+        className={styles.modal}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="data-modal-title"
+        aria-describedby="data-modal-description"
+        aria-busy={busy}
+        tabIndex={-1}
+        onClick={event => event.stopPropagation()}
+      >
         <div className={styles.header}>
-          <h2 className={styles.title}>JSON 데이터 관리</h2>
-          <button className={styles.closeButton} onClick={onClose}>✕</button>
+          <h2 className={styles.title} id="data-modal-title">
+            JSON 데이터 관리
+          </h2>
+          <button
+            type="button"
+            className={styles.closeButton}
+            aria-label="JSON 데이터 관리 창 닫기"
+            onClick={onClose}
+          >
+            ✕
+          </button>
         </div>
 
         <div className={styles.body}>
-          <p className={styles.description}>
+          <p className={styles.description} id="data-modal-description">
             루틴, 실천 기록, 경험치, 타이틀, 휴일 데이터는 이 브라우저의 IndexedDB에 저장됩니다.
             JSON 파일은 백업 및 복원에 사용합니다.
           </p>
 
-          <button className={styles.actionButton} onClick={handleExport} disabled={busy}>
+          <button
+            type="button"
+            className={styles.actionButton}
+            onClick={handleExport}
+            disabled={busy}
+          >
             JSON 내보내기
           </button>
 
-          <label className={styles.importButton}>
+          <label
+            className={styles.importButton}
+            htmlFor="routine-data-import"
+            aria-disabled={busy}
+          >
             JSON 가져오기
             <input
+              id="routine-data-import"
               type="file"
               accept=".json,application/json"
+              aria-label="가져올 JSON 백업 파일 선택"
               onChange={handleImport}
               disabled={busy}
             />
           </label>
 
-          {status && <p className={styles.status}>{status}</p>}
+          {status && (
+            <p className={styles.status} role="status" aria-live="polite" aria-atomic="true">
+              {status}
+            </p>
+          )}
         </div>
       </div>
     </div>

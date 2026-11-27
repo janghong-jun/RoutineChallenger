@@ -23,11 +23,13 @@ export const DateNavigator: React.FC = () => {
   const isToday = selectedDate === todayDate;
 
   return (
-    <div className={styles.container}>
+    <nav className={styles.container} aria-label="날짜 탐색">
       <div className={styles.dateGroup}>
         <button
+          type="button"
           className={styles.navButton}
           onClick={() => dispatch(goToPreviousDay())}
+          aria-label="이전 날짜"
           title="이전 날짜로 이동"
         >
           ‹
@@ -57,8 +59,10 @@ export const DateNavigator: React.FC = () => {
         />
 
         <button
+          type="button"
           className={styles.navButton}
           onClick={() => dispatch(goToNextDay())}
+          aria-label="다음 날짜"
           title="다음 날짜로 이동"
         >
           ›
@@ -66,8 +70,10 @@ export const DateNavigator: React.FC = () => {
 
         {!isToday && (
           <button
+            type="button"
             className={styles.todayButton}
             onClick={() => dispatch(goToToday())}
+            aria-label="오늘 날짜로 이동"
             title="오늘로 돌아가기"
           >
             오늘
@@ -78,6 +84,6 @@ export const DateNavigator: React.FC = () => {
       <div className={styles.statusWrapper}>
         <HolidayBadge isHoliday={isHoliday} holidayName={holidayName} />
       </div>
-    </div>
+    </nav>
   );
 };

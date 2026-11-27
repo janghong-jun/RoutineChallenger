@@ -203,11 +203,14 @@ export const RoutineCard: React.FC<RoutineCardProps> = ({
     >
       <div className={styles.leftSection}>
         <button
+          type="button"
           className={`${styles.checkButton} ${isCompleted ? styles.checked : ''}`}
           onClick={handleToggle}
+          aria-label={`${routine.title} 실천 ${isCompleted ? '완료 취소' : '완료 처리'}`}
+          aria-pressed={isCompleted}
           title={isCompleted ? '완료 취소' : '실천 완료 체크'}
         >
-          {isCompleted && '✓'}
+          {isCompleted && <span aria-hidden="true">✓</span>}
         </button>
 
         <div className={styles.content}>
@@ -228,7 +231,7 @@ export const RoutineCard: React.FC<RoutineCardProps> = ({
 
           <div className={styles.targetRow}>
             <span className={styles.targetPill}>
-              {routine.targetType === 'TIME' ? '⏱️' : '🎯'}{' '}
+              <span aria-hidden="true">{routine.targetType === 'TIME' ? '⏱️' : '🎯'}</span>{' '}
               {routine.targetValue}
               {routine.targetUnit}
             </span>
@@ -240,28 +243,34 @@ export const RoutineCard: React.FC<RoutineCardProps> = ({
       <div className={styles.rightSection}>
         {canLevelUp && (
           <button
+            type="button"
             className={styles.levelUpButton}
             onClick={handleLevelUp}
+            aria-label={`${routine.title} 난이도 ${nextDifficulty}단계로 승급`}
             title={`Lv.${nextDifficulty}로 승급하고 목표를 올립니다.`}
           >
-            ⭐ 난이도 승급
+            <span aria-hidden="true">⭐</span> 난이도 승급
           </button>
         )}
 
         <button
+          type="button"
           className={styles.actionButton}
           onClick={handleTogglePause}
+          aria-label={`${routine.title} ${routine.status === 'ACTIVE' ? '일시정지' : '다시 시작'}`}
           title={routine.status === 'ACTIVE' ? '루틴 일시정지' : '루틴 다시 시작'}
         >
-          {routine.status === 'ACTIVE' ? '⏸️' : '▶️'}
+          <span aria-hidden="true">{routine.status === 'ACTIVE' ? '⏸️' : '▶️'}</span>
         </button>
 
         <button
+          type="button"
           className={styles.actionButton}
           onClick={handleDelete}
+          aria-label={`${routine.title} 삭제`}
           title="루틴 삭제 (기존 기록 보존)"
         >
-          🗑️
+          <span aria-hidden="true">🗑️</span>
         </button>
       </div>
     </div>

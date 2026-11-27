@@ -20,7 +20,7 @@ export const CategoryBadge: React.FC<CategoryBadgeProps> = ({
       className={`${styles.categoryBadge} ${className}`}
       data-category={category}
     >
-      {showIcon && <span>{meta.icon}</span>}
+      {showIcon && <span aria-hidden="true">{meta.icon}</span>}
       <span>{meta.label}</span>
     </span>
   );
@@ -38,7 +38,7 @@ export const DifficultyBadge: React.FC<DifficultyBadgeProps> = ({ level, classNa
       className={`${styles.difficultyBadge} ${className}`}
       data-level={level}
     >
-      <span>{meta.badge}</span>
+      <span aria-hidden="true">{meta.badge}</span>
       <span>
         Lv.{meta.level} {meta.name}
       </span>
@@ -69,7 +69,7 @@ export const ExpBadge: React.FC<ExpBadgeProps> = ({
       className={`${styles.expBadge} ${toneClass} ${className}`}
     >
       <span>{isPositive ? `+${amount}` : amount} EXP</span>
-      {isHolidayBonus && <span>✨</span>}
+      {isHolidayBonus && <span aria-hidden="true">✨</span>}
     </span>
   );
 };
@@ -90,7 +90,7 @@ export const HolidayBadge: React.FC<HolidayBadgeProps> = ({
       <span
         className={`${styles.holidayBadge} ${className}`}
       >
-        <span>🇰🇷</span>
+        <span aria-hidden="true">🇰🇷</span>
         <span>{holidayName || '휴식일'}</span>
         <span className={styles.bonusNote}>(보너스 2배)</span>
       </span>
@@ -101,7 +101,7 @@ export const HolidayBadge: React.FC<HolidayBadgeProps> = ({
     <span
       className={`${styles.weekdayBadge} ${className}`}
     >
-      <span>🏃</span>
+    <span aria-hidden="true">🏃</span>
       <span>일반일</span>
     </span>
   );

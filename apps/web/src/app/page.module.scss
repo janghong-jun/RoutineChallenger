@@ -5,6 +5,23 @@
   background-color: var(--bg-canvas);
 }
 
+.skipLink {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  z-index: 300;
+  padding: 1rem 1.4rem;
+  color: #ffffff;
+  background-color: var(--brand-primary);
+  border-radius: 0.8rem;
+  transform: translateY(-150%);
+  transition: transform 0.2s ease;
+
+  &:focus-visible {
+    transform: translateY(0);
+  }
+}
+
 .contentWrapper {
   display: grid;
   grid-template-columns: 1fr 34rem;

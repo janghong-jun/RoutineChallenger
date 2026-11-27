@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   DayOfWeek,
   Routine,
@@ -12,6 +12,7 @@ import { ROUTINE_TEMPLATES_DATA, RoutineTemplate } from '@routine-challenger/dat
 import { useAppDispatch, addRoutine } from '@routine-challenger/store';
 import { getStorageContainer } from '@routine-challenger/storage';
 import { CategoryBadge } from '@routine-challenger/ui';
+import { useModalAccessibility } from '@/hooks/useModalAccessibility';
 import styles from './CreateRoutineModal.module.scss';
 
 interface CreateRoutineModalProps {
@@ -27,6 +28,7 @@ export const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({
   selectedDate,
 }) => {
   const dispatch = useAppDispatch();
+  const dialogRef = useRef<HTMLDivElement>(null);
   const [activeTab, setActiveTab] = useState<'templates' | 'custom'>('templates');
 
   // Custom Routine Form State
@@ -38,6 +40,8 @@ export const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({
   const [targetUnit, setTargetUnit] = useState('분');
   const [frequencyType, setFrequencyType] = useState<RoutineFrequency>('DAILY');
   const [selectedDays, setSelectedDays] = useState<DayOfWeek[]>(initialSelectedDays);
+
+  useModalAccessibility(true, dialogRef, onClose);
 
   const resetForm = () => {
     setTitle('');
@@ -131,24 +135,43 @@ export const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({
   ];
 
   return (
-    <div className={styles.overlay} onClick={onClose}>
-      <div className={styles.modal} onClick={e => e.stopPropagation()}>
+    <div className={styles.overlay} role="presentation" onClick={onClose}>
+      <div
+        ref={dialogRef}
+        className={styles.modal}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="create-routine-title"
+        tabIndex={-1}
+        onClick={e => e.stopPropagation()}
+      >
         <div className={styles.header}>
-          <h2 className={styles.title}>새 루틴 추가</h2>
-          <button className={styles.closeButton} onClick={onClose}>
+          <h2 className={styles.title} id="create-routine-title">
+            새 루틴 추가
+          </h2>
+          <button
+            type="button"
+            className={styles.closeButton}
+            aria-label="새 루틴 추가 창 닫기"
+            onClick={onClose}
+          >
             ✕
           </button>
         </div>
 
-        <div className={styles.tabNav}>
+        <div className={styles.tabNav} role="group" aria-label="루틴 추가 방식">
           <button
+            type="button"
             className={`${styles.tabItem} ${activeTab === 'templates' ? styles.active : ''}`}
+            aria-pressed={activeTab === 'templates'}
             onClick={() => handleTabChange('templates')}
           >
             추천 템플릿 선택
           </button>
           <button
+            type="button"
             className={`${styles.tabItem} ${activeTab === 'custom' ? styles.active : ''}`}
+            aria-pressed={activeTab === 'custom'}
             onClick={() => handleTabChange('custom')}
           >
             직접 만들기
@@ -166,12 +189,18 @@ export const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({
                         <span className={styles.tplCategory}>
                           <CategoryBadge category={tpl.category} />
                         </span>
-                        <span className={styles.tplIcon}>{tpl.icon}</span>
+                        <span className={styles.tplIcon} aria-hidden="true">
+                          {tpl.icon}
+                        </span>
                         <span className={styles.tplTitle}>{tpl.title}</span>
                       </div>
                       {tpl.description && <span className={styles.tplDesc}>{tpl.description}</span>}
                     </div>
-                    <button className={styles.tplAddBtn} onClick={() => handleAddFromTemplate(tpl)}>
+                    <button
+                      type="button"
+                      className={styles.tplAddBtn}
+                      onClick={() => handleAddFromTemplate(tpl)}
+                    >
                       추가하기
                     </button>
                   </div>
@@ -180,6 +209,7 @@ export const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({
                 <div className={styles.templateEmptyState}>
                   <p>등록된 추천 템플릿이 없습니다.</p>
                   <button
+                    type="button"
                     className={styles.templateEmptyAction}
                     onClick={() => handleTabChange('custom')}
                   >
@@ -191,8 +221,9 @@ export const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({
           ) : (
             <form id="custom-routine-form" className={styles.form} onSubmit={handleCreateCustom}>
               <div className={styles.formGroup}>
-                <label>루틴 이름</label>
+                <label htmlFor="routine-title">루틴 이름</label>
                 <input
+                  id="routine-title"
                   type="text"
                   placeholder="예: 하루 30분 기술 독서"
                   value={title}
@@ -202,8 +233,9 @@ export const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({
               </div>
 
               <div className={styles.formGroup}>
-                <label>설명 (선택)</label>
+                <label htmlFor="routine-description">설명 (선택)</label>
                 <input
+                  id="routine-description"
                   type="text"
                   placeholder="예: 꾸준한 개발 역량 강화를 위한 독서"
                   value={description}
@@ -213,8 +245,9 @@ export const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({
 
               <div className={styles.row}>
                 <div className={styles.formGroup}>
-                  <label>카테고리</label>
+                  <label htmlFor="routine-category">카테고리</label>
                   <select
+                    id="routine-category"
                     value={category}
                     onChange={e => setCategory(e.target.value as RoutineCategory)}
                   >
@@ -226,8 +259,9 @@ export const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label>목표 형태</label>
+                  <label htmlFor="routine-target-type">목표 형태</label>
                   <select
+                    id="routine-target-type"
                     value={targetType}
                     onChange={e => {
                       const type = e.target.value as TargetType;
@@ -243,8 +277,9 @@ export const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({
 
               <div className={styles.row}>
                 <div className={styles.formGroup}>
-                  <label>목표 수치</label>
+                  <label htmlFor="routine-target-value">목표 수치</label>
                   <input
+                    id="routine-target-value"
                     type="number"
                     min="1"
                     value={targetValue}
@@ -254,8 +289,9 @@ export const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label>단위</label>
+                  <label htmlFor="routine-target-unit">단위</label>
                   <input
+                    id="routine-target-unit"
                     type="text"
                     value={targetUnit}
                     onChange={e => setTargetUnit(e.target.value)}
@@ -265,8 +301,9 @@ export const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({
               </div>
 
               <div className={styles.formGroup}>
-                <label>반복 일정</label>
+                <label htmlFor="routine-frequency">반복 일정</label>
                 <select
+                  id="routine-frequency"
                   value={frequencyType}
                   onChange={e => setFrequencyType(e.target.value as RoutineFrequency)}
                 >
@@ -277,8 +314,14 @@ export const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({
 
               {frequencyType === 'WEEKLY_DAYS' && (
                 <div className={styles.formGroup}>
-                  <label>실천 요일 선택</label>
-                  <div className={styles.daysSelector}>
+                  <span className={styles.formLabel} id="routine-days-label">
+                    실천 요일 선택
+                  </span>
+                  <div
+                    className={styles.daysSelector}
+                    role="group"
+                    aria-labelledby="routine-days-label"
+                  >
                     {dayLabels.map(d => (
                       <button
                         type="button"
@@ -286,6 +329,7 @@ export const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({
                         className={`${styles.dayBtn} ${
                           selectedDays.includes(d.value) ? styles.selected : ''
                         }`}
+                        aria-pressed={selectedDays.includes(d.value)}
                         onClick={() => handleDayToggle(d.value)}
                       >
                         {d.label}
@@ -299,7 +343,7 @@ export const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({
         </div>
 
         <div className={styles.footer}>
-          <button className={styles.cancelBtn} onClick={onClose}>
+          <button type="button" className={styles.cancelBtn} onClick={onClose}>
             닫기
           </button>
           {activeTab === 'custom' && (

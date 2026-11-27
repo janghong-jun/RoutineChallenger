@@ -13,9 +13,7 @@ import { useAppSelector } from '@routine-challenger/store';
 import styles from './page.module.scss';
 
 export default function Home() {
-  const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const [isTitleOpen, setIsTitleOpen] = useState(false);
-  const [isDataOpen, setIsDataOpen] = useState(false);
+  const [activeModal, setActiveModal] = useState<'create' | 'titles' | 'data' | null>(null);
   const [unlockedToast, setUnlockedToast] = useState<string | null>(null);
   const { selectedDate } = useAppSelector(state => state.date);
 
@@ -28,47 +26,52 @@ export default function Home() {
 
   return (
     <div className={styles.mainLayout}>
+      <a className={styles.skipLink} href="#main-content">
+        본문 바로가기
+      </a>
       <Header
-        onOpenTitleModal={() => setIsTitleOpen(true)}
-        onOpenDataModal={() => setIsDataOpen(true)}
+        onOpenTitleModal={() => setActiveModal('titles')}
+        onOpenDataModal={() => setActiveModal('data')}
       />
       <DateNavigator />
       <WeeklyTracker />
 
-      <main className={styles.contentWrapper}>
+      <main className={styles.contentWrapper} id="main-content" tabIndex={-1}>
         <div className={styles.leftCol}>
           <RoutineList
-            onOpenCreateModal={() => setIsCreateOpen(true)}
+            onOpenCreateModal={() => setActiveModal('create')}
             onTitleUnlocked={handleTitleUnlocked}
           />
         </div>
 
-        <aside className={styles.sidebar}>
+        <aside className={styles.sidebar} aria-labelledby="stats-overview-heading">
           <StatsOverview />
         </aside>
       </main>
 
-      {isCreateOpen && (
+      {activeModal === 'create' && (
         <CreateRoutineModal
-          onClose={() => setIsCreateOpen(false)}
+          onClose={() => setActiveModal(null)}
           selectedDate={selectedDate}
         />
       )}
 
       <TitleGalleryModal
-        isOpen={isTitleOpen}
-        onClose={() => setIsTitleOpen(false)}
+        isOpen={activeModal === 'titles'}
+        onClose={() => setActiveModal(null)}
       />
 
-      {isDataOpen && (
+      {activeModal === 'data' && (
         <DataModal
-          onClose={() => setIsDataOpen(false)}
+          onClose={() => setActiveModal(null)}
         />
       )}
 
       {unlockedToast && (
-        <div className={styles.toast}>
-          <span className={styles.toastIcon}>🎉</span>
+        <div className={styles.toast} role="status" aria-live="polite" aria-atomic="true">
+          <span className={styles.toastIcon} aria-hidden="true">
+            🎉
+          </span>
           <div>
             <div className={styles.toastTitle}>새로운 타이틀 해금!</div>
             <div className={styles.toastMessage}>

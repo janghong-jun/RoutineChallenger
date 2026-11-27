@@ -82,7 +82,9 @@ export const StatsOverview: React.FC = () => {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <span className={styles.title}>성장 지표 현황</span>
+        <h2 className={styles.title} id="stats-overview-heading">
+          성장 지표 현황
+        </h2>
       </div>
 
       <div className={styles.statsGrid}>
@@ -104,7 +106,15 @@ export const StatsOverview: React.FC = () => {
         </div>
       </div>
 
-      <div className={styles.chartWrapper}>
+      <div
+        className={styles.chartWrapper}
+        role="img"
+        aria-label={
+          hasScheduledToday
+            ? `${selectedDate} 루틴 실천 현황: ${scheduledToday.length}개 중 ${completedToday}개 완료, ${pendingToday}개 미완료`
+            : `${selectedDate}에 예정된 루틴이 없습니다`
+        }
+      >
         <ReactECharts option={chartOption} className={styles.chart} opts={{ renderer: 'svg' }} />
         {!hasScheduledToday && <span className={styles.emptyChartText}>오늘 예정된 루틴 없음</span>}
       </div>

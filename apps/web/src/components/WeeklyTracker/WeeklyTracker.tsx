@@ -61,14 +61,21 @@ export const WeeklyTracker: React.FC = () => {
   const weekDays = isHydrated ? getWeekDays(selectedDate) : [];
 
   return (
-    <div className={styles.container}>
+    <section className={styles.container} aria-label="주간 날짜 선택">
       {weekDays.map(day => (
         <button
           key={day.dateString}
+          type="button"
           className={`${styles.dayCard} ${day.isSelected ? styles.isSelected : ''} ${
             day.isToday ? styles.isToday : ''
           }`}
           onClick={() => dispatch(setSelectedDate(day.dateString))}
+          aria-label={`${day.dateString}, ${day.dayLabel}요일${
+            day.isToday ? ', 오늘' : ''
+          }${day.isSelected ? ', 선택됨' : ''}${
+            day.hasCompleted ? ', 완료 기록 있음' : day.isHoliday ? ', 휴식일' : ''
+          }`}
+          aria-pressed={day.isSelected}
         >
           <span
             className={`${styles.dayName} ${
@@ -80,7 +87,7 @@ export const WeeklyTracker: React.FC = () => {
           <span className={styles.dateNum}>{day.dayNumber}</span>
           <div
             title={day.hasCompleted ? '루틴 완료' : day.isHoliday ? '휴일' : '미완료'}
-            aria-label={day.hasCompleted ? '루틴 완료' : day.isHoliday ? '휴일' : '미완료'}
+            aria-hidden="true"
             className={`${styles.indicator} ${
               day.hasCompleted
                 ? styles.hasDone
@@ -91,6 +98,6 @@ export const WeeklyTracker: React.FC = () => {
           />
         </button>
       ))}
-    </div>
+    </section>
   );
 };
