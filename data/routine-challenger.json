@@ -48,7 +48,19 @@
       "updatedAt": "2026-11-27T16:18:32.789Z"
     }
   ],
-  "records": [],
+  "records": [
+    {
+      "id": "routine_1795796312789_lzov8_2026-11-28",
+      "routineId": "routine_1795796312789_lzov8",
+      "date": "2026-11-28",
+      "completed": true,
+      "actualValue": 15,
+      "expGained": 10,
+      "expDeducted": 0,
+      "isHoliday": false,
+      "completedAt": "2026-11-27T16:20:43.050Z"
+    }
+  ],
   "expHistory": [],
   "userProfile": null,
   "customHolidays": []
