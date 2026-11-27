@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "routines": [
     {
-      "id": "routine_1795795188120_4f0wq",
+      "id": "routine_1795795306483_3opjs",
       "title": "상체 근력 운동",
       "description": "기초 대사량을 높이고 상체를 강화합니다.",
       "category": "EXERCISE",
@@ -20,8 +20,8 @@
       ],
       "startDate": "2026-11-28",
       "status": "ACTIVE",
-      "createdAt": "2026-11-27T15:59:48.120Z",
-      "updatedAt": "2026-11-27T15:59:48.120Z"
+      "createdAt": "2026-11-27T16:01:46.483Z",
+      "updatedAt": "2026-11-27T16:01:46.483Z"
     }
   ],
   "records": [],
