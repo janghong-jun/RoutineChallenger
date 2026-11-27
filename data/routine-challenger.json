@@ -1,6 +1,22 @@
 {
   "schemaVersion": 1,
-  "routines": [],
+  "routines": [
+    {
+      "id": "routine_1795795404943_3l3dm",
+      "title": "12341234",
+      "category": "EXERCISE",
+      "difficultyLevel": 1,
+      "targetType": "TIME",
+      "targetValue": 15,
+      "targetUnit": "분",
+      "frequencyType": "DAILY",
+      "targetDaysOfWeek": [0, 1, 2, 3, 4, 5, 6],
+      "startDate": "2026-11-28",
+      "status": "ACTIVE",
+      "createdAt": "2026-11-27T16:03:24.943Z",
+      "updatedAt": "2026-11-27T16:03:24.943Z"
+    }
+  ],
   "records": [],
   "expHistory": [],
   "userProfile": null,
