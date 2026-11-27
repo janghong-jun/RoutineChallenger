@@ -61,7 +61,18 @@
       "completedAt": "2026-11-27T16:20:43.050Z"
     }
   ],
-  "expHistory": [],
+  "expHistory": [
+    {
+      "id": "exp_1795796443050_39ogg8i",
+      "routineId": "routine_1795796312789_lzov8",
+      "date": "2026-11-28",
+      "type": "EARN_NORMAL",
+      "amount": 10,
+      "balanceAfter": 10,
+      "reason": "고옹부 실천 완료",
+      "timestamp": "2026-11-27T16:20:43.050Z"
+    }
+  ],
   "userProfile": null,
   "customHolidays": []
 }
