@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "routines": [
     {
-      "id": "routine_1795795375120_nwt77",
-      "title": "test",
+      "id": "routine_1795795404943_3l3dm",
+      "title": "12341234",
       "category": "EXERCISE",
       "difficultyLevel": 1,
       "targetType": "TIME",
@@ -21,8 +21,8 @@
       ],
       "startDate": "2026-11-28",
       "status": "ACTIVE",
-      "createdAt": "2026-11-27T16:02:55.120Z",
-      "updatedAt": "2026-11-27T16:02:55.120Z"
+      "createdAt": "2026-11-27T16:03:24.943Z",
+      "updatedAt": "2026-11-27T16:03:24.943Z"
     }
   ],
   "records": [],
