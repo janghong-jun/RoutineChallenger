@@ -8,12 +8,14 @@ import { RoutineList } from '@/components/RoutineList/RoutineList';
 import { StatsOverview } from '@/components/StatsOverview/StatsOverview';
 import { CreateRoutineModal } from '@/components/CreateRoutineModal/CreateRoutineModal';
 import { TitleGalleryModal } from '@/components/TitleGalleryModal/TitleGalleryModal';
+import { DataModal } from '@/components/DataModal/DataModal';
 import { useAppSelector } from '@routine-challenger/store';
 import styles from './page.module.scss';
 
 export default function Home() {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isTitleOpen, setIsTitleOpen] = useState(false);
+  const [isDataOpen, setIsDataOpen] = useState(false);
   const [unlockedToast, setUnlockedToast] = useState<string | null>(null);
   const { selectedDate } = useAppSelector(state => state.date);
 
@@ -26,7 +28,10 @@ export default function Home() {
 
   return (
     <div className={styles.mainLayout}>
-      <Header onOpenTitleModal={() => setIsTitleOpen(true)} />
+      <Header
+        onOpenTitleModal={() => setIsTitleOpen(true)}
+        onOpenDataModal={() => setIsDataOpen(true)}
+      />
       <DateNavigator />
       <WeeklyTracker />
 
@@ -54,6 +59,12 @@ export default function Home() {
         isOpen={isTitleOpen}
         onClose={() => setIsTitleOpen(false)}
       />
+
+      {isDataOpen && (
+        <DataModal
+          onClose={() => setIsDataOpen(false)}
+        />
+      )}
 
       {unlockedToast && (
         <div className={styles.toast}>

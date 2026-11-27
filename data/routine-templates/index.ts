@@ -24,8 +24,8 @@ export const ROUTINE_TEMPLATES_DATA: RoutineTemplate[] = [
   },
   {
     templateId: 'tpl_exercise_2',
-    title: '하체 근력 스쿼트',
-    description: '기초 대사량을 높이고 다리 근력을 강화합니다.',
+    title: '상체 근력 운동',
+    description: '기초 대사량을 높이고 상체를 강화합니다.',
     category: 'EXERCISE',
     difficultyLevel: 1,
     targetType: 'COUNT',
@@ -38,7 +38,7 @@ export const ROUTINE_TEMPLATES_DATA: RoutineTemplate[] = [
   },
   {
     templateId: 'tpl_exercise_3',
-    title: '가벼운 유산소 러닝 / 파워워킹',
+    title: '가벼운 유산소 / 파워워킹',
     description: '심폐 지구력을 기르고 머리를 상쾌하게 비워냅니다.',
     category: 'EXERCISE',
     difficultyLevel: 1,

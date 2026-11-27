@@ -9,8 +9,7 @@
   },
   "dependencies": {
     "@routine-challenger/types": "workspace:*",
-    "@routine-challenger/data": "workspace:*",
-    "idb": "^8.0.4"
+    "@routine-challenger/data": "workspace:*"
   },
   "scripts": {
     "type-check": "tsc --noEmit"

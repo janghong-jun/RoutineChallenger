@@ -37,3 +37,12 @@ export interface IHolidayRepository {
   getByYear(year: number): Promise<Holiday[]>;
   addCustomHoliday(holiday: Holiday): Promise<void>;
 }
+
+export interface AppDataSnapshot {
+  schemaVersion: 1;
+  routines: Routine[];
+  records: RoutineRecord[];
+  expHistory: ExpHistory[];
+  userProfile: UserProfile | null;
+  customHolidays: Holiday[];
+}

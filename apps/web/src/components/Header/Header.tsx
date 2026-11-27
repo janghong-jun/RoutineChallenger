@@ -6,9 +6,10 @@ import styles from './Header.module.scss';
 
 interface HeaderProps {
   onOpenTitleModal: () => void;
+  onOpenDataModal: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ onOpenTitleModal }) => {
+export const Header: React.FC<HeaderProps> = ({ onOpenTitleModal, onOpenDataModal }) => {
   const { totalExp, selectedTitleId, titles, currentStreak } = useAppSelector(state => state.user);
   const [theme, setTheme] = useState<'dark' | 'light'>('light');
 
@@ -63,6 +64,13 @@ export const Header: React.FC<HeaderProps> = ({ onOpenTitleModal }) => {
       </div>
 
       <div className={styles.actions}>
+        <button
+          className={styles.themeButton}
+          onClick={onOpenDataModal}
+          title="JSON 데이터 내보내기 및 가져오기"
+        >
+          💾
+        </button>
         <button
           className={styles.themeButton}
           onClick={toggleTheme}

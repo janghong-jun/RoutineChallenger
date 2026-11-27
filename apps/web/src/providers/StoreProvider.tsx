@@ -27,7 +27,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     const theme = savedTheme === 'dark' ? 'dark' : 'light';
     document.documentElement.setAttribute('data-theme', theme);
 
-    // IndexedDB로부터 데이터 로드 및 초기화
+    // 공개 GitHub JSON 데이터 로드 및 초기화
     async function initData() {
       const storage = getStorageContainer();
 
@@ -54,7 +54,6 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
           };
-          await storage.userProfile.save(profile);
         }
         store.dispatch(setUserProfile(profile));
 
@@ -64,7 +63,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         const streakResult = calculateStreaks(completedDates, todayStr);
         store.dispatch(setStreaks(streakResult));
       } catch (err) {
-        console.error('Failed to initialize local data from IndexedDB:', err);
+        console.error('Failed to initialize data from GitHub JSON:', err);
       }
     }
 
