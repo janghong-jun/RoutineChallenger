@@ -12,7 +12,9 @@ interface TitleGalleryModalProps {
 
 export const TitleGalleryModal: React.FC<TitleGalleryModalProps> = ({ isOpen, onClose }) => {
   const dispatch = useAppDispatch();
-  const { titles, selectedTitleId, unlockedTitleIds, totalExp } = useAppSelector(state => state.user);
+  const { titles, selectedTitleId, unlockedTitleIds, totalExp } = useAppSelector(
+    state => state.user
+  );
 
   if (!isOpen) return null;
 
@@ -72,15 +74,12 @@ export const TitleGalleryModal: React.FC<TitleGalleryModalProps> = ({ isOpen, on
 
                 {isUnlocked ? (
                   !isEquipped && (
-                    <button
-                      className={styles.equipBtn}
-                      onClick={() => handleEquip(title.id)}
-                    >
+                    <button className={styles.equipBtn} onClick={() => handleEquip(title.id)}>
                       대표 설정
                     </button>
                   )
                 ) : (
-                  <span className={styles.lockedBadge}>🔒 미해금</span>
+                  <span className={styles.lockedBadge}>🔒 미획득</span>
                 )}
               </div>
             );

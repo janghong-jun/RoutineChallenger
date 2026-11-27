@@ -63,8 +63,6 @@ export const StatsOverview: React.FC = () => {
         avoidLabelOverlap: false,
         itemStyle: {
           borderRadius: 6,
-          borderColor: '#111625',
-          borderWidth: 2,
         },
         label: { show: false },
         data: hasScheduledToday
