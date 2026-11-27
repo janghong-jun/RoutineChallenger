@@ -1,6 +1,5 @@
 import {
   AppDataSnapshot,
-  Holiday,
   IRoutineRepository,
   IRecordRepository,
   IExpRepository,
