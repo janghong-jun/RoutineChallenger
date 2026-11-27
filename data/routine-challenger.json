@@ -73,6 +73,15 @@
       "timestamp": "2026-11-27T16:20:43.050Z"
     }
   ],
-  "userProfile": null,
+  "userProfile": {
+    "id": "current_user_profile",
+    "totalExp": 10,
+    "selectedTitleId": "first_step",
+    "unlockedTitleIds": [
+      "first_step"
+    ],
+    "createdAt": "2026-11-27T16:20:47.415Z",
+    "updatedAt": "2026-11-27T16:20:47.857Z"
+  },
   "customHolidays": []
 }
