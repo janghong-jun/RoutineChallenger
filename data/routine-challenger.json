@@ -2,26 +2,28 @@
   "schemaVersion": 1,
   "routines": [
     {
-      "id": "routine_1795795306483_3opjs",
-      "title": "상체 근력 운동",
-      "description": "기초 대사량을 높이고 상체를 강화합니다.",
+      "id": "routine_1795795310999_gt9rz",
+      "title": "모닝 스트레칭 & 유연성 운동",
+      "description": "기상 직후 몸의 굳은 관절과 근육을 부드럽게 깨워줍니다.",
       "category": "EXERCISE",
       "difficultyLevel": 1,
-      "targetType": "COUNT",
-      "targetValue": 30,
-      "targetUnit": "회",
+      "targetType": "TIME",
+      "targetValue": 10,
+      "targetUnit": "분",
       "frequencyType": "DAILY",
       "targetDaysOfWeek": [
+        0,
         1,
         2,
         3,
         4,
-        5
+        5,
+        6
       ],
       "startDate": "2026-11-28",
       "status": "ACTIVE",
-      "createdAt": "2026-11-27T16:01:46.483Z",
-      "updatedAt": "2026-11-27T16:01:46.483Z"
+      "createdAt": "2026-11-27T16:01:50.999Z",
+      "updatedAt": "2026-11-27T16:01:50.999Z"
     }
   ],
   "records": [],
