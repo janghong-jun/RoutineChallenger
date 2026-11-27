@@ -43,11 +43,12 @@ export default function Home() {
         </aside>
       </main>
 
-      <CreateRoutineModal
-        isOpen={isCreateOpen}
-        onClose={() => setIsCreateOpen(false)}
-        selectedDate={selectedDate}
-      />
+      {isCreateOpen && (
+        <CreateRoutineModal
+          onClose={() => setIsCreateOpen(false)}
+          selectedDate={selectedDate}
+        />
+      )}
 
       <TitleGalleryModal
         isOpen={isTitleOpen}

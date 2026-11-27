@@ -31,7 +31,9 @@ export const DateNavigator: React.FC = () => {
           ‹
         </button>
 
-        <span className={styles.dateText}>{formatKoreanDate(selectedDate)}</span>
+        <span className={styles.dateText} suppressHydrationWarning>
+          {formatKoreanDate(selectedDate)}
+        </span>
 
         <button
           className={styles.navButton}

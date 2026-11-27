@@ -318,6 +318,22 @@ routine-challenger/
 14. 주요 정책은 설정 및 데이터로 관리한다.
 15. 코드 난이도는 유지보수가 가능하고 이해하기 쉬운 수준으로 유지한다.
 16. 불필요하게 복잡한 추상화나 과도한 라이브러리 도입을 피한다.
+17. SCSS와 CSS의 style 속성은 다음 순서로 작성한다.
+    - position, inset, top/right/bottom/left, z-index
+    - display, flex/grid 관련 속성, align/justify 관련 속성
+    - gap, width/height, min/max width/height
+    - margin, padding
+    - overflow
+    - font, line-height, letter-spacing, text 관련 속성
+    - color
+    - background 및 background-* 속성
+    - border 및 border-* 속성
+    - border-radius
+    - box-shadow, text-shadow
+    - opacity, cursor
+    - vendor/compatibility 속성
+    - transform, transition, animation
+18. 새 스타일을 추가하거나 기존 스타일 순서를 수정할 때 모든 SCSS와 CSS 파일에 동일한 속성 순서 규칙을 적용한다.
 
 ## 8. 개발 순서
 

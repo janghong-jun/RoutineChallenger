@@ -10,16 +10,18 @@ import {
   setExpHistory,
   setUserProfile,
   setStreaks,
+  goToToday,
 } from '@routine-challenger/store';
 import { getStorageContainer } from '@routine-challenger/storage';
-import { ROUTINE_TEMPLATES_DATA } from '@routine-challenger/data';
 import { calculateStreaks } from '@routine-challenger/core';
-import { Routine } from '@routine-challenger/types';
+import { getKoreaTodayDateString } from '@routine-challenger/store';
 
 export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [store] = useState<AppStore>(() => makeStore());
 
   useEffect(() => {
+    store.dispatch(goToToday());
+
     // 테마 설정 복원
     const savedTheme = localStorage.getItem('rc_theme');
     const theme = savedTheme === 'dark' ? 'dark' : 'light';
@@ -30,36 +32,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       const storage = getStorageContainer();
 
       try {
-        let routines = await storage.routines.getAll();
-
-        // 앱 첫 실행 시 템플릿 루틴 자동 시딩
-        if (routines.length === 0) {
-          const starterTemplates = ROUTINE_TEMPLATES_DATA.slice(0, 4); // 대표 4개 루틴
-          const now = new Date().toISOString();
-          const todayDate = now.slice(0, 10);
-
-          for (const tpl of starterTemplates) {
-            const newRoutine: Routine = {
-              id: `routine_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
-              title: tpl.title,
-              description: tpl.description,
-              category: tpl.category,
-              difficultyLevel: tpl.difficultyLevel || 1,
-              targetType: tpl.targetType,
-              targetValue: tpl.targetValue,
-              targetUnit: tpl.targetUnit || '분',
-              frequencyType: tpl.frequencyType,
-              targetDaysOfWeek: tpl.targetDaysOfWeek || [0, 1, 2, 3, 4, 5, 6],
-              startDate: todayDate,
-              status: 'ACTIVE',
-              createdAt: now,
-              updatedAt: now,
-            };
-            await storage.routines.create(newRoutine);
-          }
-          routines = await storage.routines.getAll();
-        }
-
+        const routines = await storage.routines.getAll();
         store.dispatch(setRoutines(routines));
 
         // 실천 기록 로드
@@ -87,7 +60,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
 
         // 스트릭 계산
         const completedDates = records.filter(r => r.completed).map(r => r.date);
-        const todayStr = new Date().toISOString().slice(0, 10);
+        const todayStr = getKoreaTodayDateString();
         const streakResult = calculateStreaks(completedDates, todayStr);
         store.dispatch(setStreaks(streakResult));
       } catch (err) {

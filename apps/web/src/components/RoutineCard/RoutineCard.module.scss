@@ -1,18 +1,18 @@
 .card {
   position: relative;
-  background-color: var(--bg-surface);
-  border: 1px solid var(--border-subtle);
-  border-radius: 16px;
-  padding: 16px 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 1.6rem;
+  padding: 1.6rem 2rem;
+  background-color: var(--bg-surface);
+  border: 0.1rem solid var(--border-subtle);
+  border-radius: 1.6rem;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 
   &:hover {
     border-color: var(--border-medium);
-    transform: translateY(-2px);
+    transform: translateY(-0.2rem);
     box-shadow: var(--shadow-md);
   }
 
@@ -39,24 +39,24 @@
 .leftSection {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 1.4rem;
   flex: 1;
   min-width: 0;
 }
 
 .checkButton {
-  width: 28px;
-  height: 28px;
-  border-radius: 8px;
-  border: 2px solid var(--border-medium);
-  background: var(--bg-surface-elevated);
+  width: 2.8rem;
+  height: 2.8rem;
   display: flex;
+  flex-shrink: 0;
   align-items: center;
   justify-content: center;
+  font-size: 1.5rem;
   cursor: pointer;
-  flex-shrink: 0;
+  background: var(--bg-surface-elevated);
+  border: 0.2rem solid var(--border-medium);
+  border-radius: 0.8rem;
   transition: all 0.2s ease;
-  font-size: 15px;
 
   &:hover {
     border-color: var(--brand-primary);
@@ -67,35 +67,35 @@
     background: #10b981;
     border-color: #10b981;
     color: #ffffff;
-    box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
+    box-shadow: 0 0 1.2rem rgba(16, 185, 129, 0.4);
   }
 }
 
 .content {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 0.6rem;
   min-width: 0;
 }
 
 .badgesRow {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.8rem;
   flex-wrap: wrap;
 }
 
 .routineTitle {
-  font-size: 16px;
+  font-size: 1.6rem;
   font-weight: 700;
+  letter-spacing: -0.03rem;
   color: var(--text-primary);
-  letter-spacing: -0.3px;
   transition: all 0.2s ease;
   word-break: break-word;
 }
 
 .description {
-  font-size: 13px;
+  font-size: 1.3rem;
   color: var(--text-secondary);
   line-height: 1.4;
   word-break: break-word;
@@ -104,60 +104,60 @@
 .targetRow {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 12px;
+  gap: 1rem;
+  font-size: 1.2rem;
   color: var(--text-muted);
   font-weight: 600;
-  margin-top: 2px;
+  margin-top: 0.2rem;
 }
 
 .targetPill {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 2px 8px;
-  border-radius: 6px;
-  background: var(--bg-surface-elevated);
-  border: 1px solid var(--border-subtle);
+  gap: 0.4rem;
+  padding: 0.2rem 0.8rem;
   color: var(--text-secondary);
+  background: var(--bg-surface-elevated);
+  border: 0.1rem solid var(--border-subtle);
+  border-radius: 0.6rem;
 }
 
 .rightSection {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 1rem;
   flex-shrink: 0;
 }
 
 .levelUpButton {
-  padding: 4px 10px;
-  border-radius: 8px;
-  font-size: 12px;
+  padding: 0.4rem 1rem;
+  font-size: 1.2rem;
   font-weight: 700;
-  background: rgba(245, 158, 11, 0.12);
-  border: 1px solid rgba(245, 158, 11, 0.3);
   color: #fbbf24;
   cursor: pointer;
+  background: rgba(245, 158, 11, 0.12);
+  border: 0.1rem solid rgba(245, 158, 11, 0.3);
+  border-radius: 0.8rem;
   transition: all 0.2s ease;
 
   &:hover {
     background: rgba(245, 158, 11, 0.25);
-    transform: translateY(-1px);
+    transform: translateY(-0.1rem);
     box-shadow: var(--glow-gold);
   }
 }
 
 .actionButton {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
+  width: 3.2rem;
+  height: 3.2rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: transparent;
+  font-size: 1.6rem;
   color: var(--text-muted);
-  font-size: 16px;
   cursor: pointer;
+  background: transparent;
+  border-radius: 0.8rem;
   transition: all 0.2s ease;
 
   &:hover {

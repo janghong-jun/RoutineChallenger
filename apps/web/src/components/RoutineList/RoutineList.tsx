@@ -81,12 +81,12 @@ export const RoutineList: React.FC<RoutineListProps> = ({
               {completedCount} / {totalCount} 완료 ({progressPercent}%)
             </span>
           </div>
-          <div className={styles.progressBarBg}>
-            <div
-              className={styles.progressBarFill}
-              style={{ width: `${progressPercent}%` }}
-            />
-          </div>
+          <progress
+            className={styles.progressBar}
+            value={progressPercent}
+            max={100}
+            aria-label="오늘의 루틴 달성률"
+          />
         </div>
       )}
 

@@ -14,46 +14,45 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-family: var(--font-geist-sans);
   background-color: var(--background);
 }
 
 .main {
   display: flex;
   flex: 1;
-  width: 100%;
-  max-width: 800px;
   flex-direction: column;
   align-items: flex-start;
   justify-content: space-between;
+  width: 100%;
+  max-width: 80rem;
+  padding: 12rem 6rem;
   background-color: var(--foreground);
-  padding: 120px 60px;
 }
 
 .intro {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  gap: 2.4rem;
   text-align: left;
-  gap: 24px;
 }
 
 .intro h1 {
-  max-width: 320px;
-  font-size: 40px;
+  max-width: 32rem;
+  font-size: 4rem;
   font-weight: 600;
-  line-height: 48px;
-  letter-spacing: -2.4px;
-  text-wrap: balance;
+  line-height: 4.8rem;
+  letter-spacing: -0.24rem;
   color: var(--text-primary);
+  text-wrap: balance;
 }
 
 .intro p {
-  max-width: 440px;
-  font-size: 18px;
-  line-height: 32px;
-  text-wrap: balance;
+  max-width: 44rem;
+  font-size: 1.8rem;
+  line-height: 3.2rem;
   color: var(--text-secondary);
+  text-wrap: balance;
 }
 
 .intro a {
@@ -65,29 +64,29 @@
   display: flex;
   flex-direction: row;
   width: 100%;
-  max-width: 440px;
-  gap: 16px;
-  font-size: 14px;
+  max-width: 44rem;
+  gap: 1.6rem;
+  font-size: 1.4rem;
 }
 
 .ctas a {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 40px;
-  padding: 0 16px;
-  border-radius: 128px;
-  border: 1px solid transparent;
-  transition: 0.2s;
-  cursor: pointer;
   width: fit-content;
+  height: 4rem;
+  padding: 0 1.6rem;
+  cursor: pointer;
   font-weight: 500;
+  border: 0.1rem solid transparent;
+  border-radius: 12.8rem;
+  transition: 0.2s;
 }
 
 a.primary {
   background: var(--text-primary);
   color: var(--background);
-  gap: 8px;
+  gap: 0.8rem;
 }
 
 a.secondary {
@@ -107,19 +106,19 @@ a.secondary {
   }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 60rem) {
   .main {
-    padding: 48px 24px;
+    padding: 4.8rem 2.4rem;
   }
 
   .intro {
-    gap: 16px;
+    gap: 1.6rem;
   }
 
   .intro h1 {
-    font-size: 32px;
-    line-height: 40px;
-    letter-spacing: -1.92px;
+    font-size: 3.2rem;
+    line-height: 4rem;
+    letter-spacing: -0.192rem;
   }
 }
 
@@ -142,9 +141,8 @@ a.secondary {
 }
 
 .code {
-  font-family: var(--font-geist-mono);
   font-size: 0.9em;
   background: color-mix(in srgb, currentColor 8%, transparent);
   padding: 0.1em 0.4em;
-  border-radius: 6px;
+  border-radius: 0.6rem;
 }

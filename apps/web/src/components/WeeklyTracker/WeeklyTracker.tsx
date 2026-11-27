@@ -1,11 +1,16 @@
 'use client';
 
-import React from 'react';
+import React, { useSyncExternalStore } from 'react';
 import { useAppDispatch, useAppSelector, setSelectedDate } from '@routine-challenger/store';
 import { defaultHolidayService } from '@routine-challenger/core';
 import styles from './WeeklyTracker.module.scss';
 
 export const WeeklyTracker: React.FC = () => {
+  const isHydrated = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
   const dispatch = useAppDispatch();
   const { selectedDate, todayDate } = useAppSelector(state => state.date);
   const recordsMap = useAppSelector(state => state.record.recordsMap);
@@ -57,7 +62,7 @@ export const WeeklyTracker: React.FC = () => {
     return week;
   };
 
-  const weekDays = getWeekDays(selectedDate);
+  const weekDays = isHydrated ? getWeekDays(selectedDate) : [];
 
   return (
     <div className={styles.container}>

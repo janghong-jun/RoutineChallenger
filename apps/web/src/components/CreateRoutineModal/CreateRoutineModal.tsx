@@ -15,15 +15,14 @@ import { CategoryBadge } from '@routine-challenger/ui';
 import styles from './CreateRoutineModal.module.scss';
 
 interface CreateRoutineModalProps {
-  isOpen: boolean;
   onClose: () => void;
   selectedDate: string;
 }
 
 const createRoutineId = () => `routine_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+const initialSelectedDays: DayOfWeek[] = [1, 2, 3, 4, 5];
 
 export const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({
-  isOpen,
   onClose,
   selectedDate,
 }) => {
@@ -38,9 +37,23 @@ export const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({
   const [targetValue, setTargetValue] = useState(15);
   const [targetUnit, setTargetUnit] = useState('분');
   const [frequencyType, setFrequencyType] = useState<RoutineFrequency>('DAILY');
-  const [selectedDays, setSelectedDays] = useState<DayOfWeek[]>([1, 2, 3, 4, 5]);
+  const [selectedDays, setSelectedDays] = useState<DayOfWeek[]>(initialSelectedDays);
 
-  if (!isOpen) return null;
+  const resetForm = () => {
+    setTitle('');
+    setDescription('');
+    setCategory('EXERCISE');
+    setTargetType('TIME');
+    setTargetValue(15);
+    setTargetUnit('분');
+    setFrequencyType('DAILY');
+    setSelectedDays(initialSelectedDays);
+  };
+
+  const handleTabChange = (tab: 'templates' | 'custom') => {
+    resetForm();
+    setActiveTab(tab);
+  };
 
   const handleDayToggle = (day: DayOfWeek) => {
     if (selectedDays.includes(day)) {
@@ -130,13 +143,13 @@ export const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({
         <div className={styles.tabNav}>
           <button
             className={`${styles.tabItem} ${activeTab === 'templates' ? styles.active : ''}`}
-            onClick={() => setActiveTab('templates')}
+            onClick={() => handleTabChange('templates')}
           >
             추천 템플릿 선택
           </button>
           <button
             className={`${styles.tabItem} ${activeTab === 'custom' ? styles.active : ''}`}
-            onClick={() => setActiveTab('custom')}
+            onClick={() => handleTabChange('custom')}
           >
             직접 만들기
           </button>
@@ -145,26 +158,38 @@ export const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({
         <div className={styles.body}>
           {activeTab === 'templates' ? (
             <div className={styles.templateList}>
-              {ROUTINE_TEMPLATES_DATA.map(tpl => (
-                <div key={tpl.templateId} className={styles.templateCard}>
-                  <div className={styles.tplInfo}>
-                    <div className={styles.tplHeader}>
-                      <CategoryBadge category={tpl.category} />
-                      <div style={{ flex: 'none', width: '100%' }}>
-                        <span>{tpl.icon}</span>
+              {ROUTINE_TEMPLATES_DATA.length > 0 ? (
+                ROUTINE_TEMPLATES_DATA.map(tpl => (
+                  <div key={tpl.templateId} className={styles.templateCard}>
+                    <div className={styles.tplInfo}>
+                      <div className={styles.tplHeader}>
+                        <span className={styles.tplCategory}>
+                          <CategoryBadge category={tpl.category} />
+                        </span>
+                        <span className={styles.tplIcon}>{tpl.icon}</span>
                         <span className={styles.tplTitle}>{tpl.title}</span>
                       </div>
+                      {tpl.description && <span className={styles.tplDesc}>{tpl.description}</span>}
                     </div>
-                    {tpl.description && <span className={styles.tplDesc}>{tpl.description}</span>}
+                    <button className={styles.tplAddBtn} onClick={() => handleAddFromTemplate(tpl)}>
+                      추가하기
+                    </button>
                   </div>
-                  <button className={styles.tplAddBtn} onClick={() => handleAddFromTemplate(tpl)}>
-                    추가하기
+                ))
+              ) : (
+                <div className={styles.templateEmptyState}>
+                  <p>등록된 추천 템플릿이 없습니다.</p>
+                  <button
+                    className={styles.templateEmptyAction}
+                    onClick={() => handleTabChange('custom')}
+                  >
+                    직접 루틴 만들기
                   </button>
                 </div>
-              ))}
+              )}
             </div>
           ) : (
-            <form id="custom-routine-form" onSubmit={handleCreateCustom}>
+            <form id="custom-routine-form" className={styles.form} onSubmit={handleCreateCustom}>
               <div className={styles.formGroup}>
                 <label>루틴 이름</label>
                 <input
@@ -176,7 +201,7 @@ export const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({
                 />
               </div>
 
-              <div className={styles.formGroup} style={{ marginTop: 12 }}>
+              <div className={styles.formGroup}>
                 <label>설명 (선택)</label>
                 <input
                   type="text"
@@ -186,7 +211,7 @@ export const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({
                 />
               </div>
 
-              <div className={styles.row} style={{ marginTop: 12 }}>
+              <div className={styles.row}>
                 <div className={styles.formGroup}>
                   <label>카테고리</label>
                   <select
@@ -216,7 +241,7 @@ export const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({
                 </div>
               </div>
 
-              <div className={styles.row} style={{ marginTop: 12 }}>
+              <div className={styles.row}>
                 <div className={styles.formGroup}>
                   <label>목표 수치</label>
                   <input
@@ -239,7 +264,7 @@ export const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({
                 </div>
               </div>
 
-              <div className={styles.formGroup} style={{ marginTop: 12 }}>
+              <div className={styles.formGroup}>
                 <label>반복 일정</label>
                 <select
                   value={frequencyType}
@@ -251,7 +276,7 @@ export const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({
               </div>
 
               {frequencyType === 'WEEKLY_DAYS' && (
-                <div className={styles.formGroup} style={{ marginTop: 12 }}>
+                <div className={styles.formGroup}>
                   <label>실천 요일 선택</label>
                   <div className={styles.daysSelector}>
                     {dayLabels.map(d => (

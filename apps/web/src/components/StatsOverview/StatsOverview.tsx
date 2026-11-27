@@ -20,6 +20,7 @@ export const StatsOverview: React.FC = () => {
     r => recordsMap[`${r.id}_${selectedDate}`]?.completed
   ).length;
   const pendingToday = Math.max(0, scheduledToday.length - completedToday);
+  const hasScheduledToday = scheduledToday.length > 0;
 
   // 카테고리별 실천 분포 계산
   const categoryCounts: Record<string, number> = {
@@ -46,17 +47,19 @@ export const StatsOverview: React.FC = () => {
       textStyle: { color: '#f8fafc', fontSize: 12 },
     },
     legend: {
-      orient: 'vertical',
-      right: '5%',
-      top: 'center',
+      show: hasScheduledToday,
+      orient: 'horizontal',
+      left: 'center',
+      bottom: '2%',
       textStyle: { color: '#94a3b8', fontSize: 11 },
     },
     series: [
       {
         name: '실천 현황',
         type: 'pie',
+        silent: !hasScheduledToday,
         radius: ['55%', '80%'],
-        center: ['35%', '50%'],
+        center: ['50%', '45%'],
         avoidLabelOverlap: false,
         itemStyle: {
           borderRadius: 6,
@@ -64,10 +67,16 @@ export const StatsOverview: React.FC = () => {
           borderWidth: 2,
         },
         label: { show: false },
-        data: [
-          { value: completedToday, name: '완료됨', itemStyle: { color: '#10b981' } },
-          { value: pendingToday, name: '미완료', itemStyle: { color: 'rgba(99, 102, 241, 0.25)' } },
-        ],
+        data: hasScheduledToday
+          ? [
+              { value: completedToday, name: '완료됨', itemStyle: { color: '#10b981' } },
+              {
+                value: pendingToday,
+                name: '미완료',
+                itemStyle: { color: 'rgba(99, 102, 241, 0.25)' },
+              },
+            ]
+          : [],
       },
     ],
   };
@@ -76,38 +85,30 @@ export const StatsOverview: React.FC = () => {
     <div className={styles.container}>
       <div className={styles.header}>
         <span className={styles.title}>성장 지표 현황</span>
-        <span className={styles.badge}>Live Analytics</span>
       </div>
 
       <div className={styles.statsGrid}>
         <div className={styles.statCard}>
           <span className={styles.label}>총 누적 경험치</span>
-          <span className={styles.value} style={{ color: '#fbbf24' }}>
+          <span className={`${styles.value} ${styles.expValue}`}>
             {totalExp.toLocaleString()} EXP
           </span>
         </div>
 
         <div className={styles.statCard}>
           <span className={styles.label}>연속 실천일</span>
-          <span className={styles.value} style={{ color: '#f87171' }}>
-            {currentStreak}일
-          </span>
+          <span className={`${styles.value} ${styles.streakValue}`}>{currentStreak}일</span>
         </div>
 
         <div className={styles.statCard}>
           <span className={styles.label}>총 실천 일수</span>
-          <span className={styles.value} style={{ color: '#818cf8' }}>
-            {totalActiveDays}일
-          </span>
+          <span className={`${styles.value} ${styles.activeDaysValue}`}>{totalActiveDays}일</span>
         </div>
       </div>
 
       <div className={styles.chartWrapper}>
-        <ReactECharts
-          option={chartOption}
-          style={{ height: '100%', width: '100%' }}
-          opts={{ renderer: 'svg' }}
-        />
+        <ReactECharts option={chartOption} className={styles.chart} opts={{ renderer: 'svg' }} />
+        {!hasScheduledToday && <span className={styles.emptyChartText}>오늘 예정된 루틴 없음</span>}
       </div>
     </div>
   );
