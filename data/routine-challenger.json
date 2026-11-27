@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+<<<<<<< HEAD
   "routines": [
     {
       "id": "routine_1795795404943_3l3dm",
@@ -17,6 +18,9 @@
       "updatedAt": "2026-11-27T16:03:24.943Z"
     }
   ],
+=======
+  "routines": [],
+>>>>>>> 236bfa5944fbb43a22f238b11877164cd1446a09
   "records": [],
   "expHistory": [],
   "userProfile": null,
