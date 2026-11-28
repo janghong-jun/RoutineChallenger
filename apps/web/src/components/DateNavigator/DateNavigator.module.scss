@@ -1,71 +1,69 @@
 .container {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 1.6rem;
-  padding: 1.6rem 2rem;
-  border-bottom: 0.1rem solid var(--border-subtle);
-  background-color: var(--bg-surface);
-
-  @media (max-width: 64rem) {
-    flex-direction: column;
-    gap: 1.2rem;
-  }
+  gap: 1.2rem 2rem;
 }
 
 .dateGroup {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 1.2rem;
+  gap: 1.2rem 2rem;
 }
 
-.navButton {
-  width: 3.2rem;
-  height: 3.2rem;
+.dateText {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2rem;
-  font-weight: 700;
-  color: var(--text-secondary);
-  background-color: var(--bg-surface-elevated);
-  border: 0.1rem solid var(--border-medium);
-  border-radius: 0.8rem;
-  transition: all 0.2s ease;
+  align-items: baseline;
+  gap: 1rem;
+  font-size: inherit;
+  font-weight: inherit;
+}
 
-  &:hover {
-    color: var(--text-primary);
-    background-color: rgba(99, 102, 241, 0.1);
-    border-color: var(--brand-primary);
+.dateMain {
+  font-size: 3.2rem;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+  color: var(--text-primary);
+
+  @media (max-width: 640px) {
+    font-size: 2.6rem;
   }
 }
 
 .datePicker {
-  width: 100%;
-  min-width: 0;
-  padding: 0.6rem 0.8rem 0.6rem 2.8rem;
-  font-size: 1.8rem;
-  font-weight: 800;
-  letter-spacing: -0.03rem;
-  color: var(--text-primary);
-  background-color: transparent;
+  width: 18rem;
+  padding: 0;
+  text-align: left;
+  background: transparent;
   border: 0;
   cursor: pointer;
 
   &:focus-visible {
-    outline: 0.2rem solid var(--brand-primary);
-    outline-offset: 0.2rem;
+    outline: 0.2rem solid var(--accent);
+    outline-offset: 0.3rem;
     border-radius: 0.4rem;
   }
+
+  @media (max-width: 640px) {
+    width: 15rem;
+  }
+}
+
+.dateSub {
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.calendarPopper {
+  z-index: 200;
 }
 
 .calendarIcon {
   color: var(--text-secondary);
-}
-
-.calendarPopper {
-  z-index: 20;
 }
 
 .calendar {
@@ -75,7 +73,8 @@
   color: var(--text-primary);
   background-color: var(--bg-surface);
   border-color: var(--border-subtle);
-  border-radius: 1rem;
+  border-radius: var(--radius-panel);
+  box-shadow: var(--shadow-md);
 }
 
 .calendar :global(.react-datepicker__header) {
@@ -94,21 +93,22 @@
 }
 
 .calendar :global(.react-datepicker__day-name:first-of-type) {
-  color: #f87171;
+  color: var(--holiday);
 }
+
 .calendar :global(.react-datepicker__day-name:last-of-type) {
   color: #818cf8;
 }
 
 .calendar :global(.react-datepicker__day:hover) {
-  background-color: rgba(99, 102, 241, 0.12);
+  background-color: var(--bg-surface-elevated);
   border-radius: 0.4rem;
 }
 
 .calendar :global(.react-datepicker__day--selected),
 .calendar :global(.react-datepicker__day--keyboard-selected) {
-  color: #fff;
-  background-color: var(--brand-primary);
+  color: var(--ink-text);
+  background-color: var(--ink);
   border-radius: 0.4rem;
 }
 
@@ -124,23 +124,49 @@
   display: none;
 }
 
-.todayButton {
-  padding: 0.4rem 1rem;
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: var(--brand-primary);
-  background-color: rgba(99, 102, 241, 0.1);
-  border: 0.1rem solid rgba(99, 102, 241, 0.25);
-  border-radius: 0.6rem;
-  transition: all 0.2s ease;
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.navButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.6rem;
+  height: 3.6rem;
+  color: var(--text-secondary);
+  background-color: var(--bg-surface);
+  border: 0.1rem solid var(--border-subtle);
+  border-radius: var(--radius-control);
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease;
 
   &:hover {
-    background-color: rgba(99, 102, 241, 0.2);
+    color: var(--text-primary);
+    border-color: var(--border-medium);
+  }
+}
+
+.todayButton {
+  height: 3.6rem;
+  margin-left: 0.4rem;
+  padding: 0 1.4rem;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--ink-text);
+  background-color: var(--ink);
+  border-radius: var(--radius-control);
+  transition: background-color 0.15s ease;
+
+  &:hover {
+    background-color: var(--ink-hover);
   }
 }
 
 .statusWrapper {
   display: flex;
   align-items: center;
-  gap: 1rem;
 }

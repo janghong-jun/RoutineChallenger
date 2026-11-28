@@ -8,6 +8,7 @@ import {
   setSelectedCategory,
 } from '@routine-challenger/store';
 import { filterRoutinesForDate } from '@routine-challenger/core';
+import { Icon, CATEGORY_ICON_NAMES, IconName } from '@routine-challenger/ui';
 import { RoutineCard } from '../RoutineCard/RoutineCard';
 import styles from './RoutineList.module.scss';
 
@@ -16,16 +17,12 @@ interface RoutineListProps {
   onTitleUnlocked?: (titleName: string) => void;
 }
 
-const CATEGORY_TABS: {
-  label: string;
-  icon?: string;
-  value: RoutineCategory | 'ALL';
-}[] = [
+const CATEGORY_TABS: { label: string; value: RoutineCategory | 'ALL'; icon?: IconName }[] = [
   { label: '전체', value: 'ALL' },
-  { label: '운동', icon: '🏃', value: 'EXERCISE' },
-  { label: '학습', icon: '📚', value: 'LEARNING' },
-  { label: '자기관리', icon: '🌿', value: 'SELF_CARE' },
-  { label: '생활습관', icon: '⏰', value: 'HABIT' },
+  { label: '운동', value: 'EXERCISE', icon: CATEGORY_ICON_NAMES.EXERCISE },
+  { label: '학습', value: 'LEARNING', icon: CATEGORY_ICON_NAMES.LEARNING },
+  { label: '자기관리', value: 'SELF_CARE', icon: CATEGORY_ICON_NAMES.SELF_CARE },
+  { label: '생활습관', value: 'HABIT', icon: CATEGORY_ICON_NAMES.HABIT },
 ];
 
 export const RoutineList: React.FC<RoutineListProps> = ({
@@ -54,83 +51,95 @@ export const RoutineList: React.FC<RoutineListProps> = ({
   ).length;
   const progressPercent = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
 
+  const isAllDone = totalCount > 0 && completedCount === totalCount;
+
   return (
-    <section className={styles.container} aria-labelledby="routine-list-heading">
-      <h2 className={styles.srOnly} id="routine-list-heading">
-        루틴 목록
-      </h2>
+    <section className={styles.container} aria-label="루틴 목록">
       <div className={styles.topBar}>
-        <div className={styles.categoryTabs} role="group" aria-label="루틴 카테고리 필터">
+        <div className={styles.categoryTabs} role="group" aria-label="카테고리 필터">
           {CATEGORY_TABS.map(tab => (
             <button
-              type="button"
               key={tab.value}
+              type="button"
               className={`${styles.tabButton} ${
                 selectedCategory === tab.value ? styles.active : ''
               }`}
-              onClick={() => dispatch(setSelectedCategory(tab.value))}
               aria-pressed={selectedCategory === tab.value}
-              aria-label={`${tab.label} 카테고리`}
+              onClick={() => dispatch(setSelectedCategory(tab.value))}
             >
-              {tab.icon && <span aria-hidden="true">{tab.icon} </span>}
-              {tab.label}
+              {tab.icon && <Icon name={tab.icon} size={14} />}
+              <span>{tab.label}</span>
             </button>
           ))}
         </div>
 
         <button type="button" className={styles.addButton} onClick={onOpenCreateModal}>
-          <span aria-hidden="true">+</span>
+          <Icon name="plus" size={16} strokeWidth={2.2} />
           <span>루틴 추가</span>
         </button>
       </div>
 
       {totalCount > 0 && (
-        <div className={styles.progressCard}>
-          <div className={styles.progressInfo}>
-            <span className={styles.progressTitle}>오늘의 달성 현황</span>
-            <span className={styles.progressStats}>
-              {completedCount} / {totalCount} 완료 ({progressPercent}%)
+        <section className={styles.summary} aria-label="오늘의 달성 현황">
+          <div className={styles.summaryInfo}>
+            <span className={styles.summaryTitle}>
+              {isAllDone ? (
+                <>
+                  <Icon name="check" size={16} strokeWidth={2.4} className={styles.doneIcon} />
+                  오늘 루틴을 모두 완료했어요
+                </>
+              ) : (
+                '오늘의 달성 현황'
+              )}
+            </span>
+            <span className={styles.summaryStats}>
+              <strong>{completedCount}</strong> / {totalCount} 완료 · {progressPercent}%
             </span>
           </div>
-          <progress
-            className={styles.progressBar}
-            value={progressPercent}
-            max={100}
-            aria-label={`${selectedDate} 루틴 달성률`}
-          />
-        </div>
+          <div
+            className={styles.track}
+            role="progressbar"
+            aria-label="오늘의 루틴 달성률"
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={progressPercent}
+          >
+            <span className={styles.fill} style={{ width: `${progressPercent}%` }} />
+          </div>
+        </section>
       )}
 
-      <div className={styles.list}>
-        {displayRoutines.length > 0 ? (
-          displayRoutines.map(routine => (
-            <RoutineCard
-              key={routine.id}
-              routine={routine}
-              date={selectedDate}
-              isHoliday={isHoliday}
-              onTitleUnlocked={onTitleUnlocked}
-            />
-          ))
-        ) : (
-          <div className={styles.emptyState}>
-            <span className={styles.emptyIcon} aria-hidden="true">
-              🎯
-            </span>
-            <h3 className={styles.emptyTitle}>
-              {selectedCategory === 'ALL'
-                ? '오늘 예정된 루틴이 없습니다.'
-                : '해당 카테고리에 등록된 루틴이 없습니다.'}
-            </h3>
-            <p className={styles.emptyDesc}>
-              추천 템플릿을 선택하거나 나만의 루틴을 직접 생성하여 성장의 여정을 시작해 보세요!
-            </p>
-            <button type="button" className={styles.emptyCta} onClick={onOpenCreateModal}>
-              첫 루틴 추가하기
-            </button>
-          </div>
-        )}
-      </div>
+      {displayRoutines.length > 0 ? (
+        <ul className={styles.list}>
+          {displayRoutines.map(routine => (
+            <li key={routine.id} className={styles.listItem}>
+              <RoutineCard
+                routine={routine}
+                date={selectedDate}
+                isHoliday={isHoliday}
+                onTitleUnlocked={onTitleUnlocked}
+              />
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <div className={styles.emptyState}>
+          <span className={styles.emptyIcon}>
+            <Icon name="target" size={24} />
+          </span>
+          <h2 className={styles.emptyTitle}>
+            {selectedCategory === 'ALL'
+              ? '오늘 예정된 루틴이 없습니다.'
+              : '해당 카테고리에 등록된 루틴이 없습니다.'}
+          </h2>
+          <p className={styles.emptyDesc}>
+            추천 템플릿을 선택하거나 나만의 루틴을 직접 생성하여 성장의 여정을 시작해 보세요.
+          </p>
+          <button type="button" className={styles.emptyCta} onClick={onOpenCreateModal}>
+            첫 루틴 추가하기
+          </button>
+        </div>
+      )}
     </section>
   );
 };

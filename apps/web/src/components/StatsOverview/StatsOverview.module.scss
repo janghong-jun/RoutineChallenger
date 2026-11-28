@@ -2,93 +2,123 @@
   display: flex;
   flex-direction: column;
   gap: 1.6rem;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
   padding: 2rem;
   background-color: var(--bg-surface);
   border: 0.1rem solid var(--border-subtle);
-  border-radius: 1.6rem;
+  border-radius: var(--radius-panel);
 }
 
-.header {
+.title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.statsList {
+  display: flex;
+  flex-direction: column;
+}
+
+.statRow {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 1.2rem;
+  padding: 1.2rem 0;
 
-  .title {
-    color: var(--text-primary);
-    font-size: 1.5rem;
-    font-weight: 800;
+  & + & {
+    border-top: 0.1rem solid var(--border-subtle);
   }
 
-  .badge {
-    color: var(--brand-primary);
-    font-size: 1.2rem;
-    font-weight: 700;
+  &:first-child {
+    padding-top: 0;
   }
-}
 
-.statsGrid {
-  display: grid;
-  gap: 1rem;
-  grid-template-columns: repeat(3, 1fr);
-
-  @media (max-width: 64rem) {
-    grid-template-columns: 1fr;
+  &:last-child {
+    padding-bottom: 0;
   }
 }
 
-.statCard {
+.label {
   display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-  padding: 1.2rem 1.4rem;
-  background: var(--bg-surface-elevated);
-  border: 0.1rem solid var(--border-subtle);
-  border-radius: 1.2rem;
+  align-items: center;
+  gap: 1rem;
+  font-size: 1.3rem;
+  color: var(--text-secondary);
+}
 
-  .label {
-    color: var(--text-secondary);
-    font-size: 1.1rem;
-    font-weight: 600;
-  }
+.statIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.2rem;
+  height: 3.2rem;
+  background-color: var(--bg-surface-elevated);
+  border-radius: 1rem;
+}
 
-  .value {
-    color: var(--text-primary);
-    font-size: 1.8rem;
-    font-weight: 800;
-  }
+.expTone {
+  color: var(--accent-text);
+}
 
-  .expValue {
-    color: #fbbf24;
-  }
+.streakTone {
+  color: var(--streak);
+}
 
-  .streakValue {
-    color: #f87171;
-  }
+.daysTone {
+  color: var(--cat-exercise);
+}
 
-  .activeDaysValue {
-    color: #818cf8;
-  }
+.value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
 }
 
 .chartWrapper {
   position: relative;
   width: 100%;
+  max-width: 20rem;
   height: 20rem;
+  margin: 0 auto;
 }
 
 .chart {
   width: 100%;
-  height: 100% !important;
+  height: 100%;
 }
 
-.emptyChartText {
+/* 도넛 중앙 라벨 */
+.chartCenter {
   position: absolute;
-  top: 45%;
-  left: 50%;
-  z-index: 1;
-  transform: translate(-50%, -50%);
-  color: var(--text-muted);
-  font-size: 1.2rem;
-  white-space: nowrap;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
   pointer-events: none;
+}
+
+.chartPercent {
+  font-size: 3.2rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.03em;
+  color: var(--text-primary);
+}
+
+.chartCaption {
+  max-width: 10rem;
+  font-size: 1.3rem;
+  text-align: center;
+  color: var(--text-muted);
 }

@@ -1,135 +1,126 @@
+/* 배지 공통: 색은 카테고리 아이콘/EXP 칩에만 사용하고 나머지는 중립색으로 둔다. */
 .categoryBadge,
 .difficultyBadge,
 .expBadge,
 .holidayBadge,
 .weekdayBadge {
   display: inline-flex;
-  align-items: center;
   flex: none;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.2rem;
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
 }
 
 .categoryBadge {
-  gap: 0.4rem;
-  padding: 0.3rem 0.8rem;
-  font-size: 1.2rem;
-  font-weight: 600;
-  letter-spacing: -0.02rem;
-  border: 0.1rem solid transparent;
-  border-radius: 0.6rem;
+  color: var(--text-secondary);
 
   &[data-category='EXERCISE'] {
-    color: #06b6d4;
-    background-color: rgba(6, 182, 212, 0.12);
-    border-color: rgba(6, 182, 212, 0.28);
+    --cat-color: var(--cat-exercise);
   }
 
   &[data-category='LEARNING'] {
-    color: #a855f7;
-    background-color: rgba(168, 85, 247, 0.12);
-    border-color: rgba(168, 85, 247, 0.28);
+    --cat-color: var(--cat-learning);
   }
 
   &[data-category='SELF_CARE'] {
-    color: #10b981;
-    background-color: rgba(16, 185, 129, 0.12);
-    border-color: rgba(16, 185, 129, 0.28);
+    --cat-color: var(--cat-self-care);
   }
 
   &[data-category='HABIT'] {
-    color: #f59e0b;
-    background-color: rgba(245, 158, 11, 0.12);
-    border-color: rgba(245, 158, 11, 0.28);
+    --cat-color: var(--cat-habit);
   }
+}
+
+.categoryIcon {
+  color: var(--cat-color);
 }
 
 .difficultyBadge {
-  gap: 0.3rem;
-  padding: 0.2rem 0.7rem;
-  font-size: 1.1rem;
-  font-weight: 600;
-  border: 0.1rem solid transparent;
-  border-radius: 0.6rem;
+  color: var(--text-secondary);
+}
 
-  &[data-level='1'] {
-    color: #10b981;
-    background-color: rgba(16, 185, 129, 0.08);
-    border-color: rgba(16, 185, 129, 0.21);
+.difficultyBars {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 0.2rem;
+  height: 1.2rem;
+
+  span {
+    width: 0.3rem;
+    border-radius: 0.2rem;
   }
 
-  &[data-level='2'] {
-    color: #06b6d4;
-    background-color: rgba(6, 182, 212, 0.08);
-    border-color: rgba(6, 182, 212, 0.21);
+  span:nth-child(1) {
+    height: 0.4rem;
   }
 
-  &[data-level='3'] {
-    color: #6366f1;
-    background-color: rgba(99, 102, 241, 0.08);
-    border-color: rgba(99, 102, 241, 0.21);
+  span:nth-child(2) {
+    height: 0.6rem;
   }
 
-  &[data-level='4'] {
-    color: #f59e0b;
-    background-color: rgba(245, 158, 11, 0.08);
-    border-color: rgba(245, 158, 11, 0.21);
+  span:nth-child(3) {
+    height: 0.8rem;
   }
 
-  &[data-level='5'] {
-    color: #ec4899;
-    background-color: rgba(236, 72, 153, 0.08);
-    border-color: rgba(236, 72, 153, 0.21);
+  span:nth-child(4) {
+    height: 1rem;
+  }
+
+  span:nth-child(5) {
+    height: 1.2rem;
   }
 }
 
+.barOn {
+  background-color: var(--text-primary);
+}
+
+.barOff {
+  background-color: var(--border-medium);
+}
+
+/* EXP 칩: 화면에서 유일하게 배경색이 있는 배지 */
 .expBadge {
-  gap: 0.3rem;
-  padding: 0.2rem 0.8rem;
-  font-size: 1.1rem;
-  font-weight: 700;
-  border: 0.1rem solid transparent;
-  border-radius: 1.2rem;
+  gap: 0.4rem;
+  padding: 0.4rem 0.8rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  border-radius: 99.9rem;
 }
 
 .positiveExp {
-  color: #10b981;
-  background-color: rgba(16, 185, 129, 0.12);
-  border-color: rgba(16, 185, 129, 0.28);
+  color: var(--accent-text);
+  background-color: var(--accent-soft);
+}
+
+.holidayExp {
+  color: var(--holiday);
+  background-color: var(--holiday-soft);
 }
 
 .negativeExp {
-  color: #ef4444;
-  background-color: rgba(239, 68, 68, 0.12);
-  border-color: rgba(239, 68, 68, 0.28);
-}
-
-.holidayExp,
-.holidayBadge {
-  color: #f43f5e;
-  background-color: rgba(244, 63, 94, 0.12);
-  border-color: rgba(244, 63, 94, 0.3);
-}
-
-.holidayBadge,
-.weekdayBadge {
-  gap: 0.4rem;
-  padding: 0.3rem 0.9rem;
-  border: 0.1rem solid transparent;
-  border-radius: 999.9rem;
-  font-size: 1.1rem;
+  color: var(--danger);
+  background-color: var(--danger-soft);
 }
 
 .holidayBadge {
-  font-weight: 700;
-}
-
-.weekdayBadge {
-  color: #94a3b8;
-  background-color: rgba(148, 163, 184, 0.1);
-  border-color: rgba(148, 163, 184, 0.2);
+  padding: 0.6rem 1rem;
   font-weight: 600;
+  color: var(--holiday);
+  background-color: var(--holiday-soft);
+  border-radius: 99.9rem;
 }
 
 .bonusNote {
-  font-size: 1rem;
+  padding-left: 0.6rem;
+  font-weight: 500;
+  border-left: 0.1rem solid currentColor;
   opacity: 0.8;
+}
+
+.weekdayBadge {
+  color: var(--text-muted);
 }

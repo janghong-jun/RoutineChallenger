@@ -23,7 +23,7 @@ import {
   calculateStreaks,
 } from '@routine-challenger/core';
 import { getStorageContainer } from '@routine-challenger/storage';
-import { CategoryBadge, DifficultyBadge, ExpBadge } from '@routine-challenger/ui';
+import { CategoryBadge, DifficultyBadge, ExpBadge, Icon } from '@routine-challenger/ui';
 import styles from './RoutineCard.module.scss';
 
 interface RoutineCardProps {
@@ -195,83 +195,88 @@ export const RoutineCard: React.FC<RoutineCardProps> = ({
     dispatch(deleteRoutine(routine.id));
   };
 
+  const isPaused = routine.status === 'PAUSED';
+
   return (
     <div
       className={`${styles.card} ${isCompleted ? styles.isCompleted : ''} ${
-        routine.status === 'PAUSED' ? styles.isPaused : ''
+        isPaused ? styles.isPaused : ''
       }`}
     >
-      <div className={styles.leftSection}>
-        <button
-          type="button"
-          className={`${styles.checkButton} ${isCompleted ? styles.checked : ''}`}
-          onClick={handleToggle}
-          aria-label={`${routine.title} 실천 ${isCompleted ? '완료 취소' : '완료 처리'}`}
-          aria-pressed={isCompleted}
-          title={isCompleted ? '완료 취소' : '실천 완료 체크'}
-        >
-          {isCompleted && <span aria-hidden="true">✓</span>}
-        </button>
+      <button
+        type="button"
+        className={`${styles.checkButton} ${isCompleted ? styles.checked : ''}`}
+        onClick={handleToggle}
+        aria-pressed={isCompleted}
+        aria-label={`${routine.title} ${isCompleted ? '완료 취소' : '완료로 표시'}`}
+        title={isCompleted ? '완료 취소' : '실천 완료 체크'}
+      >
+        {/* 체크 표시는 완료 시 선이 그려지는 모션으로 나타난다. */}
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className={styles.checkIcon}>
+          <path d="M6 12.5l4 4 8-9" pathLength={24} />
+        </svg>
+      </button>
 
-        <div className={styles.content}>
-          <div className={styles.badgesRow}>
-            <CategoryBadge category={routine.category} />
-            <DifficultyBadge level={routine.difficultyLevel} />
-            <ExpBadge
-              amount={isCompleted ? record?.expGained || 0 : expReward.amount}
-              isHolidayBonus={isHoliday}
-            />
-          </div>
-
+      <div className={styles.content}>
+        <div className={styles.titleRow}>
           <h3 className={styles.routineTitle}>{routine.title}</h3>
+          {isPaused && <span className={styles.pausedTag}>일시정지</span>}
+        </div>
 
-          {routine.description && (
-            <p className={styles.description}>{routine.description}</p>
-          )}
+        {routine.description && <p className={styles.description}>{routine.description}</p>}
 
-          <div className={styles.targetRow}>
-            <span className={styles.targetPill}>
-              <span aria-hidden="true">{routine.targetType === 'TIME' ? '⏱️' : '🎯'}</span>{' '}
-              {routine.targetValue}
-              {routine.targetUnit}
-            </span>
-            <span>누적 성공 {cumulativeCompletions}회</span>
-          </div>
+        <div className={styles.metaRow}>
+          <CategoryBadge category={routine.category} />
+          <DifficultyBadge level={routine.difficultyLevel} />
+          <span className={styles.metaItem}>
+            <Icon name={routine.targetType === 'TIME' ? 'clock' : 'target'} size={14} />
+            {routine.targetValue}
+            {routine.targetUnit}
+          </span>
+          <span className={styles.metaItem}>누적 성공 {cumulativeCompletions}회</span>
         </div>
       </div>
 
       <div className={styles.rightSection}>
-        {canLevelUp && (
+        <ExpBadge
+          amount={isCompleted ? record?.expGained || 0 : expReward.amount}
+          isHolidayBonus={isHoliday}
+        />
+
+        <div className={styles.actions}>
+          {canLevelUp && (
+            <button
+              type="button"
+              className={styles.levelUpButton}
+              onClick={handleLevelUp}
+              aria-label={`${routine.title} 난이도 ${nextDifficulty}단계로 승급`}
+              title={`Lv.${nextDifficulty}로 승급하고 목표를 올립니다.`}
+            >
+              <Icon name="arrow-up" size={14} strokeWidth={2.2} />
+              <span>난이도 승급</span>
+            </button>
+          )}
+
           <button
             type="button"
-            className={styles.levelUpButton}
-            onClick={handleLevelUp}
-            aria-label={`${routine.title} 난이도 ${nextDifficulty}단계로 승급`}
-            title={`Lv.${nextDifficulty}로 승급하고 목표를 올립니다.`}
+            className={styles.actionButton}
+            onClick={handleTogglePause}
+            aria-label={`${routine.title} ${routine.status === 'ACTIVE' ? '일시정지' : '다시 시작'}`}
+            title={routine.status === 'ACTIVE' ? '루틴 일시정지' : '루틴 다시 시작'}
           >
-            <span aria-hidden="true">⭐</span> 난이도 승급
+            <Icon name={routine.status === 'ACTIVE' ? 'pause' : 'play'} size={16} />
           </button>
-        )}
 
-        <button
-          type="button"
-          className={styles.actionButton}
-          onClick={handleTogglePause}
-          aria-label={`${routine.title} ${routine.status === 'ACTIVE' ? '일시정지' : '다시 시작'}`}
-          title={routine.status === 'ACTIVE' ? '루틴 일시정지' : '루틴 다시 시작'}
-        >
-          <span aria-hidden="true">{routine.status === 'ACTIVE' ? '⏸️' : '▶️'}</span>
-        </button>
-
-        <button
-          type="button"
-          className={styles.actionButton}
-          onClick={handleDelete}
-          aria-label={`${routine.title} 삭제`}
-          title="루틴 삭제 (기존 기록 보존)"
-        >
-          <span aria-hidden="true">🗑️</span>
-        </button>
+          <button
+            type="button"
+            className={`${styles.actionButton} ${styles.dangerAction}`}
+            onClick={handleDelete}
+            aria-label={`${routine.title} 삭제`}
+            title="루틴 삭제 (기존 기록 보존)"
+          >
+            <Icon name="trash" size={16} />
+          </button>
+        </div>
       </div>
     </div>
   );

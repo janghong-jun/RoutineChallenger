@@ -1,71 +1,99 @@
 .overlay {
   position: fixed;
   inset: 0;
-  z-index: 400;
+  z-index: 150;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1.6rem;
-  background-color: rgba(0, 0, 0, 0.65);
-  backdrop-filter: blur(0.8rem);
-  -webkit-backdrop-filter: blur(0.8rem);
-  animation: fadeIn 0.2s ease;
+  padding: 2rem;
+  background-color: var(--bg-overlay);
+  animation: overlayIn 0.2s ease both;
+
+  @media (max-width: 640px) {
+    align-items: flex-end;
+    padding: 0;
+  }
 }
 
 .modal {
-  width: 100%;
-  max-width: 60rem;
-  max-height: 85vh;
   display: flex;
   flex-direction: column;
+  width: 100%;
+  max-width: 56rem;
+  max-height: min(90vh, 72rem);
   overflow: hidden;
   background-color: var(--bg-surface);
-  border: 0.1rem solid var(--border-medium);
+  border: 0.1rem solid var(--border-subtle);
   border-radius: 2rem;
   box-shadow: var(--shadow-lg);
+  animation: sheetIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
+
+  &:focus {
+    outline: none;
+  }
+
+  @media (max-width: 640px) {
+    max-width: none;
+    max-height: 92vh;
+    border-bottom: 0;
+    border-radius: 2rem 2rem 0 0;
+  }
 }
 
 .header {
-  padding: 2rem 2.4rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 0.1rem solid var(--border-subtle);
+  padding: 2rem 2.4rem 0.8rem;
+}
 
-  .title {
-    font-size: 1.8rem;
-    font-weight: 800;
+.title {
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+}
+
+.closeButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.6rem;
+  height: 3.6rem;
+  color: var(--text-muted);
+  border-radius: 99.9rem;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+
+  &:hover {
     color: var(--text-primary);
-  }
-
-  .closeButton {
-    font-size: 1.8rem;
-    color: var(--text-muted);
-    cursor: pointer;
-    padding: 0.4rem;
-
-    &:hover {
-      color: var(--text-primary);
-    }
+    background-color: var(--bg-surface-elevated);
   }
 }
 
 .notice {
-  padding: 1rem 2.4rem;
-  background: rgba(99, 102, 241, 0.08);
-  border-bottom: 0.1rem solid rgba(99, 102, 241, 0.2);
-  font-size: 1.2rem;
-  color: #818cf8;
   display: flex;
-  align-items: center;
-  gap: 0.6rem;
+  align-items: flex-start;
+  gap: 0.8rem;
+  margin: 0.8rem 2.4rem 0;
+  padding: 1.2rem 1.4rem;
+  font-size: 1.3rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  background-color: var(--bg-surface-elevated);
+  border-radius: var(--radius-control);
+
+  svg {
+    flex: none;
+    margin-top: 0.2rem;
+  }
 }
 
 .grid {
-  padding: 2rem 2.4rem;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 2.4rem 2rem;
   overflow-y: auto;
 }
 
@@ -73,101 +101,108 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1.6rem;
-  padding: 1.6rem;
-  background: var(--bg-surface-elevated);
-  border: 0.1rem solid var(--border-subtle);
-  border-radius: 1.4rem;
-  transition: all 0.2s ease;
+  gap: 1.2rem;
+  padding: 1.4rem 0;
 
-  &.isEquipped {
-    border-color: var(--brand-primary);
-    background: rgba(99, 102, 241, 0.08);
-    box-shadow: var(--glow-indigo);
+  & + & {
+    border-top: 0.1rem solid var(--border-subtle);
   }
 
   &.isLocked {
-    opacity: 0.55;
-    filter: grayscale(0.6);
-  }
+    .icon {
+      color: var(--text-muted);
+    }
 
-  .left {
-    display: flex;
-    align-items: center;
-    gap: 1.4rem;
-  }
-
-  .icon {
-    width: 4.4rem;
-    height: 4.4rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2.8rem;
-    background: var(--bg-surface);
-    border: 0.1rem solid var(--border-medium);
-    border-radius: 1.2rem;
-  }
-
-  .info {
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
-  }
-
-  .nameRow {
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-  }
-
-  .name {
-    font-size: 1.5rem;
-    font-weight: 800;
-    color: var(--text-primary);
-  }
-
-  .equippedBadge {
-    padding: 0.2rem 0.6rem;
-    border-radius: 0.4rem;
-    font-size: 1rem;
-    font-weight: 700;
-    color: #ffffff;
-    background: var(--brand-primary);
-  }
-
-  .desc {
-    font-size: 1.2rem;
-    color: var(--text-secondary);
-    line-height: 1.4;
-  }
-
-  .equipBtn {
-    padding: 0.6rem 1.4rem;
-    border-radius: 0.8rem;
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: var(--brand-primary);
-    background: rgba(99, 102, 241, 0.12);
-    border: 0.1rem solid rgba(99, 102, 241, 0.3);
-    cursor: pointer;
-    flex-shrink: 0;
-    transition: all 0.2s ease;
-
-    &:hover {
-      background: var(--brand-primary);
-      color: #ffffff;
+    .name,
+    .desc {
+      color: var(--text-muted);
     }
   }
 
-  .lockedBadge {
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: var(--text-muted);
-    padding: 0.4rem 1rem;
-    border-radius: 0.6rem;
-    background: var(--bg-surface);
-    border: 0.1rem solid var(--border-subtle);
-    flex-shrink: 0;
+  &.isEquipped .icon {
+    color: var(--accent-text);
+    background-color: var(--accent-soft);
   }
+}
+
+.left {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 1.4rem;
+  min-width: 0;
+}
+
+.icon {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 4.4rem;
+  height: 4.4rem;
+  color: var(--text-primary);
+  background-color: var(--bg-surface-elevated);
+  border-radius: 1.2rem;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.nameRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.name {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.equippedBadge {
+  padding: 0.2rem 0.8rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--accent-text);
+  background-color: var(--accent-soft);
+  border-radius: 99.9rem;
+}
+
+.desc {
+  font-size: 1.3rem;
+  color: var(--text-muted);
+}
+
+.equipBtn {
+  flex: none;
+  height: 3.4rem;
+  padding: 0 1.4rem;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  border: 0.1rem solid var(--border-medium);
+  border-radius: var(--radius-control);
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease;
+
+  &:hover {
+    color: var(--ink-text);
+    background-color: var(--ink);
+    border-color: var(--ink);
+  }
+}
+
+.lockedBadge {
+  flex: none;
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: var(--text-muted);
 }

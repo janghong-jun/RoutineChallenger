@@ -5,32 +5,38 @@
   background-color: var(--bg-canvas);
 }
 
-.skipLink {
-  position: absolute;
-  top: 1rem;
-  left: 1rem;
-  z-index: 300;
-  padding: 1rem 1.4rem;
-  color: #ffffff;
-  background-color: var(--brand-primary);
-  border-radius: 0.8rem;
-  transform: translateY(-150%);
-  transition: transform 0.2s ease;
+/* 헤더 아래 콘텐츠 공통 폭 */
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 2.4rem;
+  width: 100%;
+  max-width: 112rem;
+  margin: 0 auto;
+  padding: 3.2rem 2.4rem 6.4rem;
 
-  &:focus-visible {
-    transform: translateY(0);
+  @media (max-width: 640px) {
+    gap: 1.6rem;
+    padding: 2rem 1.6rem 4.8rem;
   }
+}
+
+.dateSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
 }
 
 .contentWrapper {
   display: grid;
-  grid-template-columns: 1fr 34rem;
+  grid-template-columns: minmax(0, 1fr) 32rem;
   align-items: start;
   gap: 2.4rem;
-  max-width: 120rem;
-  width: 100%;
-  margin: 0 auto;
-  padding: 2.4rem 2rem 4.8rem;
+
+  /* 주의: 미디어쿼리의 rem 은 html font-size(62.5%)가 아닌 브라우저 기본값(16px) 기준이라 px 로 지정한다. */
+  @media (max-width: 960px) {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 .leftCol {
@@ -41,53 +47,64 @@
 }
 
 .sidebar {
+  position: sticky;
+  top: 8.8rem;
   display: flex;
   flex-direction: column;
   gap: 2rem;
-  position: sticky;
-  top: 8rem;
-  min-width: 0;
+
+  @media (max-width: 960px) {
+    position: static;
+  }
+}
+
+.toastRegion {
+  position: fixed;
+  bottom: 2.4rem;
+  left: 50%;
+  z-index: 200;
+  pointer-events: none;
 }
 
 .toast {
-  position: fixed;
-  right: 2.4rem;
-  bottom: 2.4rem;
-  z-index: 200;
   display: flex;
   align-items: center;
   gap: 1.2rem;
-  padding: 1.6rem 2rem;
-  background: var(--bg-surface);
+  width: max-content;
+  max-width: calc(100vw - 3.2rem);
+  padding: 1.4rem 1.8rem;
+  background-color: var(--bg-surface);
   border: 0.1rem solid var(--border-medium);
-  border-radius: 1.4rem;
+  border-radius: var(--radius-panel);
   box-shadow: var(--shadow-lg);
-  animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-
-  .toastIcon {
-    font-size: 2.4rem;
-  }
-
-  .toastTitle {
-    font-size: 1.4rem;
-    font-weight: 800;
-    color: var(--brand-primary);
-  }
-
-  .toastMessage {
-    font-size: 1.3rem;
-    color: var(--text-primary);
-  }
+  transform: translateX(-50%);
+  animation: toastIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-@media (max-width: 99.2rem) {
-  .contentWrapper {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 2rem;
-    padding: 1.6rem 1.4rem 4rem;
-  }
+.toastIcon {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 3.6rem;
+  height: 3.6rem;
+  color: var(--accent-text);
+  background-color: var(--accent-soft);
+  border-radius: 99.9rem;
+}
 
-  .sidebar {
-    position: static;
+.toastTitle {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.toastMessage {
+  font-size: 1.3rem;
+  color: var(--text-secondary);
+
+  strong {
+    font-weight: 600;
+    color: var(--text-primary);
   }
 }

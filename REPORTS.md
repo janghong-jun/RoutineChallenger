@@ -54,11 +54,30 @@
 
 ### 금일 작업
 
-- 디자인 수정
+**디자인 전면 개편**
+
+- 디자인 방향 변경: 보라 그라데이션 + 이모지 중심 → 중립 회색 바탕, 잉크(검정) 버튼, 초록 포인트 1색의 모던/미니멀 스타일
+- 디자인 토큰 재정의 (`variables.scss`): 라이트/다크 테마별 색상, 카테고리 아이콘 색, 반경 토큰
+- 이모지를 SVG 아이콘으로 교체 (`@routine-challenger/ui`의 `Icon`, 외부 라이브러리 없이 직접 관리)
+- 루틴 카드를 개별 카드에서 하나의 목록 + 구분선 구조로 변경, 체크 시 SVG 체크가 그려지는 인터랙션 추가
+- 날짜 헤더 및 주간 선택을 세그먼트 컨트롤 형태로 정리
+- 성장 지표를 목록형 + 도넛 차트(중앙 달성률)로 변경, ECharts 색상이 테마(다크/라이트)를 따라가도록 처리
+- 모달 2종(루틴 추가, 타이틀 갤러리) 스타일 개편, 모바일에서는 바텀시트 형태로 표시
+
+**접근성(KWCAG 2.2) 보강**
+
+- 기존 `useModalAccessibility` 훅 유지 및 적용: 정·역방향 포커스 트랩, 외부 포커스 차단, Esc 닫기, 스크롤 잠금·복원
+- 다이얼로그 `role`, `aria-modal`, `aria-labelledby` 적용 및 폼 `label`-`input` 연결
+- 아이콘 버튼 `aria-label`, 토글 버튼 `aria-pressed`, 진행률 `role="progressbar"`
+- 본문 바로가기(skip link), 전역 `:focus-visible` 스타일, `prefers-reduced-motion` 대응
 
 ### 이슈 및 특이사항
 
--
+- 반응형 브레이크포인트가 `rem` 단위여서 `html { font-size: 62.5% }`와 상관없이 브라우저 기본 16px 기준(약 1587px)으로 동작하던 문제를 `px` 단위로 수정
+- 비즈니스 로직(EXP 계산, 저장소, 상태 관리)은 변경하지 않고 화면 코드(JSX, SCSS)만 수정
+- `DIFFICULTY_METADATA.badge`(이모지)는 막대형 난이도 표시로 대체되어 제거, 카테고리 메타의 `icon`은 이모지에서 아이콘 이름으로 변경
+- `apps/web/pnpm-workspace.yaml`, `apps/web/pnpm-lock.yaml`이 남아 있어 `apps/web`에서 `pnpm dev` 실행 시 workspace 오류가 발생할 수 있음 (루트에서 실행하면 정상)
+- `apps/web/src/app/page.module.css`는 사용하지 않는 파일
 
 ### 다음 작업
 

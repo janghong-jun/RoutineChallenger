@@ -1,74 +1,89 @@
 .card {
-  position: relative;
-  display: flex;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
-  justify-content: space-between;
   gap: 1.6rem;
-  padding: 1.6rem 2rem;
-  background-color: var(--bg-surface);
-  border: 0.1rem solid var(--border-subtle);
-  border-radius: 1.6rem;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 1.8rem 2rem;
+  transition: background-color 0.15s ease;
 
   &:hover {
-    border-color: var(--border-medium);
-    transform: translateY(-0.2rem);
-    box-shadow: var(--shadow-md);
+    background-color: var(--bg-surface-elevated);
   }
 
-  &.isCompleted {
-    background-color: rgba(16, 185, 129, 0.04);
-    border-color: rgba(16, 185, 129, 0.2);
-
-    .routineTitle {
-      text-decoration: line-through;
-      color: var(--text-muted);
-    }
-
-    .description {
-      opacity: 0.6;
-    }
+  @media (max-width: 640px) {
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: start;
+    padding: 1.6rem;
   }
 
   &.isPaused {
-    opacity: 0.6;
-    border-style: dashed;
+    .content,
+    .checkButton {
+      opacity: 0.5;
+    }
+  }
+
+  &.isCompleted {
+    .routineTitle {
+      color: var(--text-muted);
+      text-decoration: line-through;
+      text-decoration-color: var(--border-medium);
+    }
   }
 }
 
-.leftSection {
-  display: flex;
-  align-items: center;
-  gap: 1.4rem;
-  flex: 1;
-  min-width: 0;
-}
-
+/* 체크 버튼: 이 화면의 핵심 인터랙션 */
 .checkButton {
-  width: 2.8rem;
-  height: 2.8rem;
-  display: flex;
-  flex-shrink: 0;
+  display: inline-flex;
+  flex: none;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
-  cursor: pointer;
-  background: var(--bg-surface-elevated);
+  width: 3rem;
+  height: 3rem;
+  color: var(--bg-surface);
+  background-color: transparent;
   border: 0.2rem solid var(--border-medium);
-  border-radius: 0.8rem;
-  transition: all 0.2s ease;
+  border-radius: 99.9rem;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
 
   &:hover {
-    border-color: var(--brand-primary);
-    transform: scale(1.05);
+    border-color: var(--accent);
   }
 
   &.checked {
-    background: #10b981;
-    border-color: #10b981;
-    color: #ffffff;
-    box-shadow: 0 0 1.2rem rgba(16, 185, 129, 0.4);
+    color: #fff;
+    background-color: var(--accent);
+    border-color: var(--accent);
+    animation: popCheck 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+    .checkIcon path {
+      animation: drawCheck 0.3s 0.05s ease-out both;
+    }
   }
+}
+
+[data-theme='dark'] .checkButton.checked {
+  color: #08140f;
+}
+
+.checkIcon {
+  width: 1.8rem;
+  height: 1.8rem;
+
+  path {
+    stroke: currentColor;
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 24;
+    stroke-dashoffset: 24;
+  }
+}
+
+.checked .checkIcon path {
+  stroke-dashoffset: 0;
 }
 
 .content {
@@ -76,92 +91,111 @@
   flex-direction: column;
   gap: 0.6rem;
   min-width: 0;
+  transition: opacity 0.15s ease;
 }
 
-.badgesRow {
+.titleRow {
   display: flex;
   align-items: center;
   gap: 0.8rem;
-  flex-wrap: wrap;
 }
 
 .routineTitle {
   font-size: 1.6rem;
-  font-weight: 700;
-  letter-spacing: -0.03rem;
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: -0.02em;
   color: var(--text-primary);
-  transition: all 0.2s ease;
-  word-break: break-word;
+  transition: color 0.2s ease;
+}
+
+.pausedTag {
+  flex: none;
+  padding: 0.2rem 0.7rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background-color: var(--bg-surface-elevated);
+  border-radius: 99.9rem;
 }
 
 .description {
   font-size: 1.3rem;
-  color: var(--text-secondary);
-  line-height: 1.4;
-  word-break: break-word;
+  color: var(--text-muted);
 }
 
-.targetRow {
+.metaRow {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 1rem;
-  font-size: 1.2rem;
-  color: var(--text-muted);
-  font-weight: 600;
+  gap: 0.4rem 1.6rem;
   margin-top: 0.2rem;
 }
 
-.targetPill {
+.metaItem {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  padding: 0.2rem 0.8rem;
-  color: var(--text-secondary);
-  background: var(--bg-surface-elevated);
-  border: 0.1rem solid var(--border-subtle);
-  border-radius: 0.6rem;
+  gap: 0.5rem;
+  font-size: 1.2rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
 }
 
 .rightSection {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  flex-shrink: 0;
+  gap: 1.2rem;
+
+  @media (max-width: 640px) {
+    grid-column: 2;
+    justify-content: space-between;
+  }
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
 }
 
 .levelUpButton {
-  padding: 0.4rem 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  height: 3rem;
+  margin-right: 0.4rem;
+  padding: 0 1.1rem;
   font-size: 1.2rem;
-  font-weight: 700;
-  color: #fbbf24;
-  cursor: pointer;
-  background: rgba(245, 158, 11, 0.12);
-  border: 0.1rem solid rgba(245, 158, 11, 0.3);
-  border-radius: 0.8rem;
-  transition: all 0.2s ease;
+  font-weight: 600;
+  color: var(--accent-text);
+  background-color: var(--accent-soft);
+  border-radius: 99.9rem;
+  transition: filter 0.15s ease;
 
   &:hover {
-    background: rgba(245, 158, 11, 0.25);
-    transform: translateY(-0.1rem);
-    box-shadow: var(--glow-gold);
+    filter: brightness(0.95);
   }
 }
 
 .actionButton {
-  width: 3.2rem;
-  height: 3.2rem;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.6rem;
+  width: 3.2rem;
+  height: 3.2rem;
   color: var(--text-muted);
-  cursor: pointer;
-  background: transparent;
-  border-radius: 0.8rem;
-  transition: all 0.2s ease;
+  border-radius: var(--radius-control);
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
 
   &:hover {
-    background: var(--bg-surface-elevated);
     color: var(--text-primary);
+    background-color: var(--bg-surface-elevated);
+  }
+
+  &.dangerAction:hover {
+    color: var(--danger);
+    background-color: var(--danger-soft);
   }
 }

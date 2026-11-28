@@ -1,0 +1,4597 @@
+diff --git a/REPORTS.md b/REPORTS.md
+index 61e6e56..078115f 100644
+--- a/REPORTS.md
++++ b/REPORTS.md
+@@ -1,24 +1,52 @@
+ # 프로젝트 데일리 리포트
+ 
+-## Day 01
++## Day 01 (2026-11-27 ~ 11-28)
+ 
+ ### 금일 작업
+ 
+-- 프로젝트 개발 환경 구성 및 필수 프로그램 설치
+-- VS Code 개발 환경 및 기본 설정
+-- 프로젝트 기획 초안 작성 및 주요 기능 방향성 정리
+-- 경험치 및 타이틀 기반의 성장 시스템 기획
++**기획**
++
++- 프로젝트 기획 초안 작성 및 주요 기능 방향성 정리 (11/27 19:00 시작)
++- 경험치(EXP) 및 타이틀 기반의 성장 시스템 기획
+ - 휴식일 및 보상·차감 정책 초안 수립
+ 
++**개발 환경**
++
++- 개발 환경 구성 및 필수 프로그램 설치 (Node.js, Git, pnpm)
++- VS Code 개발 환경 및 기본 설정 (`.editorconfig`, Prettier)
++- pnpm + Turborepo 모노레포 구성 (`setup.ps1`, `scripts/dev.mjs`)
++- TypeScript strict 설정 (`tsconfig.base.json`, 각 패키지 `tsconfig.json`)
++
++**패키지 / 코어 로직**
++
++- 공통 타입 모델 정의 (`@routine-challenger/types`: Routine, Record, EXP, Title, Holiday, Storage)
++- 밸런싱 데이터 및 정책 데이터 분리 (`@routine-challenger/data`: 2025~2027 공휴일, 타이틀, 추천 템플릿, EXP 설정)
++- 비즈니스 코어 로직 구현 (`@routine-challenger/core`: EXP 엔진, 공휴일 판정, 스케줄러, 스트릭, 난이도 해금, 타이틀 판정)
++- Vitest 테스트 24개 항목 검증 완료
++- Repository 패턴 기반의 IndexedDB 스토리지 구현 (`@routine-challenger/storage`)
++- Redux Toolkit 전역 상태 관리 구현 (`@routine-challenger/store`)
++
++**UI**
++
++- 공통 디자인 토큰 및 뱃지 UI 구현 (`@routine-challenger/ui`)
++- Next.js 기반 대시보드 UI 구현 (`apps/web`: 다크/라이트 테마, 통계 차트, 주간 스트릭 바, 루틴 체크/승급, 템플릿 추가 모달, 타이틀 갤러리)
++- 컴포넌트별 SCSS Modules 적용 및 스타일 속성 순서 정리
++- 웹폰트 적용
++
++**배포**
++
++- Next.js 정적 내보내기(`output: 'export'`) 빌드 및 전체 워크스페이스 타입 검사 완료
++- GitHub Pages용 Next.js 설정
++- GitHub Actions CI 및 Pages 배포 워크플로우 구성 (lint, type-check, build, deploy)
++
+ ### 이슈 및 특이사항
+ 
+-- 없음
++- Windows PowerShell 인코딩으로 인한 JSON BOM 이슈 발견 및 제거 처리 완료
++- pnpm v11 빌드 스크립트 정책(esbuild) 허용 구성 완료
+ 
+ ### 다음 작업
+ 
+-- 프로젝트 기술 스택 및 폴더 구조 확정
+-- 초기 프로젝트 생성 및 기본 환경 구축
+-- 주요 기능별 상세 요구사항 정리
++- Day 02: 디자인 수정
+ 
+ ---
+ 
+@@ -26,23 +54,32 @@
+ 
+ ### 금일 작업
+ 
+-- 모노레포 패키지 구성 및 TypeScript strict 설정 (`tsconfig.base.json`, 각 패키지 `tsconfig.json`)
+-- 공통 타입 모델 정의 (`@routine-challenger/types`: Routine, Record, EXP, Title, Holiday, Storage)
+-- 밸런싱 데이터 및 정책 데이터 분리 (`@routine-challenger/data`: 2025~2027 공휴일, 타이틀, 추천 템플릿, EXP 설정)
+-- 비즈니스 코어 로직 구현 및 Vitest 테스트 24개 항목 검증 완료 (`@routine-challenger/core`: EXP 엔진, 공휴일 판정, 스케줄러, 스트릭, 난이도 해금, 타이틀 판정)
+-- Repository 패턴 기반의 IndexedDB 스토리지 구현 (`@routine-challenger/storage`)
+-- Redux Toolkit 전역 상태 관리 구현 (`@routine-challenger/store`)
+-- 공통 디자인 토큰 및 뱃지 UI 구현 (`@routine-challenger/ui`)
+-- Next.js 기반 모던 대시보드 UI 구현 (`apps/web`: 다크/라이트 테마, 실시간 통계 차트, 주간 스트릭 바, 루틴 체크/승급, 템플릿 추가 모달, 타이틀 갤러리)
+-- Next.js 정적 내보내기(`output: 'export'`) 빌드 및 전체 워크스페이스 타입 검사 완료
++**디자인 전면 개편**
++
++- 디자인 방향 변경: 보라 그라데이션 + 이모지 중심 → 중립 회색 바탕, 잉크(검정) 버튼, 초록 포인트 1색의 모던/미니멀 스타일
++- 디자인 토큰 재정의 (`variables.scss`): 라이트/다크 테마별 색상, 카테고리 아이콘 색, 반경 토큰
++- 이모지를 SVG 아이콘으로 교체 (`@routine-challenger/ui`의 `Icon`, 외부 라이브러리 없이 직접 관리)
++- 루틴 카드를 개별 카드에서 하나의 목록 + 구분선 구조로 변경, 체크 시 SVG 체크가 그려지는 인터랙션 추가
++- 날짜 헤더 및 주간 선택을 세그먼트 컨트롤 형태로 정리
++- 성장 지표를 목록형 + 도넛 차트(중앙 달성률)로 변경, ECharts 색상이 테마(다크/라이트)를 따라가도록 처리
++- 모달 2종(루틴 추가, 타이틀 갤러리) 스타일 개편, 모바일에서는 바텀시트 형태로 표시
++
++**접근성(KWCAG 2.2) 보강**
++
++- `useDialog` 훅 추가: 모달 포커스 이동/복귀, 포커스 트랩, Esc 닫기, 배경 스크롤 잠금
++- 다이얼로그 `role`, `aria-modal`, `aria-labelledby` 적용 및 폼 `label`-`input` 연결
++- 아이콘 버튼 `aria-label`, 토글 버튼 `aria-pressed`, 진행률 `role="progressbar"`
++- 본문 바로가기(skip link), 전역 `:focus-visible` 스타일, `prefers-reduced-motion` 대응
+ 
+ ### 이슈 및 특이사항
+ 
+-- Windows PowerShell 인코딩으로 인한 JSON BOM 이슈 발견 및 제거 처리 완료
+-- pnpm v11 빌드 스크립트 정책(esbuild) 허용 구성 완료
++- 반응형 브레이크포인트가 `rem` 단위여서 `html { font-size: 62.5% }`와 상관없이 브라우저 기본 16px 기준(약 1587px)으로 동작하던 문제를 `px` 단위로 수정
++- 비즈니스 로직(EXP 계산, 저장소, 상태 관리)은 변경하지 않고 화면 코드(JSX, SCSS)만 수정
++- `DIFFICULTY_METADATA.badge`(이모지)는 막대형 난이도 표시로 대체되어 제거, 카테고리 메타의 `icon`은 이모지에서 아이콘 이름으로 변경
++- `apps/web/pnpm-workspace.yaml`, `apps/web/pnpm-lock.yaml`이 남아 있어 `apps/web`에서 `pnpm dev` 실행 시 workspace 오류가 발생할 수 있음 (루트에서 실행하면 정상)
++- `apps/web/src/app/page.module.css`는 사용하지 않는 파일
+ 
+ ### 다음 작업
+ 
+ - Phase 3 성장 시스템 고도화 및 밸런싱 모니터링
+ - Phase 4 일일 마감 처리 및 누락일 복구 기능
+-- GitHub Pages 배포 자동화를 위한 GitHub Actions 워크플로우 구성
+diff --git a/apps/web/src/app/globals.css b/apps/web/src/app/globals.css
+index 51908d7..0cd7e16 100644
+--- a/apps/web/src/app/globals.css
++++ b/apps/web/src/app/globals.css
+@@ -25,22 +25,23 @@ body {
+   min-height: 100vh;
+   font-family:
+     'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans KR', sans-serif;
++  line-height: 1.5;
++  letter-spacing: -0.01em;
+   color: var(--text-primary);
+   background-color: var(--bg-canvas);
+   text-rendering: optimizeLegibility;
+-  font-feature-settings:
+-    'kern' 1,
+-    'liga' 1;
+   -webkit-font-smoothing: antialiased;
+   -moz-osx-font-smoothing: grayscale;
+   transition:
+-    background-color 0.25s ease,
+-    color 0.25s ease;
++    background-color 0.2s ease,
++    color 0.2s ease;
+ }
+ 
+ body {
+   display: flex;
+   flex-direction: column;
++  /* rem 기준(html 62.5%)이므로 html 이 아닌 body 에만 기본 글자 크기를 지정한다. */
++  font-size: 1.4rem;
+ }
+ 
+ a {
+@@ -50,10 +51,10 @@ a {
+ 
+ button {
+   font-family: inherit;
+-  cursor: pointer;
++  color: inherit;
+   background: none;
+   border: none;
+-  outline: none;
++  cursor: pointer;
+ }
+ 
+ input,
+@@ -62,10 +63,50 @@ textarea {
+   font-family: inherit;
+ }
+ 
+-/* Custom scrollbar */
++ul {
++  list-style: none;
++}
++
++/* 키보드 포커스는 항상 보이게 한다. (KWCAG 2.2 키보드 접근성) */
++:focus-visible {
++  outline: 0.2rem solid var(--accent);
++  outline-offset: 0.2rem;
++}
++
++/* 스크린리더 전용 텍스트 */
++.sr-only {
++  position: absolute;
++  width: 0.1rem;
++  height: 0.1rem;
++  margin: -0.1rem;
++  padding: 0;
++  overflow: hidden;
++  clip-path: inset(50%);
++  white-space: nowrap;
++  border: 0;
++}
++
++/* 본문 바로가기: 포커스를 받을 때만 보인다. */
++.skip-link {
++  position: fixed;
++  top: 0.8rem;
++  left: 0.8rem;
++  z-index: 300;
++  padding: 1rem 1.6rem;
++  font-weight: 600;
++  color: var(--ink-text);
++  background-color: var(--ink);
++  border-radius: var(--radius-control);
++  transform: translateY(-20rem);
++}
++
++.skip-link:focus {
++  transform: translateY(0);
++}
++
+ ::-webkit-scrollbar {
+-  width: 0.6rem;
+-  height: 0.6rem;
++  width: 0.8rem;
++  height: 0.8rem;
+ }
+ 
+ ::-webkit-scrollbar-track {
+@@ -74,40 +115,68 @@ textarea {
+ 
+ ::-webkit-scrollbar-thumb {
+   background: var(--border-medium);
+-  border-radius: 999.9rem;
++  border-radius: 99.9rem;
+ }
+ 
+-::-webkit-scrollbar-thumb:hover {
+-  background: var(--text-muted);
++/* 사용자 동작에 반응하는 모션만 사용한다. */
++@keyframes sheetIn {
++  from {
++    opacity: 0;
++    transform: translateY(1.2rem) scale(0.98);
++  }
++  to {
++    opacity: 1;
++    transform: translateY(0) scale(1);
++  }
+ }
+ 
+-/* Keyframes */
+-@keyframes fadeIn {
++@keyframes overlayIn {
+   from {
+     opacity: 0;
+-    transform: translateY(0.6rem);
+   }
+   to {
+     opacity: 1;
+-    transform: translateY(0);
+   }
+ }
+ 
+-@keyframes pulseGlow {
+-  0%,
+-  100% {
+-    box-shadow: 0 0 1.5rem rgba(99, 102, 241, 0.2);
++@keyframes toastIn {
++  from {
++    opacity: 0;
++    transform: translate(-50%, 1.6rem);
+   }
+-  50% {
+-    box-shadow: 0 0 2.5rem rgba(99, 102, 241, 0.45);
++  to {
++    opacity: 1;
++    transform: translate(-50%, 0);
+   }
+ }
+ 
+-@keyframes shimmer {
++@keyframes drawCheck {
++  from {
++    stroke-dashoffset: 24;
++  }
++  to {
++    stroke-dashoffset: 0;
++  }
++}
++
++@keyframes popCheck {
+   0% {
+-    background-position: -200% 0;
++    transform: scale(0.8);
++  }
++  60% {
++    transform: scale(1.08);
+   }
+   100% {
+-    background-position: 200% 0;
++    transform: scale(1);
++  }
++}
++
++@media (prefers-reduced-motion: reduce) {
++  *,
++  *::before,
++  *::after {
++    animation-duration: 0.01ms !important;
++    animation-iteration-count: 1 !important;
++    transition-duration: 0.01ms !important;
+   }
+ }
+diff --git a/apps/web/src/app/layout.tsx b/apps/web/src/app/layout.tsx
+index 373222e..4c73ad2 100644
+--- a/apps/web/src/app/layout.tsx
++++ b/apps/web/src/app/layout.tsx
+@@ -15,6 +15,10 @@ export default function RootLayout({
+   return (
+     <html lang="ko">
+       <body>
++        {/* 키보드 사용자가 반복되는 헤더를 건너뛸 수 있게 한다. */}
++        <a href="#main-content" className="skip-link">
++          본문 바로가기
++        </a>
+         <StoreProvider>{children}</StoreProvider>
+       </body>
+     </html>
+diff --git a/apps/web/src/app/page.module.scss b/apps/web/src/app/page.module.scss
+index 5fd6a2d..57fb435 100644
+--- a/apps/web/src/app/page.module.scss
++++ b/apps/web/src/app/page.module.scss
+@@ -5,20 +5,37 @@
+   background-color: var(--bg-canvas);
+ }
+ 
++/* 헤더 아래 콘텐츠 공통 폭 */
++.page {
++  display: flex;
++  flex-direction: column;
++  gap: 2.4rem;
++  width: 100%;
++  max-width: 112rem;
++  margin: 0 auto;
++  padding: 3.2rem 2.4rem 6.4rem;
++
++  @media (max-width: 640px) {
++    gap: 1.6rem;
++    padding: 2rem 1.6rem 4.8rem;
++  }
++}
++
++.dateSection {
++  display: flex;
++  flex-direction: column;
++  gap: 1.6rem;
++}
++
+ .contentWrapper {
+   display: grid;
+-  grid-template-columns: 1fr 34rem;
++  grid-template-columns: minmax(0, 1fr) 32rem;
+   align-items: start;
+   gap: 2.4rem;
+-  max-width: 120rem;
+-  width: 100%;
+-  margin: 0 auto;
+-  padding: 2.4rem 2rem 4.8rem;
+ 
+-  @media (max-width: 99.2rem) {
+-    grid-template-columns: 1fr;
+-    gap: 2rem;
+-    padding: 1.6rem 1.4rem 4rem;
++  /* 주의: 미디어쿼리의 rem 은 html font-size(62.5%)가 아닌 브라우저 기본값(16px) 기준이라 px 로 지정한다. */
++  @media (max-width: 960px) {
++    grid-template-columns: minmax(0, 1fr);
+   }
+ }
+ 
+@@ -30,44 +47,64 @@
+ }
+ 
+ .sidebar {
++  position: sticky;
++  top: 8.8rem;
+   display: flex;
+   flex-direction: column;
+   gap: 2rem;
+-  position: sticky;
+-  top: 8rem;
+ 
+-  @media (max-width: 99.2rem) {
++  @media (max-width: 960px) {
+     position: static;
+   }
+ }
+ 
+-.toast {
++.toastRegion {
+   position: fixed;
+-  right: 2.4rem;
+   bottom: 2.4rem;
++  left: 50%;
+   z-index: 200;
++  pointer-events: none;
++}
++
++.toast {
+   display: flex;
+   align-items: center;
+   gap: 1.2rem;
+-  padding: 1.6rem 2rem;
+-  background: var(--bg-surface);
++  width: max-content;
++  max-width: calc(100vw - 3.2rem);
++  padding: 1.4rem 1.8rem;
++  background-color: var(--bg-surface);
+   border: 0.1rem solid var(--border-medium);
+-  border-radius: 1.4rem;
++  border-radius: var(--radius-panel);
+   box-shadow: var(--shadow-lg);
+-  animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
++  transform: translateX(-50%);
++  animation: toastIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
++}
+ 
+-  .toastIcon {
+-    font-size: 2.4rem;
+-  }
++.toastIcon {
++  display: inline-flex;
++  flex: none;
++  align-items: center;
++  justify-content: center;
++  width: 3.6rem;
++  height: 3.6rem;
++  color: var(--accent-text);
++  background-color: var(--accent-soft);
++  border-radius: 99.9rem;
++}
+ 
+-  .toastTitle {
+-    font-size: 1.4rem;
+-    font-weight: 800;
+-    color: var(--brand-primary);
+-  }
++.toastTitle {
++  font-size: 1.4rem;
++  font-weight: 700;
++  color: var(--text-primary);
++}
++
++.toastMessage {
++  font-size: 1.3rem;
++  color: var(--text-secondary);
+ 
+-  .toastMessage {
+-    font-size: 1.3rem;
++  strong {
++    font-weight: 600;
+     color: var(--text-primary);
+   }
+ }
+diff --git a/apps/web/src/app/page.tsx b/apps/web/src/app/page.tsx
+index 34ec01c..8f52d63 100644
+--- a/apps/web/src/app/page.tsx
++++ b/apps/web/src/app/page.tsx
+@@ -9,6 +9,7 @@ import { StatsOverview } from '@/components/StatsOverview/StatsOverview';
+ import { CreateRoutineModal } from '@/components/CreateRoutineModal/CreateRoutineModal';
+ import { TitleGalleryModal } from '@/components/TitleGalleryModal/TitleGalleryModal';
+ import { useAppSelector } from '@routine-challenger/store';
++import { Icon } from '@routine-challenger/ui';
+ import styles from './page.module.scss';
+ 
+ export default function Home() {
+@@ -27,21 +28,27 @@ export default function Home() {
+   return (
+     <div className={styles.mainLayout}>
+       <Header onOpenTitleModal={() => setIsTitleOpen(true)} />
+-      <DateNavigator />
+-      <WeeklyTracker />
+ 
+-      <main className={styles.contentWrapper}>
+-        <div className={styles.leftCol}>
+-          <RoutineList
+-            onOpenCreateModal={() => setIsCreateOpen(true)}
+-            onTitleUnlocked={handleTitleUnlocked}
+-          />
+-        </div>
++      <div className={styles.page}>
++        <section className={styles.dateSection} aria-label="날짜 선택">
++          <DateNavigator />
++          <WeeklyTracker />
++        </section>
+ 
+-        <aside className={styles.sidebar}>
+-          <StatsOverview />
+-        </aside>
+-      </main>
++        {/* 스킵 링크 이동 대상 */}
++        <main id="main-content" className={styles.contentWrapper}>
++          <div className={styles.leftCol}>
++            <RoutineList
++              onOpenCreateModal={() => setIsCreateOpen(true)}
++              onTitleUnlocked={handleTitleUnlocked}
++            />
++          </div>
++
++          <aside className={styles.sidebar} aria-label="성장 지표">
++            <StatsOverview />
++          </aside>
++        </main>
++      </div>
+ 
+       {isCreateOpen && (
+         <CreateRoutineModal
+@@ -55,17 +62,22 @@ export default function Home() {
+         onClose={() => setIsTitleOpen(false)}
+       />
+ 
+-      {unlockedToast && (
+-        <div className={styles.toast}>
+-          <span className={styles.toastIcon}>🎉</span>
+-          <div>
+-            <div className={styles.toastTitle}>새로운 타이틀 해금!</div>
+-            <div className={styles.toastMessage}>
+-              축하합니다! <strong>{unlockedToast}</strong> 타이틀을 획득했습니다.
++      {/* 타이틀 획득 알림: 스크린리더에도 안내한다. */}
++      <div className={styles.toastRegion} role="status" aria-live="polite">
++        {unlockedToast && (
++          <div className={styles.toast}>
++            <span className={styles.toastIcon}>
++              <Icon name="trophy" size={18} />
++            </span>
++            <div>
++              <div className={styles.toastTitle}>새로운 타이틀 해금!</div>
++              <div className={styles.toastMessage}>
++                축하합니다! <strong>{unlockedToast}</strong> 타이틀을 획득했습니다.
++              </div>
+             </div>
+           </div>
+-        </div>
+-      )}
++        )}
++      </div>
+     </div>
+   );
+ }
+diff --git a/apps/web/src/components/CreateRoutineModal/CreateRoutineModal.module.scss b/apps/web/src/components/CreateRoutineModal/CreateRoutineModal.module.scss
+index d6bce27..d98b5be 100644
+--- a/apps/web/src/components/CreateRoutineModal/CreateRoutineModal.module.scss
++++ b/apps/web/src/components/CreateRoutineModal/CreateRoutineModal.module.scss
+@@ -1,204 +1,235 @@
+ .overlay {
+   position: fixed;
+   inset: 0;
+-  z-index: 100;
++  z-index: 150;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+-  padding: 1.6rem;
+-  background-color: rgba(0, 0, 0, 0.65);
+-  backdrop-filter: blur(0.8rem);
+-  -webkit-backdrop-filter: blur(0.8rem);
+-  animation: fadeIn 0.2s ease;
++  padding: 2rem;
++  background-color: var(--bg-overlay);
++  animation: overlayIn 0.2s ease both;
++
++  @media (max-width: 640px) {
++    align-items: flex-end;
++    padding: 0;
++  }
+ }
+ 
+ .modal {
+-  width: 100%;
+-  max-width: 60rem;
+-  max-height: 85vh;
+   display: flex;
+   flex-direction: column;
++  width: 100%;
++  max-width: 56rem;
++  max-height: min(90vh, 72rem);
+   overflow: hidden;
+   background-color: var(--bg-surface);
+-  border: 0.1rem solid var(--border-medium);
++  border: 0.1rem solid var(--border-subtle);
+   border-radius: 2rem;
+   box-shadow: var(--shadow-lg);
++  animation: sheetIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
++
++  &:focus {
++    outline: none;
++  }
++
++  @media (max-width: 640px) {
++    max-width: none;
++    max-height: 92vh;
++    border-bottom: 0;
++    border-radius: 2rem 2rem 0 0;
++  }
+ }
+ 
+ .header {
+-  flex-shrink: 0;
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+-  padding: 2rem 2.4rem;
+-  border-bottom: 0.1rem solid var(--border-subtle);
++  padding: 2rem 2.4rem 0.8rem;
++}
+ 
+-  .title {
+-    font-size: 1.8rem;
+-    font-weight: 800;
+-    color: var(--text-primary);
+-  }
++.title {
++  font-size: 2rem;
++  font-weight: 700;
++  letter-spacing: -0.02em;
++  color: var(--text-primary);
++}
+ 
+-  .closeButton {
+-    font-size: 1.8rem;
+-    color: var(--text-muted);
+-    cursor: pointer;
+-    padding: 0.4rem;
++.closeButton {
++  display: inline-flex;
++  align-items: center;
++  justify-content: center;
++  width: 3.6rem;
++  height: 3.6rem;
++  color: var(--text-muted);
++  border-radius: 99.9rem;
++  transition:
++    background-color 0.15s ease,
++    color 0.15s ease;
+ 
+-    &:hover {
+-      color: var(--text-primary);
+-    }
++  &:hover {
++    color: var(--text-primary);
++    background-color: var(--bg-surface-elevated);
+   }
+ }
+ 
++/* 세그먼트형 탭 */
+ .tabNav {
+-  flex-shrink: 0;
+   display: flex;
+-  background: var(--bg-surface-elevated);
+-  border-bottom: 0.1rem solid var(--border-subtle);
++  gap: 0.4rem;
++  margin: 1.2rem 2.4rem 0;
++  padding: 0.4rem;
++  background-color: var(--bg-surface-elevated);
++  border-radius: var(--radius-control);
+ }
+ 
+ .tabItem {
+   flex: 1;
+-  padding: 1.2rem;
+-  text-align: center;
+-  font-size: 1.4rem;
+-  font-weight: 700;
+-  color: var(--text-secondary);
+-  cursor: pointer;
+-  border-bottom: 0.2rem solid transparent;
+-  transition: all 0.2s ease;
++  height: 3.6rem;
++  font-size: 1.3rem;
++  font-weight: 600;
++  color: var(--text-muted);
++  border-radius: 0.7rem;
++  transition:
++    background-color 0.15s ease,
++    color 0.15s ease;
+ 
+   &:hover {
+     color: var(--text-primary);
+   }
+ 
+   &.active {
+-    color: var(--brand-primary);
+-    border-bottom-color: var(--brand-primary);
+-    background: var(--bg-surface);
++    color: var(--text-primary);
++    background-color: var(--bg-surface);
++    box-shadow: 0 0.1rem 0.3rem rgba(16, 20, 24, 0.12);
+   }
+ }
+ 
+ .body {
+   flex: 1;
+   min-height: 0;
+-  display: flex;
+-  flex-direction: column;
+-  gap: 1.6rem;
+-  padding: 2rem 2.4rem;
++  padding: 1.6rem 2.4rem 2rem;
+   overflow-y: auto;
+ }
+ 
+-// 템플릿 카드
++/* ----- 추천 템플릿 ----- */
+ .templateList {
+   display: flex;
+   flex-direction: column;
+-  gap: 1rem;
+ }
+ 
+-.templateEmptyState {
+-  min-height: 18rem;
++.templateCard {
+   display: flex;
+-  flex-direction: column;
+   align-items: center;
+-  justify-content: center;
+-  gap: 1.2rem;
+-  color: var(--text-secondary);
+-  text-align: center;
+-}
+-
+-.templateEmptyAction {
+-  padding: 0.8rem 1.4rem;
+-  border: 0.1rem solid var(--border-subtle);
+-  border-radius: 0.8rem;
+-  background: var(--brand-primary);
+-  color: #ffffff;
+-  font-size: 1.3rem;
+-  font-weight: 700;
+-  cursor: pointer;
+-  transition: background-color 0.2s ease;
++  gap: 1.4rem;
++  padding: 1.4rem 0;
+ 
+-  &:hover {
+-    background: var(--brand-primary-hover);
++  & + & {
++    border-top: 0.1rem solid var(--border-subtle);
+   }
+ }
+ 
+-.templateCard {
+-  display: flex;
++.tplIcon {
++  display: inline-flex;
++  flex: none;
+   align-items: center;
+-  justify-content: space-between;
+-  gap: 1.2rem;
+-  padding: 1.4rem 1.6rem;
+-  background: var(--bg-surface-elevated);
+-  border: 0.1rem solid var(--border-subtle);
++  justify-content: center;
++  width: 4rem;
++  height: 4rem;
++  color: var(--cat-color, var(--text-secondary));
++  background-color: var(--bg-surface-elevated);
+   border-radius: 1.2rem;
+-  transition: all 0.2s ease;
+ 
+-  &:hover {
+-    border-color: var(--brand-primary);
+-    transform: translateY(-0.1rem);
++  &[data-category='EXERCISE'] {
++    --cat-color: var(--cat-exercise);
+   }
+ 
+-  .tplInfo {
+-    display: flex;
+-    flex-direction: column;
+-    flex: 1;
+-    gap: 0.4rem;
+-    min-width: 0;
++  &[data-category='LEARNING'] {
++    --cat-color: var(--cat-learning);
+   }
+ 
+-  .tplHeader {
+-    display: flex;
+-    align-items: center;
+-    gap: 0.8rem;
+-    flex-wrap: wrap;
++  &[data-category='SELF_CARE'] {
++    --cat-color: var(--cat-self-care);
+   }
+ 
+-  .tplIcon {
+-    flex: none;
++  &[data-category='HABIT'] {
++    --cat-color: var(--cat-habit);
+   }
++}
+ 
+-  .tplTitle {
+-    font-size: 1.5rem;
+-    font-weight: 700;
+-    min-width: 0;
+-    color: var(--text-primary);
+-    overflow-wrap: anywhere;
+-  }
++.tplInfo {
++  display: flex;
++  flex: 1;
++  flex-direction: column;
++  gap: 0.2rem;
++  min-width: 0;
++}
+ 
+-  .tplCategory {
+-    width: 100%;
+-    flex: none;
+-  }
++.tplTitle {
++  font-size: 1.5rem;
++  font-weight: 600;
++  color: var(--text-primary);
++}
+ 
+-  .tplDesc {
+-    font-size: 1.2rem;
+-    color: var(--text-secondary);
+-    overflow-wrap: anywhere;
+-  }
++.tplDesc {
++  font-size: 1.3rem;
++  color: var(--text-muted);
++}
+ 
+-  .tplAddBtn {
+-    padding: 0.6rem 1.4rem;
+-    font-size: 1.2rem;
+-    font-weight: 700;
+-    color: #ffffff;
+-    cursor: pointer;
+-    flex-shrink: 0;
+-    background: var(--brand-primary);
+-    border-radius: 0.8rem;
+-    transition: all 0.2s ease;
+-
+-    &:hover {
+-      background: var(--brand-primary-hover);
+-    }
++.tplCategory {
++  margin-top: 0.2rem;
++}
++
++.tplAddBtn {
++  flex: none;
++  height: 3.4rem;
++  padding: 0 1.4rem;
++  font-size: 1.3rem;
++  font-weight: 600;
++  color: var(--text-primary);
++  border: 0.1rem solid var(--border-medium);
++  border-radius: var(--radius-control);
++  transition:
++    background-color 0.15s ease,
++    color 0.15s ease,
++    border-color 0.15s ease;
++
++  &:hover {
++    color: var(--ink-text);
++    background-color: var(--ink);
++    border-color: var(--ink);
+   }
+ }
+ 
+-// 폼 입력
++.templateEmptyState {
++  display: flex;
++  flex-direction: column;
++  align-items: center;
++  gap: 1.2rem;
++  padding: 3.2rem 0;
++  font-size: 1.4rem;
++  color: var(--text-muted);
++}
++
++.templateEmptyAction {
++  height: 3.8rem;
++  padding: 0 1.6rem;
++  font-size: 1.3rem;
++  font-weight: 600;
++  color: var(--ink-text);
++  background-color: var(--ink);
++  border-radius: var(--radius-control);
++}
++
++/* ----- 직접 만들기 폼 ----- */
+ .form {
+   display: flex;
+   flex-direction: column;
++  gap: 1.6rem;
++}
++
++.row {
++  display: grid;
++  grid-template-columns: repeat(2, minmax(0, 1fr));
+   gap: 1.2rem;
+ }
+ 
+@@ -208,126 +239,111 @@
+   gap: 0.6rem;
+   min-width: 0;
+ 
+-  label {
++  label,
++  .groupLabel {
+     font-size: 1.3rem;
+-    font-weight: 700;
++    font-weight: 600;
+     color: var(--text-secondary);
+   }
+ 
+   input,
+-  select,
+-  textarea {
++  select {
+     width: 100%;
+-    min-width: 0;
+-    box-sizing: border-box;
+-    background-color: var(--bg-surface-elevated);
+-    border: 0.1rem solid var(--border-medium);
+-    border-radius: 1rem;
+-    padding: 1rem 1.4rem;
++    height: 4.4rem;
++    padding: 0 1.4rem;
+     font-size: 1.4rem;
+     color: var(--text-primary);
+-    outline: none;
+-    transition: border-color 0.2s ease;
++    background-color: var(--bg-surface);
++    border: 0.1rem solid var(--border-medium);
++    border-radius: var(--radius-control);
++    transition:
++      border-color 0.15s ease,
++      box-shadow 0.15s ease;
++
++    &::placeholder {
++      color: var(--text-muted);
++    }
+ 
+     &:focus {
+-      border-color: var(--brand-primary);
++      outline: none;
++      border-color: var(--accent);
++      box-shadow: 0 0 0 0.3rem var(--accent-soft);
+     }
+   }
+-}
+ 
+-.row {
+-  display: grid;
+-  grid-template-columns: repeat(2, minmax(0, 1fr));
+-  gap: 1.2rem;
++  select {
++    padding-right: 3.6rem;
++    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238b93a1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
++    background-repeat: no-repeat;
++    background-position: right 1.2rem center;
++    -webkit-appearance: none;
++    appearance: none;
++  }
+ }
+ 
+ .daysSelector {
+-  display: flex;
++  display: grid;
++  grid-template-columns: repeat(7, minmax(0, 1fr));
+   gap: 0.6rem;
+-  flex-wrap: wrap;
+ }
+ 
+ .dayBtn {
+-  width: 3.6rem;
+-  height: 3.6rem;
+-  border-radius: 0.8rem;
+-  background: var(--bg-surface-elevated);
+-  border: 0.1rem solid var(--border-subtle);
+-  color: var(--text-secondary);
++  height: 4rem;
+   font-size: 1.3rem;
+-  font-weight: 700;
+-  cursor: pointer;
+-  transition: all 0.2s ease;
++  font-weight: 600;
++  color: var(--text-secondary);
++  border: 0.1rem solid var(--border-medium);
++  border-radius: var(--radius-control);
++  transition:
++    background-color 0.15s ease,
++    color 0.15s ease,
++    border-color 0.15s ease;
++
++  &:hover {
++    color: var(--text-primary);
++  }
+ 
+   &.selected {
+-    background: var(--brand-primary);
+-    border-color: var(--brand-primary);
+-    color: #ffffff;
+-    box-shadow: var(--glow-indigo);
++    color: var(--ink-text);
++    background-color: var(--ink);
++    border-color: var(--ink);
+   }
+ }
+ 
+ .footer {
+-  flex-shrink: 0;
+-  padding: 1.6rem 2.4rem;
+-  border-top: 0.1rem solid var(--border-subtle);
+   display: flex;
+   align-items: center;
+   justify-content: flex-end;
+-  gap: 1rem;
++  gap: 0.8rem;
++  padding: 1.4rem 2.4rem;
++  border-top: 0.1rem solid var(--border-subtle);
+ }
+ 
+ .cancelBtn {
+-  padding: 1rem 1.8rem;
+-  border-radius: 1rem;
++  height: 4.2rem;
++  padding: 0 1.8rem;
+   font-size: 1.4rem;
+   font-weight: 600;
+   color: var(--text-secondary);
+-  background: var(--bg-surface-elevated);
+-  border: 0.1rem solid var(--border-subtle);
+-  cursor: pointer;
++  border-radius: var(--radius-control);
++  transition: background-color 0.15s ease;
+ 
+   &:hover {
+-    color: var(--text-primary);
++    background-color: var(--bg-surface-elevated);
+   }
+ }
+ 
+ .submitBtn {
+-  padding: 1rem 2.2rem;
+-  border-radius: 1rem;
++  height: 4.2rem;
++  padding: 0 2rem;
+   font-size: 1.4rem;
+-  font-weight: 700;
+-  color: #ffffff;
+-  background: var(--brand-gradient);
+-  cursor: pointer;
+-  box-shadow: var(--glow-indigo);
+-  transition: all 0.2s ease;
++  font-weight: 600;
++  color: var(--ink-text);
++  background-color: var(--ink);
++  border-radius: var(--radius-control);
++  transition: background-color 0.15s ease;
+ 
+   &:hover {
+-    opacity: 0.95;
+-    transform: translateY(-0.1rem);
+-  }
+-}
+-
+-@media (max-width: 56rem) {
+-  .modal {
+-    max-height: 85dvh;
+-    border-radius: 1.6rem;
+-  }
+-
+-  .header {
+-    padding: 1.6rem 1.8rem;
+-  }
+-
+-  .body {
+-    padding: 1.6rem 1.8rem;
+-  }
+-
+-  .row {
+-    grid-template-columns: minmax(0, 1fr);
+-  }
+-
+-  .footer {
+-    padding: 1.2rem 1.8rem;
++    background-color: var(--ink-hover);
+   }
+ }
+diff --git a/apps/web/src/components/CreateRoutineModal/CreateRoutineModal.tsx b/apps/web/src/components/CreateRoutineModal/CreateRoutineModal.tsx
+index 782462b..b0e6e06 100644
+--- a/apps/web/src/components/CreateRoutineModal/CreateRoutineModal.tsx
++++ b/apps/web/src/components/CreateRoutineModal/CreateRoutineModal.tsx
+@@ -1,6 +1,6 @@
+ 'use client';
+ 
+-import React, { useState } from 'react';
++import React, { useId, useState } from 'react';
+ import {
+   DayOfWeek,
+   Routine,
+@@ -11,7 +11,8 @@ import {
+ import { ROUTINE_TEMPLATES_DATA, RoutineTemplate } from '@routine-challenger/data';
+ import { useAppDispatch, addRoutine } from '@routine-challenger/store';
+ import { getStorageContainer } from '@routine-challenger/storage';
+-import { CategoryBadge } from '@routine-challenger/ui';
++import { CategoryBadge, Icon, getTemplateIconName } from '@routine-challenger/ui';
++import { useDialog } from '@/hooks/useDialog';
+ import styles from './CreateRoutineModal.module.scss';
+ 
+ interface CreateRoutineModalProps {
+@@ -27,6 +28,8 @@ export const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({
+   selectedDate,
+ }) => {
+   const dispatch = useAppDispatch();
++  const dialogRef = useDialog<HTMLDivElement>(true, onClose);
++  const formId = useId();
+   const [activeTab, setActiveTab] = useState<'templates' | 'custom'>('templates');
+ 
+   // Custom Routine Form State
+@@ -132,22 +135,42 @@ export const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({
+ 
+   return (
+     <div className={styles.overlay} onClick={onClose}>
+-      <div className={styles.modal} onClick={e => e.stopPropagation()}>
++      <div
++        ref={dialogRef}
++        className={styles.modal}
++        role="dialog"
++        aria-modal="true"
++        aria-labelledby={`${formId}-heading`}
++        tabIndex={-1}
++        onClick={e => e.stopPropagation()}
++      >
+         <div className={styles.header}>
+-          <h2 className={styles.title}>새 루틴 추가</h2>
+-          <button className={styles.closeButton} onClick={onClose}>
+-            ✕
++          <h2 id={`${formId}-heading`} className={styles.title}>
++            새 루틴 추가
++          </h2>
++          <button type="button" className={styles.closeButton} onClick={onClose} aria-label="닫기">
++            <Icon name="x" size={18} />
+           </button>
+         </div>
+ 
+-        <div className={styles.tabNav}>
++        <div className={styles.tabNav} role="tablist" aria-label="루틴 추가 방식">
+           <button
++            type="button"
++            role="tab"
++            id={`${formId}-tab-templates`}
++            aria-selected={activeTab === 'templates'}
++            aria-controls={`${formId}-panel`}
+             className={`${styles.tabItem} ${activeTab === 'templates' ? styles.active : ''}`}
+             onClick={() => handleTabChange('templates')}
+           >
+             추천 템플릿 선택
+           </button>
+           <button
++            type="button"
++            role="tab"
++            id={`${formId}-tab-custom`}
++            aria-selected={activeTab === 'custom'}
++            aria-controls={`${formId}-panel`}
+             className={`${styles.tabItem} ${activeTab === 'custom' ? styles.active : ''}`}
+             onClick={() => handleTabChange('custom')}
+           >
+@@ -155,44 +178,56 @@ export const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({
+           </button>
+         </div>
+ 
+-        <div className={styles.body}>
++        <div
++          className={styles.body}
++          role="tabpanel"
++          id={`${formId}-panel`}
++          aria-labelledby={`${formId}-tab-${activeTab}`}
++        >
+           {activeTab === 'templates' ? (
+-            <div className={styles.templateList}>
++            <ul className={styles.templateList}>
+               {ROUTINE_TEMPLATES_DATA.length > 0 ? (
+                 ROUTINE_TEMPLATES_DATA.map(tpl => (
+-                  <div key={tpl.templateId} className={styles.templateCard}>
++                  <li key={tpl.templateId} className={styles.templateCard}>
++                    <span className={styles.tplIcon} data-category={tpl.category}>
++                      <Icon name={getTemplateIconName(tpl.templateId, tpl.category)} size={20} />
++                    </span>
+                     <div className={styles.tplInfo}>
+-                      <div className={styles.tplHeader}>
+-                        <span className={styles.tplCategory}>
+-                          <CategoryBadge category={tpl.category} />
+-                        </span>
+-                        <span className={styles.tplIcon}>{tpl.icon}</span>
+-                        <span className={styles.tplTitle}>{tpl.title}</span>
+-                      </div>
++                      <span className={styles.tplTitle}>{tpl.title}</span>
+                       {tpl.description && <span className={styles.tplDesc}>{tpl.description}</span>}
++                      <span className={styles.tplCategory}>
++                        <CategoryBadge category={tpl.category} showIcon={false} />
++                      </span>
+                     </div>
+-                    <button className={styles.tplAddBtn} onClick={() => handleAddFromTemplate(tpl)}>
+-                      추가하기
++                    <button
++                      type="button"
++                      className={styles.tplAddBtn}
++                      onClick={() => handleAddFromTemplate(tpl)}
++                      aria-label={`${tpl.title} 추가하기`}
++                    >
++                      추가
+                     </button>
+-                  </div>
++                  </li>
+                 ))
+               ) : (
+-                <div className={styles.templateEmptyState}>
++                <li className={styles.templateEmptyState}>
+                   <p>등록된 추천 템플릿이 없습니다.</p>
+                   <button
++                    type="button"
+                     className={styles.templateEmptyAction}
+                     onClick={() => handleTabChange('custom')}
+                   >
+                     직접 루틴 만들기
+                   </button>
+-                </div>
++                </li>
+               )}
+-            </div>
++            </ul>
+           ) : (
+             <form id="custom-routine-form" className={styles.form} onSubmit={handleCreateCustom}>
+               <div className={styles.formGroup}>
+-                <label>루틴 이름</label>
++                <label htmlFor={`${formId}-title`}>루틴 이름</label>
+                 <input
++                  id={`${formId}-title`}
+                   type="text"
+                   placeholder="예: 하루 30분 기술 독서"
+                   value={title}
+@@ -202,8 +237,9 @@ export const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({
+               </div>
+ 
+               <div className={styles.formGroup}>
+-                <label>설명 (선택)</label>
++                <label htmlFor={`${formId}-desc`}>설명 (선택)</label>
+                 <input
++                  id={`${formId}-desc`}
+                   type="text"
+                   placeholder="예: 꾸준한 개발 역량 강화를 위한 독서"
+                   value={description}
+@@ -213,21 +249,23 @@ export const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({
+ 
+               <div className={styles.row}>
+                 <div className={styles.formGroup}>
+-                  <label>카테고리</label>
++                  <label htmlFor={`${formId}-category`}>카테고리</label>
+                   <select
++                    id={`${formId}-category`}
+                     value={category}
+                     onChange={e => setCategory(e.target.value as RoutineCategory)}
+                   >
+-                    <option value="EXERCISE">🏃 운동</option>
+-                    <option value="LEARNING">📚 학습</option>
+-                    <option value="SELF_CARE">🌿 자기관리</option>
+-                    <option value="HABIT">⏰ 생활습관</option>
++                    <option value="EXERCISE">운동</option>
++                    <option value="LEARNING">학습</option>
++                    <option value="SELF_CARE">자기관리</option>
++                    <option value="HABIT">생활습관</option>
+                   </select>
+                 </div>
+ 
+                 <div className={styles.formGroup}>
+-                  <label>목표 형태</label>
++                  <label htmlFor={`${formId}-type`}>목표 형태</label>
+                   <select
++                    id={`${formId}-type`}
+                     value={targetType}
+                     onChange={e => {
+                       const type = e.target.value as TargetType;
+@@ -243,8 +281,9 @@ export const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({
+ 
+               <div className={styles.row}>
+                 <div className={styles.formGroup}>
+-                  <label>목표 수치</label>
++                  <label htmlFor={`${formId}-value`}>목표 수치</label>
+                   <input
++                    id={`${formId}-value`}
+                     type="number"
+                     min="1"
+                     value={targetValue}
+@@ -254,8 +293,9 @@ export const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({
+                 </div>
+ 
+                 <div className={styles.formGroup}>
+-                  <label>단위</label>
++                  <label htmlFor={`${formId}-unit`}>단위</label>
+                   <input
++                    id={`${formId}-unit`}
+                     type="text"
+                     value={targetUnit}
+                     onChange={e => setTargetUnit(e.target.value)}
+@@ -265,8 +305,9 @@ export const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({
+               </div>
+ 
+               <div className={styles.formGroup}>
+-                <label>반복 일정</label>
++                <label htmlFor={`${formId}-frequency`}>반복 일정</label>
+                 <select
++                  id={`${formId}-frequency`}
+                   value={frequencyType}
+                   onChange={e => setFrequencyType(e.target.value as RoutineFrequency)}
+                 >
+@@ -276,8 +317,10 @@ export const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({
+               </div>
+ 
+               {frequencyType === 'WEEKLY_DAYS' && (
+-                <div className={styles.formGroup}>
+-                  <label>실천 요일 선택</label>
++                <div className={styles.formGroup} role="group" aria-labelledby={`${formId}-days`}>
++                  <span id={`${formId}-days`} className={styles.groupLabel}>
++                    실천 요일 선택
++                  </span>
+                   <div className={styles.daysSelector}>
+                     {dayLabels.map(d => (
+                       <button
+@@ -286,6 +329,7 @@ export const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({
+                         className={`${styles.dayBtn} ${
+                           selectedDays.includes(d.value) ? styles.selected : ''
+                         }`}
++                        aria-pressed={selectedDays.includes(d.value)}
+                         onClick={() => handleDayToggle(d.value)}
+                       >
+                         {d.label}
+@@ -299,7 +343,7 @@ export const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({
+         </div>
+ 
+         <div className={styles.footer}>
+-          <button className={styles.cancelBtn} onClick={onClose}>
++          <button type="button" className={styles.cancelBtn} onClick={onClose}>
+             닫기
+           </button>
+           {activeTab === 'custom' && (
+diff --git a/apps/web/src/components/DateNavigator/DateNavigator.module.scss b/apps/web/src/components/DateNavigator/DateNavigator.module.scss
+index 998a103..26dbcb8 100644
+--- a/apps/web/src/components/DateNavigator/DateNavigator.module.scss
++++ b/apps/web/src/components/DateNavigator/DateNavigator.module.scss
+@@ -1,70 +1,87 @@
+ .container {
+   display: flex;
++  flex-wrap: wrap;
+   align-items: center;
+   justify-content: space-between;
+-  gap: 1.6rem;
+-  padding: 1.6rem 2rem;
+-  border-bottom: 0.1rem solid var(--border-subtle);
+-  background-color: var(--bg-surface);
++  gap: 1.2rem 2rem;
++}
++
++.dateGroup {
++  display: flex;
++  flex-wrap: wrap;
++  align-items: center;
++  gap: 1.2rem 2rem;
++}
+ 
+-  @media (max-width: 64rem) {
+-    flex-direction: column;
+-    align-items: flex-start;
+-    gap: 1.2rem;
++.dateText {
++  display: flex;
++  align-items: baseline;
++  gap: 1rem;
++  font-size: inherit;
++  font-weight: inherit;
++}
++
++.dateMain {
++  font-size: 3.2rem;
++  font-weight: 700;
++  line-height: 1.2;
++  letter-spacing: -0.03em;
++  color: var(--text-primary);
++
++  @media (max-width: 640px) {
++    font-size: 2.6rem;
+   }
+ }
+ 
+-.dateGroup {
++.dateSub {
++  font-size: 1.5rem;
++  font-weight: 500;
++  color: var(--text-muted);
++}
++
++.controls {
+   display: flex;
+   align-items: center;
+-  gap: 1.2rem;
++  gap: 0.4rem;
+ }
+ 
+ .navButton {
+-  width: 3.2rem;
+-  height: 3.2rem;
+-  display: flex;
++  display: inline-flex;
+   align-items: center;
+   justify-content: center;
+-  font-size: 2rem;
+-  font-weight: 700;
++  width: 3.6rem;
++  height: 3.6rem;
+   color: var(--text-secondary);
+-  background-color: var(--bg-surface-elevated);
+-  border: 0.1rem solid var(--border-medium);
+-  border-radius: 0.8rem;
+-  transition: all 0.2s ease;
++  background-color: var(--bg-surface);
++  border: 0.1rem solid var(--border-subtle);
++  border-radius: var(--radius-control);
++  transition:
++    border-color 0.15s ease,
++    color 0.15s ease;
+ 
+   &:hover {
+     color: var(--text-primary);
+-    background-color: rgba(99, 102, 241, 0.1);
+-    border-color: var(--brand-primary);
++    border-color: var(--border-medium);
+   }
+ }
+ 
+-.dateText {
+-  font-size: 1.8rem;
+-  font-weight: 800;
+-  letter-spacing: -0.03rem;
+-  color: var(--text-primary);
+-}
+-
+ .todayButton {
+-  padding: 0.4rem 1rem;
+-  font-size: 1.2rem;
+-  font-weight: 700;
+-  color: var(--brand-primary);
+-  background-color: rgba(99, 102, 241, 0.1);
+-  border: 0.1rem solid rgba(99, 102, 241, 0.25);
+-  border-radius: 0.6rem;
+-  transition: all 0.2s ease;
++  height: 3.6rem;
++  margin-left: 0.4rem;
++  padding: 0 1.4rem;
++  font-size: 1.3rem;
++  font-weight: 600;
++  color: var(--ink-text);
++  background-color: var(--ink);
++  border-radius: var(--radius-control);
++  transition: background-color 0.15s ease;
+ 
+   &:hover {
+-    background-color: rgba(99, 102, 241, 0.2);
++    background-color: var(--ink-hover);
+   }
+ }
+ 
+ .statusWrapper {
+   display: flex;
+   align-items: center;
+-  gap: 1rem;
+ }
+diff --git a/apps/web/src/components/DateNavigator/DateNavigator.tsx b/apps/web/src/components/DateNavigator/DateNavigator.tsx
+index ae1581c..12dc8a8 100644
+--- a/apps/web/src/components/DateNavigator/DateNavigator.tsx
++++ b/apps/web/src/components/DateNavigator/DateNavigator.tsx
+@@ -2,7 +2,7 @@
+ 
+ import React from 'react';
+ import { useAppDispatch, useAppSelector, goToPreviousDay, goToNextDay, goToToday } from '@routine-challenger/store';
+-import { HolidayBadge } from '@routine-challenger/ui';
++import { HolidayBadge, Icon } from '@routine-challenger/ui';
+ import styles from './DateNavigator.module.scss';
+ 
+ export const DateNavigator: React.FC = () => {
+@@ -11,47 +11,53 @@ export const DateNavigator: React.FC = () => {
+ 
+   const formatKoreanDate = (dateString: string) => {
+     const [year, month, day] = dateString.split('-').map(Number);
+-    if (!year || !month || !day) return dateString;
++    if (!year || !month || !day) return { main: dateString, sub: '' };
+     const dateObj = new Date(year, month - 1, day);
+     const dayNames = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+     const dayName = dayNames[dateObj.getDay()];
+-    return `${year}년 ${month}월 ${day}일 (${dayName})`;
++    return { main: `${month}월 ${day}일`, sub: `${year}년 ${dayName}` };
+   };
+ 
+   const isToday = selectedDate === todayDate;
++  const dateLabel = formatKoreanDate(selectedDate);
+ 
+   return (
+     <div className={styles.container}>
+       <div className={styles.dateGroup}>
+-        <button
+-          className={styles.navButton}
+-          onClick={() => dispatch(goToPreviousDay())}
+-          title="이전 날짜로 이동"
+-        >
+-          ‹
+-        </button>
+-
+-        <span className={styles.dateText} suppressHydrationWarning>
+-          {formatKoreanDate(selectedDate)}
+-        </span>
+-
+-        <button
+-          className={styles.navButton}
+-          onClick={() => dispatch(goToNextDay())}
+-          title="다음 날짜로 이동"
+-        >
+-          ›
+-        </button>
+-
+-        {!isToday && (
++        <h1 className={styles.dateText} suppressHydrationWarning>
++          <span className={styles.dateMain}>{dateLabel.main}</span>
++          <span className={styles.dateSub}>{dateLabel.sub}</span>
++        </h1>
++
++        <div className={styles.controls}>
+           <button
+-            className={styles.todayButton}
+-            onClick={() => dispatch(goToToday())}
+-            title="오늘로 돌아가기"
++            type="button"
++            className={styles.navButton}
++            onClick={() => dispatch(goToPreviousDay())}
++            aria-label="이전 날짜로 이동"
+           >
+-            오늘
++            <Icon name="chevron-left" size={18} />
+           </button>
+-        )}
++          <button
++            type="button"
++            className={styles.navButton}
++            onClick={() => dispatch(goToNextDay())}
++            aria-label="다음 날짜로 이동"
++          >
++            <Icon name="chevron-right" size={18} />
++          </button>
++
++          {!isToday && (
++            <button
++              type="button"
++              className={styles.todayButton}
++              onClick={() => dispatch(goToToday())}
++              aria-label="오늘로 돌아가기"
++            >
++              오늘
++            </button>
++          )}
++        </div>
+       </div>
+ 
+       <div className={styles.statusWrapper}>
+diff --git a/apps/web/src/components/Header/Header.module.scss b/apps/web/src/components/Header/Header.module.scss
+index ac533fe..ec22367 100644
+--- a/apps/web/src/components/Header/Header.module.scss
++++ b/apps/web/src/components/Header/Header.module.scss
+@@ -1,135 +1,156 @@
+ .header {
+   position: sticky;
+   top: 0;
+-  z-index: 50;
+-  display: flex;
+-  align-items: center;
+-  justify-content: space-between;
+-  gap: 1.6rem;
+-  padding: 1.4rem 2rem;
++  z-index: 100;
+   background-color: var(--bg-surface-glass);
+-  backdrop-filter: blur(1.6rem);
+-  -webkit-backdrop-filter: blur(1.6rem);
+   border-bottom: 0.1rem solid var(--border-subtle);
++  -webkit-backdrop-filter: blur(1.2rem);
+ 
+-  @media (max-width: 76.8rem) {
+-    padding: 1rem 1.4rem;
+-    flex-wrap: wrap;
++  @supports (backdrop-filter: blur(1.2rem)) {
++    backdrop-filter: blur(1.2rem);
+   }
+ }
+ 
+-.brand {
++.inner {
+   display: flex;
++  flex-wrap: wrap;
+   align-items: center;
+-  gap: 0.8rem;
+-  cursor: pointer;
+-
+-  .brandLogo {
+-    width: 3.2rem;
+-    height: 3.2rem;
+-    display: flex;
+-    align-items: center;
+-    justify-content: center;
+-    font-size: 1.6rem;
+-      background: var(--brand-gradient);
+-      border-radius: 0.8rem;
+-    box-shadow: var(--glow-indigo);
+-  }
++  justify-content: space-between;
++  gap: 1.2rem 2rem;
++  width: 100%;
++  max-width: 112rem;
++  min-height: 6.4rem;
++  margin: 0 auto;
++  padding: 0.8rem 2.4rem;
+ 
+-  .brandName {
+-    font-size: 1.6rem;
+-    font-weight: 800;
+-    letter-spacing: -0.04rem;
+-    background: linear-gradient(135deg, var(--text-primary) 30%, var(--brand-primary) 100%);
+-    -webkit-background-clip: text;
+-    -webkit-text-fill-color: transparent;
++  @media (max-width: 640px) {
++    padding: 0.8rem 1.6rem;
+   }
+ }
+ 
+-.statusPills {
++.brand {
+   display: flex;
+   align-items: center;
+   gap: 1rem;
++}
++
++.brandMark {
++  width: 2.8rem;
++  height: 2.8rem;
++}
++
++.brandRing {
++  stroke: var(--border-medium);
++  stroke-width: 2;
++}
++
++.brandArc {
++  stroke: var(--accent);
++  stroke-width: 2.4;
++  stroke-linecap: round;
++}
++
++.brandCheck {
++  stroke: var(--text-primary);
++  stroke-width: 2;
++  stroke-linecap: round;
++  stroke-linejoin: round;
++}
++
++.brandName {
++  font-size: 1.6rem;
++  font-weight: 700;
++  letter-spacing: -0.02em;
++  color: var(--text-primary);
++}
++
++.status {
++  display: flex;
++  flex: 1;
+   flex-wrap: wrap;
++  align-items: center;
++  justify-content: flex-end;
++  gap: 0.4rem 2rem;
+ 
+-  @media (max-width: 76.8rem) {
++  @media (max-width: 640px) {
++    flex-basis: 100%;
+     order: 3;
+-    width: 100%;
+-    justify-content: space-between;
+-    margin-top: 0.4rem;
++    justify-content: flex-start;
+   }
+ }
+ 
+-.titlePill {
++.titleButton {
+   display: inline-flex;
+   align-items: center;
+   gap: 0.6rem;
+-  padding: 0.6rem 1.2rem;
+-  border-radius: 999.9rem;
++  height: 3.6rem;
++  padding: 0 1.2rem;
+   font-size: 1.3rem;
+-  font-weight: 700;
+-  background: rgba(99, 102, 241, 0.12);
+-  border: 0.1rem solid rgba(99, 102, 241, 0.3);
+-  color: #818cf8;
+-  cursor: pointer;
+-  transition: all 0.2s ease;
++  font-weight: 600;
++  color: var(--text-primary);
++  background-color: var(--bg-surface-elevated);
++  border-radius: 99.9rem;
++  transition: background-color 0.15s ease;
+ 
+   &:hover {
+-    background: rgba(99, 102, 241, 0.2);
+-    border-color: rgba(99, 102, 241, 0.5);
+-    transform: translateY(-0.1rem);
++    background-color: var(--border-subtle);
+   }
+ }
+ 
+-.expPill {
++.stat {
+   display: inline-flex;
+-  align-items: center;
+-  gap: 0.6rem;
+-  padding: 0.6rem 1.4rem;
+-  border-radius: 999.9rem;
++  align-items: baseline;
++  gap: 0.4rem;
+   font-size: 1.3rem;
+-  font-weight: 800;
+-  background: rgba(245, 158, 11, 0.12);
+-  border: 0.1rem solid rgba(245, 158, 11, 0.35);
+-  color: #fbbf24;
+-  box-shadow: var(--glow-gold);
+-  letter-spacing: -0.02rem;
++  color: var(--text-secondary);
++
++  svg {
++    align-self: center;
++  }
+ }
+ 
+-.streakPill {
+-  display: inline-flex;
+-  align-items: center;
+-  gap: 0.5rem;
+-  padding: 0.6rem 1.2rem;
+-  border-radius: 999.9rem;
+-  font-size: 1.3rem;
++.expIcon {
++  color: var(--accent);
++}
++
++.streakIcon {
++  color: var(--streak);
++}
++
++.statValue {
++  font-size: 1.5rem;
+   font-weight: 700;
+-  background: rgba(239, 68, 68, 0.12);
+-  border: 0.1rem solid rgba(239, 68, 68, 0.3);
+-  color: #f87171;
++  font-variant-numeric: tabular-nums;
++  color: var(--text-primary);
+ }
+ 
+-.actions {
+-  display: flex;
+-  align-items: center;
+-  gap: 0.8rem;
++.statUnit {
++  font-size: 1.2rem;
++}
++
++/* 한글 단위("일")는 숫자에 붙여 쓴다. */
++.statUnitTight {
++  margin-left: -0.3rem;
+ }
+ 
+ .themeButton {
+-  width: 3.6rem;
+-  height: 3.6rem;
+-  border-radius: 1rem;
+-  display: flex;
++  display: inline-flex;
+   align-items: center;
+   justify-content: center;
+-  font-size: 1.6rem;
+-  background: var(--bg-surface-elevated);
+-  border: 0.1rem solid var(--border-medium);
++  width: 3.6rem;
++  height: 3.6rem;
+   color: var(--text-secondary);
+-  transition: all 0.2s ease;
++  border-radius: 99.9rem;
++  transition:
++    background-color 0.15s ease,
++    color 0.15s ease;
+ 
+   &:hover {
+     color: var(--text-primary);
+-    border-color: var(--brand-primary);
++    background-color: var(--bg-surface-elevated);
++  }
++
++  @media (max-width: 640px) {
++    order: 2;
+   }
+ }
+diff --git a/apps/web/src/components/Header/Header.tsx b/apps/web/src/components/Header/Header.tsx
+index 9d050da..b7c85a6 100644
+--- a/apps/web/src/components/Header/Header.tsx
++++ b/apps/web/src/components/Header/Header.tsx
+@@ -2,6 +2,7 @@
+ 
+ import React, { useState, useEffect } from 'react';
+ import { useAppSelector } from '@routine-challenger/store';
++import { Icon, getTitleIconName } from '@routine-challenger/ui';
+ import styles from './Header.module.scss';
+ 
+ interface HeaderProps {
+@@ -33,42 +34,50 @@ export const Header: React.FC<HeaderProps> = ({ onOpenTitleModal }) => {
+ 
+   return (
+     <header className={styles.header}>
+-      <div className={styles.brand}>
+-        <div className={styles.brandLogo}>⚡</div>
+-        <span className={styles.brandName}>ROUTINE CHALLENGER</span>
+-      </div>
++      <div className={styles.inner}>
++        <div className={styles.brand}>
++          {/* 로고: 진행 링 + 체크. 장식용이므로 스크린리더에서 숨긴다. */}
++          <svg className={styles.brandMark} viewBox="0 0 24 24" fill="none" aria-hidden="true">
++            <circle cx="12" cy="12" r="9" className={styles.brandRing} />
++            <path d="M12 3a9 9 0 0 1 9 9" className={styles.brandArc} />
++            <path d="M8.5 12.5l2.4 2.4 4.6-5" className={styles.brandCheck} />
++          </svg>
++          <span className={styles.brandName}>Routine Challenger</span>
++        </div>
+ 
+-      <div className={styles.statusPills}>
+-        <button
+-          className={styles.titlePill}
+-          onClick={onOpenTitleModal}
+-          title="클릭하여 전체 타이틀 확인 및 대표 타이틀 변경"
+-        >
+-          <span>{currentTitle?.icon || '🌱'}</span>
+-          <span>{currentTitle?.name || '첫걸음'}</span>
+-        </button>
++        <div className={styles.status}>
++          <button
++            type="button"
++            className={styles.titleButton}
++            onClick={onOpenTitleModal}
++            aria-label={`대표 타이틀 ${currentTitle?.name || '첫걸음'}. 전체 타이틀 보기`}
++            title="전체 타이틀 확인 및 대표 타이틀 변경"
++          >
++            <Icon name={getTitleIconName(currentTitle?.id || 'first_step')} size={16} />
++            <span>{currentTitle?.name || '첫걸음'}</span>
++          </button>
+ 
+-        <div
+-          className={styles.expPill}
+-          title="현재 보유 경험치 (성공 시 획득, 일반일 미실천 시 차감)"
+-        >
+-          <span>✨</span>
+-          <span>{totalExp.toLocaleString()} EXP</span>
+-        </div>
++          <div className={styles.stat} title="현재 보유 경험치 (성공 시 획득, 일반일 미실천 시 차감)">
++            <Icon name="zap" size={16} className={styles.expIcon} />
++            <span className={styles.statValue}>{totalExp.toLocaleString()}</span>
++            <span className={styles.statUnit}>EXP</span>
++          </div>
+ 
+-        <div className={styles.streakPill} title="현재 연속 실천 일수">
+-          <span>🔥</span>
+-          <span>{currentStreak}일 연속</span>
++          <div className={styles.stat} title="현재 연속 실천 일수">
++            <Icon name="flame" size={16} className={styles.streakIcon} />
++            <span className={styles.statValue}>{currentStreak}</span>
++            <span className={`${styles.statUnit} ${styles.statUnitTight}`}>일 연속</span>
++          </div>
+         </div>
+-      </div>
+ 
+-      <div className={styles.actions}>
+         <button
++          type="button"
+           className={styles.themeButton}
+           onClick={toggleTheme}
++          aria-label={theme === 'dark' ? '라이트 모드로 전환' : '다크 모드로 전환'}
+           title={theme === 'dark' ? '라이트 모드로 전환' : '다크 모드로 전환'}
+         >
+-          {theme === 'dark' ? '☀️' : '🌙'}
++          <Icon name={theme === 'dark' ? 'sun' : 'moon'} size={18} />
+         </button>
+       </div>
+     </header>
+diff --git a/apps/web/src/components/RoutineCard/RoutineCard.module.scss b/apps/web/src/components/RoutineCard/RoutineCard.module.scss
+index 70b0e3b..5777269 100644
+--- a/apps/web/src/components/RoutineCard/RoutineCard.module.scss
++++ b/apps/web/src/components/RoutineCard/RoutineCard.module.scss
+@@ -1,167 +1,201 @@
+ .card {
+-  position: relative;
+-  display: flex;
++  display: grid;
++  grid-template-columns: auto minmax(0, 1fr) auto;
+   align-items: center;
+-  justify-content: space-between;
+   gap: 1.6rem;
+-  padding: 1.6rem 2rem;
+-  background-color: var(--bg-surface);
+-  border: 0.1rem solid var(--border-subtle);
+-  border-radius: 1.6rem;
+-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
++  padding: 1.8rem 2rem;
++  transition: background-color 0.15s ease;
+ 
+   &:hover {
+-    border-color: var(--border-medium);
+-    transform: translateY(-0.2rem);
+-    box-shadow: var(--shadow-md);
++    background-color: var(--bg-surface-elevated);
+   }
+ 
+-  &.isCompleted {
+-    background-color: rgba(16, 185, 129, 0.04);
+-    border-color: rgba(16, 185, 129, 0.2);
+-
+-    .routineTitle {
+-      text-decoration: line-through;
+-      color: var(--text-muted);
+-    }
+-
+-    .description {
+-      opacity: 0.6;
+-    }
++  @media (max-width: 640px) {
++    grid-template-columns: auto minmax(0, 1fr);
++    align-items: start;
++    padding: 1.6rem;
+   }
+ 
+   &.isPaused {
+-    opacity: 0.6;
+-    border-style: dashed;
++    .content,
++    .checkButton {
++      opacity: 0.5;
++    }
+   }
+-}
+ 
+-.leftSection {
+-  display: flex;
+-  align-items: center;
+-  gap: 1.4rem;
+-  flex: 1;
+-  min-width: 0;
++  &.isCompleted {
++    .routineTitle {
++      color: var(--text-muted);
++      text-decoration: line-through;
++      text-decoration-color: var(--border-medium);
++    }
++  }
+ }
+ 
++/* 체크 버튼: 이 화면의 핵심 인터랙션 */
+ .checkButton {
+-  width: 2.8rem;
+-  height: 2.8rem;
+-  display: flex;
+-  flex-shrink: 0;
++  display: inline-flex;
++  flex: none;
+   align-items: center;
+   justify-content: center;
+-  font-size: 1.5rem;
+-  cursor: pointer;
+-  background: var(--bg-surface-elevated);
++  width: 3rem;
++  height: 3rem;
++  color: var(--bg-surface);
++  background-color: transparent;
+   border: 0.2rem solid var(--border-medium);
+-  border-radius: 0.8rem;
+-  transition: all 0.2s ease;
++  border-radius: 99.9rem;
++  transition:
++    background-color 0.2s ease,
++    border-color 0.2s ease;
+ 
+   &:hover {
+-    border-color: var(--brand-primary);
+-    transform: scale(1.05);
++    border-color: var(--accent);
+   }
+ 
+   &.checked {
+-    background: #10b981;
+-    border-color: #10b981;
+-    color: #ffffff;
+-    box-shadow: 0 0 1.2rem rgba(16, 185, 129, 0.4);
++    color: #fff;
++    background-color: var(--accent);
++    border-color: var(--accent);
++    animation: popCheck 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
++
++    .checkIcon path {
++      animation: drawCheck 0.3s 0.05s ease-out both;
++    }
++  }
++}
++
++[data-theme='dark'] .checkButton.checked {
++  color: #08140f;
++}
++
++.checkIcon {
++  width: 1.8rem;
++  height: 1.8rem;
++
++  path {
++    stroke: currentColor;
++    stroke-width: 3;
++    stroke-linecap: round;
++    stroke-linejoin: round;
++    stroke-dasharray: 24;
++    stroke-dashoffset: 24;
+   }
+ }
+ 
++.checked .checkIcon path {
++  stroke-dashoffset: 0;
++}
++
+ .content {
+   display: flex;
+   flex-direction: column;
+   gap: 0.6rem;
+   min-width: 0;
++  transition: opacity 0.15s ease;
+ }
+ 
+-.badgesRow {
++.titleRow {
+   display: flex;
+   align-items: center;
+   gap: 0.8rem;
+-  flex-wrap: wrap;
+ }
+ 
+ .routineTitle {
+   font-size: 1.6rem;
+-  font-weight: 700;
+-  letter-spacing: -0.03rem;
++  font-weight: 600;
++  line-height: 1.35;
++  letter-spacing: -0.02em;
+   color: var(--text-primary);
+-  transition: all 0.2s ease;
+-  word-break: break-word;
++  transition: color 0.2s ease;
++}
++
++.pausedTag {
++  flex: none;
++  padding: 0.2rem 0.7rem;
++  font-size: 1.1rem;
++  font-weight: 600;
++  color: var(--text-secondary);
++  background-color: var(--bg-surface-elevated);
++  border-radius: 99.9rem;
+ }
+ 
+ .description {
+   font-size: 1.3rem;
+-  color: var(--text-secondary);
+-  line-height: 1.4;
+-  word-break: break-word;
++  color: var(--text-muted);
+ }
+ 
+-.targetRow {
++.metaRow {
+   display: flex;
++  flex-wrap: wrap;
+   align-items: center;
+-  gap: 1rem;
+-  font-size: 1.2rem;
+-  color: var(--text-muted);
+-  font-weight: 600;
++  gap: 0.4rem 1.6rem;
+   margin-top: 0.2rem;
+ }
+ 
+-.targetPill {
++.metaItem {
+   display: inline-flex;
+   align-items: center;
+-  gap: 0.4rem;
+-  padding: 0.2rem 0.8rem;
+-  color: var(--text-secondary);
+-  background: var(--bg-surface-elevated);
+-  border: 0.1rem solid var(--border-subtle);
+-  border-radius: 0.6rem;
++  gap: 0.5rem;
++  font-size: 1.2rem;
++  font-variant-numeric: tabular-nums;
++  color: var(--text-muted);
+ }
+ 
+ .rightSection {
+   display: flex;
+   align-items: center;
+-  gap: 1rem;
+-  flex-shrink: 0;
++  gap: 1.2rem;
++
++  @media (max-width: 640px) {
++    grid-column: 2;
++    justify-content: space-between;
++  }
++}
++
++.actions {
++  display: flex;
++  align-items: center;
++  gap: 0.2rem;
+ }
+ 
+ .levelUpButton {
+-  padding: 0.4rem 1rem;
++  display: inline-flex;
++  align-items: center;
++  gap: 0.4rem;
++  height: 3rem;
++  margin-right: 0.4rem;
++  padding: 0 1.1rem;
+   font-size: 1.2rem;
+-  font-weight: 700;
+-  color: #fbbf24;
+-  cursor: pointer;
+-  background: rgba(245, 158, 11, 0.12);
+-  border: 0.1rem solid rgba(245, 158, 11, 0.3);
+-  border-radius: 0.8rem;
+-  transition: all 0.2s ease;
++  font-weight: 600;
++  color: var(--accent-text);
++  background-color: var(--accent-soft);
++  border-radius: 99.9rem;
++  transition: filter 0.15s ease;
+ 
+   &:hover {
+-    background: rgba(245, 158, 11, 0.25);
+-    transform: translateY(-0.1rem);
+-    box-shadow: var(--glow-gold);
++    filter: brightness(0.95);
+   }
+ }
+ 
+ .actionButton {
+-  width: 3.2rem;
+-  height: 3.2rem;
+-  display: flex;
++  display: inline-flex;
+   align-items: center;
+   justify-content: center;
+-  font-size: 1.6rem;
++  width: 3.2rem;
++  height: 3.2rem;
+   color: var(--text-muted);
+-  cursor: pointer;
+-  background: transparent;
+-  border-radius: 0.8rem;
+-  transition: all 0.2s ease;
++  border-radius: var(--radius-control);
++  transition:
++    background-color 0.15s ease,
++    color 0.15s ease;
+ 
+   &:hover {
+-    background: var(--bg-surface-elevated);
+     color: var(--text-primary);
++    background-color: var(--bg-surface-elevated);
++  }
++
++  &.dangerAction:hover {
++    color: var(--danger);
++    background-color: var(--danger-soft);
+   }
+ }
+diff --git a/apps/web/src/components/RoutineCard/RoutineCard.tsx b/apps/web/src/components/RoutineCard/RoutineCard.tsx
+index b7a289e..7d11b0f 100644
+--- a/apps/web/src/components/RoutineCard/RoutineCard.tsx
++++ b/apps/web/src/components/RoutineCard/RoutineCard.tsx
+@@ -23,7 +23,7 @@ import {
+   calculateStreaks,
+ } from '@routine-challenger/core';
+ import { getStorageContainer } from '@routine-challenger/storage';
+-import { CategoryBadge, DifficultyBadge, ExpBadge } from '@routine-challenger/ui';
++import { CategoryBadge, DifficultyBadge, ExpBadge, Icon } from '@routine-challenger/ui';
+ import styles from './RoutineCard.module.scss';
+ 
+ interface RoutineCardProps {
+@@ -195,74 +195,87 @@ export const RoutineCard: React.FC<RoutineCardProps> = ({
+     dispatch(deleteRoutine(routine.id));
+   };
+ 
++  const isPaused = routine.status === 'PAUSED';
++
+   return (
+     <div
+       className={`${styles.card} ${isCompleted ? styles.isCompleted : ''} ${
+-        routine.status === 'PAUSED' ? styles.isPaused : ''
++        isPaused ? styles.isPaused : ''
+       }`}
+     >
+-      <div className={styles.leftSection}>
+-        <button
+-          className={`${styles.checkButton} ${isCompleted ? styles.checked : ''}`}
+-          onClick={handleToggle}
+-          title={isCompleted ? '완료 취소' : '실천 완료 체크'}
+-        >
+-          {isCompleted && '✓'}
+-        </button>
+-
+-        <div className={styles.content}>
+-          <div className={styles.badgesRow}>
+-            <CategoryBadge category={routine.category} />
+-            <DifficultyBadge level={routine.difficultyLevel} />
+-            <ExpBadge
+-              amount={isCompleted ? record?.expGained || 0 : expReward.amount}
+-              isHolidayBonus={isHoliday}
+-            />
+-          </div>
+-
++      <button
++        type="button"
++        className={`${styles.checkButton} ${isCompleted ? styles.checked : ''}`}
++        onClick={handleToggle}
++        aria-pressed={isCompleted}
++        aria-label={`${routine.title} ${isCompleted ? '완료 취소' : '완료로 표시'}`}
++        title={isCompleted ? '완료 취소' : '실천 완료 체크'}
++      >
++        {/* 체크 표시는 완료 시 선이 그려지는 모션으로 나타난다. */}
++        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className={styles.checkIcon}>
++          <path d="M6 12.5l4 4 8-9" pathLength={24} />
++        </svg>
++      </button>
++
++      <div className={styles.content}>
++        <div className={styles.titleRow}>
+           <h3 className={styles.routineTitle}>{routine.title}</h3>
++          {isPaused && <span className={styles.pausedTag}>일시정지</span>}
++        </div>
+ 
+-          {routine.description && (
+-            <p className={styles.description}>{routine.description}</p>
+-          )}
+-
+-          <div className={styles.targetRow}>
+-            <span className={styles.targetPill}>
+-              {routine.targetType === 'TIME' ? '⏱️' : '🎯'}{' '}
+-              {routine.targetValue}
+-              {routine.targetUnit}
+-            </span>
+-            <span>누적 성공 {cumulativeCompletions}회</span>
+-          </div>
++        {routine.description && <p className={styles.description}>{routine.description}</p>}
++
++        <div className={styles.metaRow}>
++          <CategoryBadge category={routine.category} />
++          <DifficultyBadge level={routine.difficultyLevel} />
++          <span className={styles.metaItem}>
++            <Icon name={routine.targetType === 'TIME' ? 'clock' : 'target'} size={14} />
++            {routine.targetValue}
++            {routine.targetUnit}
++          </span>
++          <span className={styles.metaItem}>누적 성공 {cumulativeCompletions}회</span>
+         </div>
+       </div>
+ 
+       <div className={styles.rightSection}>
+-        {canLevelUp && (
++        <ExpBadge
++          amount={isCompleted ? record?.expGained || 0 : expReward.amount}
++          isHolidayBonus={isHoliday}
++        />
++
++        <div className={styles.actions}>
++          {canLevelUp && (
++            <button
++              type="button"
++              className={styles.levelUpButton}
++              onClick={handleLevelUp}
++              title={`Lv.${nextDifficulty}로 승급하고 목표를 올립니다.`}
++            >
++              <Icon name="arrow-up" size={14} strokeWidth={2.2} />
++              <span>난이도 승급</span>
++            </button>
++          )}
++
++          <button
++            type="button"
++            className={styles.actionButton}
++            onClick={handleTogglePause}
++            aria-label={`${routine.title} ${routine.status === 'ACTIVE' ? '일시정지' : '다시 시작'}`}
++            title={routine.status === 'ACTIVE' ? '루틴 일시정지' : '루틴 다시 시작'}
++          >
++            <Icon name={routine.status === 'ACTIVE' ? 'pause' : 'play'} size={16} />
++          </button>
++
+           <button
+-            className={styles.levelUpButton}
+-            onClick={handleLevelUp}
+-            title={`Lv.${nextDifficulty}로 승급하고 목표를 올립니다.`}
++            type="button"
++            className={`${styles.actionButton} ${styles.dangerAction}`}
++            onClick={handleDelete}
++            aria-label={`${routine.title} 삭제`}
++            title="루틴 삭제 (기존 기록 보존)"
+           >
+-            ⭐ 난이도 승급
++            <Icon name="trash" size={16} />
+           </button>
+-        )}
+-
+-        <button
+-          className={styles.actionButton}
+-          onClick={handleTogglePause}
+-          title={routine.status === 'ACTIVE' ? '루틴 일시정지' : '루틴 다시 시작'}
+-        >
+-          {routine.status === 'ACTIVE' ? '⏸️' : '▶️'}
+-        </button>
+-
+-        <button
+-          className={styles.actionButton}
+-          onClick={handleDelete}
+-          title="루틴 삭제 (기존 기록 보존)"
+-        >
+-          🗑️
+-        </button>
++        </div>
+       </div>
+     </div>
+   );
+diff --git a/apps/web/src/components/RoutineList/RoutineList.module.scss b/apps/web/src/components/RoutineList/RoutineList.module.scss
+index b2dfb52..7aa711c 100644
+--- a/apps/web/src/components/RoutineList/RoutineList.module.scss
++++ b/apps/web/src/components/RoutineList/RoutineList.module.scss
+@@ -1,47 +1,46 @@
+ .container {
+   display: flex;
+   flex-direction: column;
+-  gap: 2rem;
++  gap: 1.6rem;
+ }
+ 
+ .topBar {
+   display: flex;
++  flex-wrap: wrap;
+   align-items: center;
+   justify-content: space-between;
+-  gap: 1.6rem;
+-  flex-wrap: wrap;
++  gap: 1.2rem;
+ }
+ 
+ .categoryTabs {
+   display: flex;
+-  align-items: center;
+-  gap: 0.8rem;
+-  overflow-x: auto;
+-  padding-bottom: 0.2rem;
++  flex-wrap: wrap;
++  gap: 0.4rem;
+ }
+ 
+ .tabButton {
+-  padding: 0.8rem 1.4rem;
++  display: inline-flex;
++  align-items: center;
++  gap: 0.6rem;
++  height: 3.6rem;
++  padding: 0 1.4rem;
+   font-size: 1.3rem;
+-  font-weight: 700;
+-  cursor: pointer;
+-  white-space: nowrap;
++  font-weight: 600;
+   color: var(--text-secondary);
+-  background: var(--bg-surface-elevated);
+-  border: 0.1rem solid var(--border-subtle);
+-  border-radius: 1rem;
+-  transition: all 0.2s ease;
++  border-radius: 99.9rem;
++  transition:
++    background-color 0.15s ease,
++    color 0.15s ease;
+ 
+   &:hover {
+     color: var(--text-primary);
+-    border-color: var(--border-medium);
++    background-color: var(--bg-surface-elevated);
+   }
+ 
+   &.active {
+-    color: #ffffff;
+-    background: var(--brand-primary);
+-    border-color: var(--brand-primary);
+-    box-shadow: var(--glow-indigo);
++    color: var(--text-primary);
++    background-color: var(--bg-surface);
++    box-shadow: inset 0 0 0 0.1rem var(--border-medium);
+   }
+ }
+ 
+@@ -49,130 +48,137 @@
+   display: inline-flex;
+   align-items: center;
+   gap: 0.6rem;
+-  padding: 0.2rem 1.6rem 0.3rem;
+-  font-size: 1.3rem;
+-  font-weight: 700;
+-  color: #ffffff;
+-  cursor: pointer;
+-  background: var(--brand-gradient);
+-  border-radius: 1rem;
+-  box-shadow: var(--glow-indigo);
+-  transition: all 0.2s ease;
+-
+-  span {
+-    &:first-child {
+-      font-size: 2.4rem;
+-    }
+-  }
++  height: 3.8rem;
++  padding: 0 1.6rem;
++  font-size: 1.4rem;
++  font-weight: 600;
++  color: var(--ink-text);
++  background-color: var(--ink);
++  border-radius: var(--radius-control);
++  transition: background-color 0.15s ease;
+ 
+   &:hover {
+-    transform: translateY(-0.1rem);
+-    opacity: 0.95;
++    background-color: var(--ink-hover);
+   }
+ }
+ 
+-.progressCard {
++/* 오늘의 달성 현황: 카드 대신 얇은 진행 막대 */
++.summary {
+   display: flex;
+   flex-direction: column;
+   gap: 1rem;
+-  padding: 1.6rem 2rem;
+-  background-color: var(--bg-surface);
+-  border: 0.1rem solid var(--border-subtle);
+-  border-radius: 1.4rem;
++  padding: 0.4rem 0.2rem 0;
+ }
+ 
+-.progressInfo {
++.summaryInfo {
+   display: flex;
+-  align-items: center;
++  align-items: baseline;
+   justify-content: space-between;
++  gap: 1.2rem;
++}
++
++.summaryTitle {
++  display: inline-flex;
++  align-items: center;
++  gap: 0.6rem;
++  font-size: 1.5rem;
++  font-weight: 600;
++  color: var(--text-primary);
++}
++
++.doneIcon {
++  color: var(--accent);
++}
++
++.summaryStats {
++  font-size: 1.3rem;
++  font-variant-numeric: tabular-nums;
++  color: var(--text-muted);
+ 
+-  .progressTitle {
+-    font-size: 1.4rem;
++  strong {
+     font-weight: 700;
+     color: var(--text-primary);
+   }
+-
+-  .progressStats {
+-    font-size: 1.3rem;
+-    font-weight: 800;
+-    color: var(--brand-primary);
+-  }
+ }
+ 
+-.progressBar {
+-  appearance: none;
+-  -webkit-appearance: none;
++.track {
+   width: 100%;
+-  height: 0.8rem;
++  height: 0.6rem;
+   overflow: hidden;
+-  background-color: var(--bg-surface-elevated);
+-  border-radius: 999.9rem;
+-
+-  &::-webkit-progress-bar {
+-    background-color: var(--bg-surface-elevated);
+-    border-radius: 999.9rem;
+-  }
+-
+-  &::-webkit-progress-value {
+-    background: linear-gradient(90deg, #6366f1, #10b981);
+-    border-radius: 999.9rem;
+-    transition: width 0.4s ease;
+-  }
++  background-color: var(--border-subtle);
++  border-radius: 99.9rem;
++}
+ 
+-  &::-moz-progress-bar {
+-    background: linear-gradient(90deg, #6366f1, #10b981);
+-    border-radius: 999.9rem;
+-    transition: width 0.4s ease;
+-  }
++.fill {
++  display: block;
++  height: 100%;
++  background-color: var(--accent);
++  border-radius: 99.9rem;
++  transition: width 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+ }
+ 
++/* 루틴 목록: 하나의 패널 안에서 구분선으로 나눈다. */
+ .list {
+-  display: flex;
+-  flex-direction: column;
+-  gap: 1.2rem;
++  overflow: hidden;
++  background-color: var(--bg-surface);
++  border: 0.1rem solid var(--border-subtle);
++  border-radius: var(--radius-panel);
++}
++
++.listItem + .listItem {
++  border-top: 0.1rem solid var(--border-subtle);
+ }
+ 
+ .emptyState {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+-  justify-content: center;
++  gap: 0.8rem;
++  padding: 5.6rem 2.4rem;
+   text-align: center;
+-  gap: 1.2rem;
+-  padding: 4.8rem 2rem;
+   background-color: var(--bg-surface);
+-  border: 0.1rem dashed var(--border-medium);
+-  border-radius: 1.6rem;
++  border: 0.1rem solid var(--border-subtle);
++  border-radius: var(--radius-panel);
++}
+ 
+-  .emptyIcon {
+-    font-size: 4rem;
+-  }
++.emptyIcon {
++  display: inline-flex;
++  align-items: center;
++  justify-content: center;
++  width: 5.2rem;
++  height: 5.2rem;
++  margin-bottom: 0.8rem;
++  color: var(--text-secondary);
++  background-color: var(--bg-surface-elevated);
++  border-radius: 99.9rem;
++}
+ 
+-  .emptyTitle {
+-    font-size: 1.6rem;
+-    font-weight: 700;
+-    color: var(--text-primary);
+-  }
++.emptyTitle {
++  font-size: 1.7rem;
++  font-weight: 700;
++  color: var(--text-primary);
++}
+ 
+-  .emptyDesc {
+-    font-size: 1.3rem;
+-    color: var(--text-secondary);
+-    max-width: 32rem;
+-  }
++.emptyDesc {
++  max-width: 36rem;
++  font-size: 1.4rem;
++  line-height: 1.6;
++  color: var(--text-muted);
++  text-wrap: balance;
++}
+ 
+-  .emptyCta {
+-    margin-top: 0.8rem;
+-    padding: 0.8rem 1.6rem;
+-    border-radius: 0.8rem;
+-    background: var(--brand-primary);
+-    color: #ffffff;
+-    font-size: 1.3rem;
+-    font-weight: 700;
+-    cursor: pointer;
+-    transition: all 0.2s ease;
++.emptyCta {
++  height: 4rem;
++  margin-top: 1.2rem;
++  padding: 0 1.8rem;
++  font-size: 1.4rem;
++  font-weight: 600;
++  color: var(--ink-text);
++  background-color: var(--ink);
++  border-radius: var(--radius-control);
++  transition: background-color 0.15s ease;
+ 
+-    &:hover {
+-      background: var(--brand-primary-hover);
+-    }
++  &:hover {
++    background-color: var(--ink-hover);
+   }
+ }
+diff --git a/apps/web/src/components/RoutineList/RoutineList.tsx b/apps/web/src/components/RoutineList/RoutineList.tsx
+index b8044d0..6022375 100644
+--- a/apps/web/src/components/RoutineList/RoutineList.tsx
++++ b/apps/web/src/components/RoutineList/RoutineList.tsx
+@@ -8,6 +8,7 @@ import {
+   setSelectedCategory,
+ } from '@routine-challenger/store';
+ import { filterRoutinesForDate } from '@routine-challenger/core';
++import { Icon, CATEGORY_ICON_NAMES, IconName } from '@routine-challenger/ui';
+ import { RoutineCard } from '../RoutineCard/RoutineCard';
+ import styles from './RoutineList.module.scss';
+ 
+@@ -16,12 +17,12 @@ interface RoutineListProps {
+   onTitleUnlocked?: (titleName: string) => void;
+ }
+ 
+-const CATEGORY_TABS: { label: string; value: RoutineCategory | 'ALL' }[] = [
++const CATEGORY_TABS: { label: string; value: RoutineCategory | 'ALL'; icon?: IconName }[] = [
+   { label: '전체', value: 'ALL' },
+-  { label: '🏃 운동', value: 'EXERCISE' },
+-  { label: '📚 학습', value: 'LEARNING' },
+-  { label: '🌿 자기관리', value: 'SELF_CARE' },
+-  { label: '⏰ 생활습관', value: 'HABIT' },
++  { label: '운동', value: 'EXERCISE', icon: CATEGORY_ICON_NAMES.EXERCISE },
++  { label: '학습', value: 'LEARNING', icon: CATEGORY_ICON_NAMES.LEARNING },
++  { label: '자기관리', value: 'SELF_CARE', icon: CATEGORY_ICON_NAMES.SELF_CARE },
++  { label: '생활습관', value: 'HABIT', icon: CATEGORY_ICON_NAMES.HABIT },
+ ];
+ 
+ export const RoutineList: React.FC<RoutineListProps> = ({
+@@ -50,74 +51,95 @@ export const RoutineList: React.FC<RoutineListProps> = ({
+   ).length;
+   const progressPercent = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+ 
++  const isAllDone = totalCount > 0 && completedCount === totalCount;
++
+   return (
+     <div className={styles.container}>
+       <div className={styles.topBar}>
+-        <div className={styles.categoryTabs}>
++        <div className={styles.categoryTabs} role="group" aria-label="카테고리 필터">
+           {CATEGORY_TABS.map(tab => (
+             <button
+               key={tab.value}
++              type="button"
+               className={`${styles.tabButton} ${
+                 selectedCategory === tab.value ? styles.active : ''
+               }`}
++              aria-pressed={selectedCategory === tab.value}
+               onClick={() => dispatch(setSelectedCategory(tab.value))}
+             >
+-              {tab.label}
++              {tab.icon && <Icon name={tab.icon} size={14} />}
++              <span>{tab.label}</span>
+             </button>
+           ))}
+         </div>
+ 
+-        <button className={styles.addButton} onClick={onOpenCreateModal}>
+-          <span>+</span>
++        <button type="button" className={styles.addButton} onClick={onOpenCreateModal}>
++          <Icon name="plus" size={16} strokeWidth={2.2} />
+           <span>루틴 추가</span>
+         </button>
+       </div>
+ 
+       {totalCount > 0 && (
+-        <div className={styles.progressCard}>
+-          <div className={styles.progressInfo}>
+-            <span className={styles.progressTitle}>오늘의 달성 현황</span>
+-            <span className={styles.progressStats}>
+-              {completedCount} / {totalCount} 완료 ({progressPercent}%)
++        <section className={styles.summary} aria-label="오늘의 달성 현황">
++          <div className={styles.summaryInfo}>
++            <span className={styles.summaryTitle}>
++              {isAllDone ? (
++                <>
++                  <Icon name="check" size={16} strokeWidth={2.4} className={styles.doneIcon} />
++                  오늘 루틴을 모두 완료했어요
++                </>
++              ) : (
++                '오늘의 달성 현황'
++              )}
++            </span>
++            <span className={styles.summaryStats}>
++              <strong>{completedCount}</strong> / {totalCount} 완료 · {progressPercent}%
+             </span>
+           </div>
+-          <progress
+-            className={styles.progressBar}
+-            value={progressPercent}
+-            max={100}
++          <div
++            className={styles.track}
++            role="progressbar"
+             aria-label="오늘의 루틴 달성률"
+-          />
+-        </div>
++            aria-valuemin={0}
++            aria-valuemax={100}
++            aria-valuenow={progressPercent}
++          >
++            <span className={styles.fill} style={{ width: `${progressPercent}%` }} />
++          </div>
++        </section>
+       )}
+ 
+-      <div className={styles.list}>
+-        {displayRoutines.length > 0 ? (
+-          displayRoutines.map(routine => (
+-            <RoutineCard
+-              key={routine.id}
+-              routine={routine}
+-              date={selectedDate}
+-              isHoliday={isHoliday}
+-              onTitleUnlocked={onTitleUnlocked}
+-            />
+-          ))
+-        ) : (
+-          <div className={styles.emptyState}>
+-            <span className={styles.emptyIcon}>🎯</span>
+-            <h4 className={styles.emptyTitle}>
+-              {selectedCategory === 'ALL'
+-                ? '오늘 예정된 루틴이 없습니다.'
+-                : '해당 카테고리에 등록된 루틴이 없습니다.'}
+-            </h4>
+-            <p className={styles.emptyDesc}>
+-              추천 템플릿을 선택하거나 나만의 루틴을 직접 생성하여 성장의 여정을 시작해 보세요!
+-            </p>
+-            <button className={styles.emptyCta} onClick={onOpenCreateModal}>
+-              첫 루틴 추가하기
+-            </button>
+-          </div>
+-        )}
+-      </div>
++      {displayRoutines.length > 0 ? (
++        <ul className={styles.list}>
++          {displayRoutines.map(routine => (
++            <li key={routine.id} className={styles.listItem}>
++              <RoutineCard
++                routine={routine}
++                date={selectedDate}
++                isHoliday={isHoliday}
++                onTitleUnlocked={onTitleUnlocked}
++              />
++            </li>
++          ))}
++        </ul>
++      ) : (
++        <div className={styles.emptyState}>
++          <span className={styles.emptyIcon}>
++            <Icon name="target" size={24} />
++          </span>
++          <h2 className={styles.emptyTitle}>
++            {selectedCategory === 'ALL'
++              ? '오늘 예정된 루틴이 없습니다.'
++              : '해당 카테고리에 등록된 루틴이 없습니다.'}
++          </h2>
++          <p className={styles.emptyDesc}>
++            추천 템플릿을 선택하거나 나만의 루틴을 직접 생성하여 성장의 여정을 시작해 보세요.
++          </p>
++          <button type="button" className={styles.emptyCta} onClick={onOpenCreateModal}>
++            첫 루틴 추가하기
++          </button>
++        </div>
++      )}
+     </div>
+   );
+ };
+diff --git a/apps/web/src/components/StatsOverview/StatsOverview.module.scss b/apps/web/src/components/StatsOverview/StatsOverview.module.scss
+index b9aec7f..4ca01a6 100644
+--- a/apps/web/src/components/StatsOverview/StatsOverview.module.scss
++++ b/apps/web/src/components/StatsOverview/StatsOverview.module.scss
+@@ -2,93 +2,123 @@
+   display: flex;
+   flex-direction: column;
+   gap: 1.6rem;
++}
++
++.panel {
++  display: flex;
++  flex-direction: column;
++  gap: 1.6rem;
+   padding: 2rem;
+   background-color: var(--bg-surface);
+   border: 0.1rem solid var(--border-subtle);
+-  border-radius: 1.6rem;
++  border-radius: var(--radius-panel);
+ }
+ 
+-.header {
++.title {
++  font-size: 1.5rem;
++  font-weight: 700;
++  color: var(--text-primary);
++}
++
++.statsList {
++  display: flex;
++  flex-direction: column;
++}
++
++.statRow {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
++  gap: 1.2rem;
++  padding: 1.2rem 0;
+ 
+-  .title {
+-    color: var(--text-primary);
+-    font-size: 1.5rem;
+-    font-weight: 800;
++  & + & {
++    border-top: 0.1rem solid var(--border-subtle);
+   }
+ 
+-  .badge {
+-    color: var(--brand-primary);
+-    font-size: 1.2rem;
+-    font-weight: 700;
++  &:first-child {
++    padding-top: 0;
+   }
+-}
+ 
+-.statsGrid {
+-  display: grid;
+-  gap: 1rem;
+-  grid-template-columns: repeat(3, 1fr);
+-
+-  @media (max-width: 64rem) {
+-    grid-template-columns: 1fr;
++  &:last-child {
++    padding-bottom: 0;
+   }
+ }
+ 
+-.statCard {
++.label {
+   display: flex;
+-  flex-direction: column;
+-  gap: 0.4rem;
+-  padding: 1.2rem 1.4rem;
+-  background: var(--bg-surface-elevated);
+-  border: 0.1rem solid var(--border-subtle);
+-  border-radius: 1.2rem;
++  align-items: center;
++  gap: 1rem;
++  font-size: 1.3rem;
++  color: var(--text-secondary);
++}
+ 
+-  .label {
+-    color: var(--text-secondary);
+-    font-size: 1.1rem;
+-    font-weight: 600;
+-  }
++.statIcon {
++  display: inline-flex;
++  align-items: center;
++  justify-content: center;
++  width: 3.2rem;
++  height: 3.2rem;
++  background-color: var(--bg-surface-elevated);
++  border-radius: 1rem;
++}
+ 
+-  .value {
+-    color: var(--text-primary);
+-    font-size: 1.8rem;
+-    font-weight: 800;
+-  }
++.expTone {
++  color: var(--accent-text);
++}
+ 
+-  .expValue {
+-    color: #fbbf24;
+-  }
++.streakTone {
++  color: var(--streak);
++}
+ 
+-  .streakValue {
+-    color: #f87171;
+-  }
++.daysTone {
++  color: var(--cat-exercise);
++}
+ 
+-  .activeDaysValue {
+-    color: #818cf8;
+-  }
++.value {
++  font-size: 1.8rem;
++  font-weight: 700;
++  font-variant-numeric: tabular-nums;
++  letter-spacing: -0.02em;
++  color: var(--text-primary);
+ }
+ 
+ .chartWrapper {
+   position: relative;
+   width: 100%;
++  max-width: 20rem;
+   height: 20rem;
++  margin: 0 auto;
+ }
+ 
+ .chart {
+   width: 100%;
+-  height: 100% !important;
++  height: 100%;
+ }
+ 
+-.emptyChartText {
++/* 도넛 중앙 라벨 */
++.chartCenter {
+   position: absolute;
+-  top: 45%;
+-  left: 50%;
+-  z-index: 1;
+-  transform: translate(-50%, -50%);
+-  color: var(--text-muted);
+-  font-size: 1.2rem;
+-  white-space: nowrap;
++  inset: 0;
++  display: flex;
++  flex-direction: column;
++  align-items: center;
++  justify-content: center;
++  gap: 0.2rem;
+   pointer-events: none;
+ }
++
++.chartPercent {
++  font-size: 3.2rem;
++  font-weight: 700;
++  font-variant-numeric: tabular-nums;
++  letter-spacing: -0.03em;
++  color: var(--text-primary);
++}
++
++.chartCaption {
++  max-width: 10rem;
++  font-size: 1.3rem;
++  text-align: center;
++  color: var(--text-muted);
++}
+diff --git a/apps/web/src/components/StatsOverview/StatsOverview.tsx b/apps/web/src/components/StatsOverview/StatsOverview.tsx
+index 2e2e077..35cafd5 100644
+--- a/apps/web/src/components/StatsOverview/StatsOverview.tsx
++++ b/apps/web/src/components/StatsOverview/StatsOverview.tsx
+@@ -1,15 +1,65 @@
+ 'use client';
+ 
+-import React from 'react';
++import React, { useEffect, useState } from 'react';
+ import dynamic from 'next/dynamic';
+ import { useAppSelector } from '@routine-challenger/store';
+ import { filterRoutinesForDate } from '@routine-challenger/core';
++import { Icon, IconName } from '@routine-challenger/ui';
+ import styles from './StatsOverview.module.scss';
+ 
+ // SSR 방지를 위해 동적 임포트
+ const ReactECharts = dynamic(() => import('echarts-for-react'), { ssr: false });
+ 
++// ECharts 는 CSS 변수를 읽지 못하므로, 현재 테마의 색을 계산해서 전달한다.
++interface ChartColors {
++  accent: string;
++  track: string;
++  surface: string;
++  text: string;
++}
++
++const DEFAULT_CHART_COLORS: ChartColors = {
++  accent: '#0e9f6e',
++  track: '#e8eaee',
++  surface: '#ffffff',
++  text: '#101418',
++};
++
++const readChartColors = (): ChartColors => {
++  const style = getComputedStyle(document.documentElement);
++  const read = (name: string, fallback: string) => style.getPropertyValue(name).trim() || fallback;
++  return {
++    accent: read('--accent', DEFAULT_CHART_COLORS.accent),
++    track: read('--border-subtle', DEFAULT_CHART_COLORS.track),
++    surface: read('--bg-surface', DEFAULT_CHART_COLORS.surface),
++    text: read('--text-primary', DEFAULT_CHART_COLORS.text),
++  };
++};
++
++// 테마(data-theme)가 바뀌면 차트 색도 함께 갱신한다.
++const useChartColors = () => {
++  const [colors, setColors] = useState<ChartColors>(DEFAULT_CHART_COLORS);
++
++  useEffect(() => {
++    const update = () => setColors(readChartColors());
++    update();
++
++    const observer = new MutationObserver(update);
++    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
++    return () => observer.disconnect();
++  }, []);
++
++  return colors;
++};
++
++const STAT_ITEMS: { key: 'exp' | 'streak' | 'days'; label: string; icon: IconName; tone: string }[] = [
++  { key: 'exp', label: '총 누적 경험치', icon: 'zap', tone: 'expTone' },
++  { key: 'streak', label: '연속 실천일', icon: 'flame', tone: 'streakTone' },
++  { key: 'days', label: '총 실천 일수', icon: 'calendar', tone: 'daysTone' },
++];
++
+ export const StatsOverview: React.FC = () => {
++  const colors = useChartColors();
+   const { totalExp, currentStreak, totalActiveDays } = useAppSelector(state => state.user);
+   const routines = useAppSelector(state => state.routine.routines);
+   const recordsMap = useAppSelector(state => state.record.recordsMap);
+@@ -39,42 +89,42 @@ export const StatsOverview: React.FC = () => {
+     }
+   });
+ 
++  const statValues = {
++    exp: `${totalExp.toLocaleString()} EXP`,
++    streak: `${currentStreak}일`,
++    days: `${totalActiveDays}일`,
++  };
++
++  const progressPercent =
++    scheduledToday.length > 0 ? Math.round((completedToday / scheduledToday.length) * 100) : 0;
++
+   const chartOption = {
+     tooltip: {
+-      trigger: 'item',
+-      backgroundColor: 'rgba(18, 23, 39, 0.9)',
+-      borderColor: 'rgba(255, 255, 255, 0.1)',
+-      textStyle: { color: '#f8fafc', fontSize: 12 },
+-    },
+-    legend: {
+       show: hasScheduledToday,
+-      orient: 'horizontal',
+-      left: 'center',
+-      bottom: '2%',
+-      textStyle: { color: '#94a3b8', fontSize: 11 },
++      trigger: 'item',
++      backgroundColor: colors.surface,
++      borderColor: colors.track,
++      textStyle: { color: colors.text, fontSize: 12 },
+     },
+     series: [
+       {
+         name: '실천 현황',
+         type: 'pie',
+         silent: !hasScheduledToday,
+-        radius: ['55%', '80%'],
+-        center: ['50%', '45%'],
++        radius: ['72%', '92%'],
++        center: ['50%', '50%'],
+         avoidLabelOverlap: false,
++        emptyCircleStyle: { color: colors.track },
+         itemStyle: {
+-          borderRadius: 6,
+-          borderColor: '#111625',
+-          borderWidth: 2,
++          borderRadius: 99,
++          borderColor: colors.surface,
++          borderWidth: 3,
+         },
+         label: { show: false },
+         data: hasScheduledToday
+           ? [
+-              { value: completedToday, name: '완료됨', itemStyle: { color: '#10b981' } },
+-              {
+-                value: pendingToday,
+-                name: '미완료',
+-                itemStyle: { color: 'rgba(99, 102, 241, 0.25)' },
+-              },
++              { value: completedToday, name: '완료', itemStyle: { color: colors.accent } },
++              { value: pendingToday, name: '남음', itemStyle: { color: colors.track } },
+             ]
+           : [],
+       },
+@@ -83,33 +133,52 @@ export const StatsOverview: React.FC = () => {
+ 
+   return (
+     <div className={styles.container}>
+-      <div className={styles.header}>
+-        <span className={styles.title}>성장 지표 현황</span>
+-      </div>
+-
+-      <div className={styles.statsGrid}>
+-        <div className={styles.statCard}>
+-          <span className={styles.label}>총 누적 경험치</span>
+-          <span className={`${styles.value} ${styles.expValue}`}>
+-            {totalExp.toLocaleString()} EXP
+-          </span>
+-        </div>
++      <section className={styles.panel} aria-labelledby="stats-title">
++        <h2 id="stats-title" className={styles.title}>
++          성장 지표
++        </h2>
+ 
+-        <div className={styles.statCard}>
+-          <span className={styles.label}>연속 실천일</span>
+-          <span className={`${styles.value} ${styles.streakValue}`}>{currentStreak}일</span>
+-        </div>
++        <dl className={styles.statsList}>
++          {STAT_ITEMS.map(item => (
++            <div key={item.key} className={styles.statRow}>
++              <dt className={styles.label}>
++                <span className={`${styles.statIcon} ${styles[item.tone]}`}>
++                  <Icon name={item.icon} size={16} />
++                </span>
++                {item.label}
++              </dt>
++              <dd className={styles.value}>{statValues[item.key]}</dd>
++            </div>
++          ))}
++        </dl>
++      </section>
+ 
+-        <div className={styles.statCard}>
+-          <span className={styles.label}>총 실천 일수</span>
+-          <span className={`${styles.value} ${styles.activeDaysValue}`}>{totalActiveDays}일</span>
+-        </div>
+-      </div>
++      <section className={styles.panel} aria-labelledby="today-title">
++        <h2 id="today-title" className={styles.title}>
++          오늘의 실천
++        </h2>
+ 
+-      <div className={styles.chartWrapper}>
+-        <ReactECharts option={chartOption} className={styles.chart} opts={{ renderer: 'svg' }} />
+-        {!hasScheduledToday && <span className={styles.emptyChartText}>오늘 예정된 루틴 없음</span>}
+-      </div>
++        <div className={styles.chartWrapper}>
++          <ReactECharts
++            option={chartOption}
++            className={styles.chart}
++            opts={{ renderer: 'svg' }}
++            style={{ height: '100%', width: '100%' }}
++          />
++          <div className={styles.chartCenter}>
++            {hasScheduledToday ? (
++              <>
++                <span className={styles.chartPercent}>{progressPercent}%</span>
++                <span className={styles.chartCaption}>
++                  {completedToday} / {scheduledToday.length} 완료
++                </span>
++              </>
++            ) : (
++              <span className={styles.chartCaption}>오늘 예정된 루틴 없음</span>
++            )}
++          </div>
++        </div>
++      </section>
+     </div>
+   );
+ };
+diff --git a/apps/web/src/components/TitleGalleryModal/TitleGalleryModal.module.scss b/apps/web/src/components/TitleGalleryModal/TitleGalleryModal.module.scss
+index 967318a..c512176 100644
+--- a/apps/web/src/components/TitleGalleryModal/TitleGalleryModal.module.scss
++++ b/apps/web/src/components/TitleGalleryModal/TitleGalleryModal.module.scss
+@@ -1,71 +1,99 @@
+ .overlay {
+   position: fixed;
+   inset: 0;
+-  z-index: 100;
++  z-index: 150;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+-  padding: 1.6rem;
+-  background-color: rgba(0, 0, 0, 0.65);
+-  backdrop-filter: blur(0.8rem);
+-  -webkit-backdrop-filter: blur(0.8rem);
+-  animation: fadeIn 0.2s ease;
++  padding: 2rem;
++  background-color: var(--bg-overlay);
++  animation: overlayIn 0.2s ease both;
++
++  @media (max-width: 640px) {
++    align-items: flex-end;
++    padding: 0;
++  }
+ }
+ 
+ .modal {
+-  width: 100%;
+-  max-width: 60rem;
+-  max-height: 85vh;
+   display: flex;
+   flex-direction: column;
++  width: 100%;
++  max-width: 56rem;
++  max-height: min(90vh, 72rem);
+   overflow: hidden;
+   background-color: var(--bg-surface);
+-  border: 0.1rem solid var(--border-medium);
++  border: 0.1rem solid var(--border-subtle);
+   border-radius: 2rem;
+   box-shadow: var(--shadow-lg);
++  animation: sheetIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
++
++  &:focus {
++    outline: none;
++  }
++
++  @media (max-width: 640px) {
++    max-width: none;
++    max-height: 92vh;
++    border-bottom: 0;
++    border-radius: 2rem 2rem 0 0;
++  }
+ }
+ 
+ .header {
+-  padding: 2rem 2.4rem;
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+-  border-bottom: 0.1rem solid var(--border-subtle);
+-
+-  .title {
+-    font-size: 1.8rem;
+-    font-weight: 800;
+-    color: var(--text-primary);
+-  }
++  padding: 2rem 2.4rem 0.8rem;
++}
+ 
+-  .closeButton {
+-    font-size: 1.8rem;
+-    color: var(--text-muted);
+-    cursor: pointer;
+-    padding: 0.4rem;
++.title {
++  font-size: 2rem;
++  font-weight: 700;
++  letter-spacing: -0.02em;
++  color: var(--text-primary);
++}
+ 
+-    &:hover {
+-      color: var(--text-primary);
+-    }
++.closeButton {
++  display: inline-flex;
++  align-items: center;
++  justify-content: center;
++  width: 3.6rem;
++  height: 3.6rem;
++  color: var(--text-muted);
++  border-radius: 99.9rem;
++  transition:
++    background-color 0.15s ease,
++    color 0.15s ease;
++
++  &:hover {
++    color: var(--text-primary);
++    background-color: var(--bg-surface-elevated);
+   }
+ }
+ 
+ .notice {
+-  padding: 1rem 2.4rem;
+-  background: rgba(99, 102, 241, 0.08);
+-  border-bottom: 0.1rem solid rgba(99, 102, 241, 0.2);
+-  font-size: 1.2rem;
+-  color: #818cf8;
+   display: flex;
+-  align-items: center;
+-  gap: 0.6rem;
++  align-items: flex-start;
++  gap: 0.8rem;
++  margin: 0.8rem 2.4rem 0;
++  padding: 1.2rem 1.4rem;
++  font-size: 1.3rem;
++  line-height: 1.5;
++  color: var(--text-secondary);
++  background-color: var(--bg-surface-elevated);
++  border-radius: var(--radius-control);
++
++  svg {
++    flex: none;
++    margin-top: 0.2rem;
++  }
+ }
+ 
+ .grid {
+-  padding: 2rem 2.4rem;
+-  display: grid;
+-  grid-template-columns: 1fr;
+-  gap: 1.2rem;
++  display: flex;
++  flex-direction: column;
++  padding: 1rem 2.4rem 2rem;
+   overflow-y: auto;
+ }
+ 
+@@ -73,101 +101,108 @@
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+-  gap: 1.6rem;
+-  padding: 1.6rem;
+-  background: var(--bg-surface-elevated);
+-  border: 0.1rem solid var(--border-subtle);
+-  border-radius: 1.4rem;
+-  transition: all 0.2s ease;
++  gap: 1.2rem;
++  padding: 1.4rem 0;
+ 
+-  &.isEquipped {
+-    border-color: var(--brand-primary);
+-    background: rgba(99, 102, 241, 0.08);
+-    box-shadow: var(--glow-indigo);
++  & + & {
++    border-top: 0.1rem solid var(--border-subtle);
+   }
+ 
+   &.isLocked {
+-    opacity: 0.55;
+-    filter: grayscale(0.6);
+-  }
++    .icon {
++      color: var(--text-muted);
++    }
+ 
+-  .left {
+-    display: flex;
+-    align-items: center;
+-    gap: 1.4rem;
++    .name,
++    .desc {
++      color: var(--text-muted);
++    }
+   }
+ 
+-  .icon {
+-    width: 4.4rem;
+-    height: 4.4rem;
+-    display: flex;
+-    align-items: center;
+-    justify-content: center;
+-    font-size: 2.8rem;
+-    background: var(--bg-surface);
+-    border: 0.1rem solid var(--border-medium);
+-    border-radius: 1.2rem;
++  &.isEquipped .icon {
++    color: var(--accent-text);
++    background-color: var(--accent-soft);
+   }
++}
+ 
+-  .info {
+-    display: flex;
+-    flex-direction: column;
+-    gap: 0.4rem;
+-  }
++.left {
++  display: flex;
++  flex: 1;
++  align-items: center;
++  gap: 1.4rem;
++  min-width: 0;
++}
+ 
+-  .nameRow {
+-    display: flex;
+-    align-items: center;
+-    gap: 0.8rem;
+-  }
++.icon {
++  display: inline-flex;
++  flex: none;
++  align-items: center;
++  justify-content: center;
++  width: 4.4rem;
++  height: 4.4rem;
++  color: var(--text-primary);
++  background-color: var(--bg-surface-elevated);
++  border-radius: 1.2rem;
++}
+ 
+-  .name {
+-    font-size: 1.5rem;
+-    font-weight: 800;
+-    color: var(--text-primary);
+-  }
++.info {
++  display: flex;
++  flex-direction: column;
++  gap: 0.2rem;
++  min-width: 0;
++}
+ 
+-  .equippedBadge {
+-    padding: 0.2rem 0.6rem;
+-    border-radius: 0.4rem;
+-    font-size: 1rem;
+-    font-weight: 700;
+-    color: #ffffff;
+-    background: var(--brand-primary);
+-  }
++.nameRow {
++  display: flex;
++  flex-wrap: wrap;
++  align-items: center;
++  gap: 0.8rem;
++}
+ 
+-  .desc {
+-    font-size: 1.2rem;
+-    color: var(--text-secondary);
+-    line-height: 1.4;
+-  }
++.name {
++  font-size: 1.5rem;
++  font-weight: 600;
++  color: var(--text-primary);
++}
+ 
+-  .equipBtn {
+-    padding: 0.6rem 1.4rem;
+-    border-radius: 0.8rem;
+-    font-size: 1.2rem;
+-    font-weight: 700;
+-    color: var(--brand-primary);
+-    background: rgba(99, 102, 241, 0.12);
+-    border: 0.1rem solid rgba(99, 102, 241, 0.3);
+-    cursor: pointer;
+-    flex-shrink: 0;
+-    transition: all 0.2s ease;
+-
+-    &:hover {
+-      background: var(--brand-primary);
+-      color: #ffffff;
+-    }
+-  }
++.equippedBadge {
++  padding: 0.2rem 0.8rem;
++  font-size: 1.1rem;
++  font-weight: 600;
++  color: var(--accent-text);
++  background-color: var(--accent-soft);
++  border-radius: 99.9rem;
++}
++
++.desc {
++  font-size: 1.3rem;
++  color: var(--text-muted);
++}
+ 
+-  .lockedBadge {
+-    font-size: 1.2rem;
+-    font-weight: 700;
+-    color: var(--text-muted);
+-    padding: 0.4rem 1rem;
+-    border-radius: 0.6rem;
+-    background: var(--bg-surface);
+-    border: 0.1rem solid var(--border-subtle);
+-    flex-shrink: 0;
++.equipBtn {
++  flex: none;
++  height: 3.4rem;
++  padding: 0 1.4rem;
++  font-size: 1.3rem;
++  font-weight: 600;
++  color: var(--text-primary);
++  border: 0.1rem solid var(--border-medium);
++  border-radius: var(--radius-control);
++  transition:
++    background-color 0.15s ease,
++    color 0.15s ease,
++    border-color 0.15s ease;
++
++  &:hover {
++    color: var(--ink-text);
++    background-color: var(--ink);
++    border-color: var(--ink);
+   }
+ }
++
++.lockedBadge {
++  flex: none;
++  font-size: 1.2rem;
++  font-weight: 500;
++  color: var(--text-muted);
++}
+diff --git a/apps/web/src/components/TitleGalleryModal/TitleGalleryModal.tsx b/apps/web/src/components/TitleGalleryModal/TitleGalleryModal.tsx
+index db348c4..999b5ee 100644
+--- a/apps/web/src/components/TitleGalleryModal/TitleGalleryModal.tsx
++++ b/apps/web/src/components/TitleGalleryModal/TitleGalleryModal.tsx
+@@ -3,6 +3,8 @@
+ import React from 'react';
+ import { useAppDispatch, useAppSelector, setSelectedTitle } from '@routine-challenger/store';
+ import { getStorageContainer } from '@routine-challenger/storage';
++import { Icon, getTitleIconName } from '@routine-challenger/ui';
++import { useDialog } from '@/hooks/useDialog';
+ import styles from './TitleGalleryModal.module.scss';
+ 
+ interface TitleGalleryModalProps {
+@@ -14,6 +16,9 @@ export const TitleGalleryModal: React.FC<TitleGalleryModalProps> = ({ isOpen, on
+   const dispatch = useAppDispatch();
+   const { titles, selectedTitleId, unlockedTitleIds, totalExp } = useAppSelector(state => state.user);
+ 
++  // 훅은 조건부 return 보다 먼저 호출해야 한다.
++  const dialogRef = useDialog<HTMLDivElement>(isOpen, onClose);
++
+   if (!isOpen) return null;
+ 
+   const handleEquip = async (titleId: string) => {
+@@ -32,35 +37,47 @@ export const TitleGalleryModal: React.FC<TitleGalleryModalProps> = ({ isOpen, on
+ 
+   return (
+     <div className={styles.overlay} onClick={onClose}>
+-      <div className={styles.modal} onClick={e => e.stopPropagation()}>
++      <div
++        ref={dialogRef}
++        className={styles.modal}
++        role="dialog"
++        aria-modal="true"
++        aria-labelledby="title-gallery-heading"
++        tabIndex={-1}
++        onClick={e => e.stopPropagation()}
++      >
+         <div className={styles.header}>
+-          <h2 className={styles.title}>🏆 타이틀 갤러리</h2>
+-          <button className={styles.closeButton} onClick={onClose}>
+-            ✕
++          <h2 id="title-gallery-heading" className={styles.title}>
++            타이틀 갤러리
++          </h2>
++          <button type="button" className={styles.closeButton} onClick={onClose} aria-label="닫기">
++            <Icon name="x" size={18} />
+           </button>
+         </div>
+ 
+         <div className={styles.notice}>
+-          <span>💡</span>
++          <Icon name="info" size={16} />
+           <span>
+             한 번 획득한 타이틀은 경험치가 차감되더라도 절대 회수되지 않으며 영구 보존됩니다.
+           </span>
+         </div>
+ 
+-        <div className={styles.grid}>
++        <ul className={styles.grid}>
+           {titles.map(title => {
+             const isUnlocked = unlockedTitleIds.includes(title.id);
+             const isEquipped = selectedTitleId === title.id;
+ 
+             return (
+-              <div
++              <li
+                 key={title.id}
+                 className={`${styles.titleCard} ${isEquipped ? styles.isEquipped : ''} ${
+                   !isUnlocked ? styles.isLocked : ''
+                 }`}
+               >
+                 <div className={styles.left}>
+-                  <div className={styles.icon}>{title.icon}</div>
++                  <div className={styles.icon}>
++                    <Icon name={isUnlocked ? getTitleIconName(title.id) : 'lock'} size={20} />
++                  </div>
+                   <div className={styles.info}>
+                     <div className={styles.nameRow}>
+                       <span className={styles.name}>{title.name}</span>
+@@ -73,19 +90,21 @@ export const TitleGalleryModal: React.FC<TitleGalleryModalProps> = ({ isOpen, on
+                 {isUnlocked ? (
+                   !isEquipped && (
+                     <button
++                      type="button"
+                       className={styles.equipBtn}
+                       onClick={() => handleEquip(title.id)}
++                      aria-label={`${title.name} 대표 타이틀로 설정`}
+                     >
+                       대표 설정
+                     </button>
+                   )
+                 ) : (
+-                  <span className={styles.lockedBadge}>🔒 미해금</span>
++                  <span className={styles.lockedBadge}>미해금</span>
+                 )}
+-              </div>
++              </li>
+             );
+           })}
+-        </div>
++        </ul>
+       </div>
+     </div>
+   );
+diff --git a/apps/web/src/components/WeeklyTracker/WeeklyTracker.module.scss b/apps/web/src/components/WeeklyTracker/WeeklyTracker.module.scss
+index 18685db..d0644d5 100644
+--- a/apps/web/src/components/WeeklyTracker/WeeklyTracker.module.scss
++++ b/apps/web/src/components/WeeklyTracker/WeeklyTracker.module.scss
+@@ -1,80 +1,96 @@
++/* 7일을 하나의 세그먼트 컨트롤처럼 묶는다. */
+ .container {
+-  display: flex;
+-  align-items: center;
+-  justify-content: space-between;
+-  gap: 0.8rem;
+-  padding: 1.2rem 2rem;
+-  border-bottom: 0.1rem solid var(--border-subtle);
+-  background-color: var(--bg-surface-elevated);
+-  overflow-x: auto;
+-
+-  @media (max-width: 64rem) {
+-    padding: 1rem 1.4rem;
+-  }
++  display: grid;
++  grid-template-columns: repeat(7, minmax(0, 1fr));
++  gap: 0.4rem;
++  padding: 0.4rem;
++  background-color: var(--bg-surface);
++  border: 0.1rem solid var(--border-subtle);
++  border-radius: var(--radius-panel);
+ }
+ 
+ .dayCard {
+-  flex: 1;
+-  min-width: 4.4rem;
+-  max-width: 8rem;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+-  gap: 0.4rem;
+-  padding: 0.8rem 0.4rem;
+-  cursor: pointer;
+-  background-color: var(--bg-surface);
+-  border: 0.1rem solid var(--border-subtle);
++  gap: 0.2rem;
++  padding: 1rem 0 0.8rem;
+   border-radius: 1.2rem;
+-  transition: all 0.2s ease;
++  transition: background-color 0.15s ease;
+ 
+   &:hover {
+-    border-color: var(--brand-primary);
+-    transform: translateY(-0.2rem);
++    background-color: var(--bg-surface-elevated);
+   }
+ 
+   &.isSelected {
+-    background: rgba(99, 102, 241, 0.15);
+-    border-color: var(--brand-primary);
+-    box-shadow: var(--glow-indigo);
+-  }
++    background-color: var(--ink);
+ 
+-  &.isToday {
++    .dayName,
+     .dateNum {
+-      color: var(--brand-primary);
+-      font-weight: 800;
++      color: var(--ink-text);
++    }
++
++    .dayName {
++      opacity: 0.7;
++    }
++
++    .indicator {
++      background-color: var(--ink-text);
++      opacity: 0.35;
+     }
++
++    .hasDone {
++      background-color: var(--accent);
++      opacity: 1;
++    }
++  }
++
++  /* 오늘 표시: 선택 여부와 관계없이 날짜 숫자에 링 */
++  &.isToday .dateNum {
++    box-shadow: inset 0 0 0 0.2rem var(--accent);
+   }
+ }
+ 
+ .dayName {
+-  font-size: 1.1rem;
+-  font-weight: 600;
+-  color: var(--text-secondary);
++  font-size: 1.2rem;
++  font-weight: 500;
++  color: var(--text-muted);
+ 
+   &.isWeekend {
+-    color: #f87171;
++    color: var(--holiday);
+   }
+ }
+ 
++.dayCard.isSelected .dayName.isWeekend {
++  color: var(--ink-text);
++}
++
+ .dateNum {
+-  font-size: 1.5rem;
+-  font-weight: 700;
++  display: inline-flex;
++  align-items: center;
++  justify-content: center;
++  width: 3rem;
++  height: 3rem;
++  font-size: 1.6rem;
++  font-weight: 600;
++  font-variant-numeric: tabular-nums;
+   color: var(--text-primary);
++  border-radius: 99.9rem;
+ }
+ 
+ .indicator {
+-  width: 0.6rem;
+-  height: 0.6rem;
+-  border-radius: 999.9rem;
++  width: 0.5rem;
++  height: 0.5rem;
+   background-color: transparent;
++  border-radius: 99.9rem;
++  transition: background-color 0.2s ease;
+ 
+   &.hasDone {
+-    background-color: #10b981;
+-    box-shadow: 0 0 0.6rem rgba(16, 185, 129, 0.8);
++    background-color: var(--accent);
+   }
+ 
+   &.isHoliday {
+-    background-color: #f43f5e;
++    background-color: var(--holiday);
++    opacity: 0.6;
+   }
+ }
+diff --git a/apps/web/src/components/WeeklyTracker/WeeklyTracker.tsx b/apps/web/src/components/WeeklyTracker/WeeklyTracker.tsx
+index 6acc076..d3587d7 100644
+--- a/apps/web/src/components/WeeklyTracker/WeeklyTracker.tsx
++++ b/apps/web/src/components/WeeklyTracker/WeeklyTracker.tsx
+@@ -64,15 +64,23 @@ export const WeeklyTracker: React.FC = () => {
+ 
+   const weekDays = isHydrated ? getWeekDays(selectedDate) : [];
+ 
++  const dayNames = ['월요일', '화요일', '수요일', '목요일', '금요일', '토요일', '일요일'];
++
+   return (
+-    <div className={styles.container}>
+-      {weekDays.map(day => (
++    <div className={styles.container} role="group" aria-label="이번 주 날짜 선택">
++      {weekDays.map((day, index) => (
+         <button
+           key={day.dateString}
++          type="button"
+           className={`${styles.dayCard} ${day.isSelected ? styles.isSelected : ''} ${
+             day.isToday ? styles.isToday : ''
+           }`}
+           onClick={() => dispatch(setSelectedDate(day.dateString))}
++          aria-pressed={day.isSelected}
++          aria-current={day.isToday ? 'date' : undefined}
++          aria-label={`${day.dateString.slice(5).replace('-', '월 ')}일 ${dayNames[index]}${
++            day.isToday ? ', 오늘' : ''
++          }${day.isHoliday ? ', 휴식일' : ''}${day.hasCompleted ? ', 완료한 루틴 있음' : ''}`}
+         >
+           <span
+             className={`${styles.dayName} ${
+@@ -82,7 +90,7 @@ export const WeeklyTracker: React.FC = () => {
+             {day.dayLabel}
+           </span>
+           <span className={styles.dateNum}>{day.dayNumber}</span>
+-          <div
++          <span
+             className={`${styles.indicator} ${
+               day.hasCompleted
+                 ? styles.hasDone
+@@ -90,6 +98,7 @@ export const WeeklyTracker: React.FC = () => {
+                 ? styles.isHoliday
+                 : ''
+             }`}
++            aria-hidden="true"
+           />
+         </button>
+       ))}
+diff --git a/apps/web/src/hooks/useDialog.ts b/apps/web/src/hooks/useDialog.ts
+new file mode 100644
+index 0000000..48b886a
+--- /dev/null
++++ b/apps/web/src/hooks/useDialog.ts
+@@ -0,0 +1,69 @@
++import { useEffect, useRef } from 'react';
++
++const FOCUSABLE_SELECTOR =
++  'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
++
++/**
++ * 모달 접근성 처리 (KWCAG 2.2)
++ * - 열릴 때 다이얼로그 안으로 포커스 이동, 닫힐 때 원래 위치로 복귀
++ * - Tab 키 포커스 트랩, Esc 로 닫기
++ * - 열려 있는 동안 배경 스크롤 잠금
++ */
++export function useDialog<T extends HTMLElement>(isOpen: boolean, onClose: () => void) {
++  const dialogRef = useRef<T>(null);
++  const onCloseRef = useRef(onClose);
++
++  // 부모가 렌더링될 때마다 effect 가 재실행되지 않도록 최신 onClose 만 ref 에 보관한다.
++  useEffect(() => {
++    onCloseRef.current = onClose;
++  }, [onClose]);
++
++  useEffect(() => {
++    if (!isOpen) return;
++
++    const dialog = dialogRef.current;
++    if (!dialog) return;
++
++    const previousFocus = document.activeElement as HTMLElement | null;
++    const previousOverflow = document.body.style.overflow;
++    document.body.style.overflow = 'hidden';
++
++    const getFocusable = () => Array.from(dialog.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR));
++    (getFocusable()[0] ?? dialog).focus();
++
++    const handleKeyDown = (event: KeyboardEvent) => {
++      if (event.key === 'Escape') {
++        event.stopPropagation();
++        onCloseRef.current();
++        return;
++      }
++      if (event.key !== 'Tab') return;
++
++      const focusable = getFocusable();
++      if (focusable.length === 0) {
++        event.preventDefault();
++        return;
++      }
++      const first = focusable[0];
++      const last = focusable[focusable.length - 1];
++
++      if (event.shiftKey && document.activeElement === first) {
++        event.preventDefault();
++        last.focus();
++      } else if (!event.shiftKey && document.activeElement === last) {
++        event.preventDefault();
++        first.focus();
++      }
++    };
++
++    document.addEventListener('keydown', handleKeyDown);
++
++    return () => {
++      document.removeEventListener('keydown', handleKeyDown);
++      document.body.style.overflow = previousOverflow;
++      previousFocus?.focus();
++    };
++  }, [isOpen]);
++
++  return dialogRef;
++}
+diff --git a/apps/web/src/styles/variables.scss b/apps/web/src/styles/variables.scss
+index 0571f21..4f5c3ca 100644
+--- a/apps/web/src/styles/variables.scss
++++ b/apps/web/src/styles/variables.scss
+@@ -1,48 +1,84 @@
++/* 디자인 토큰: 중립 회색 + 잉크(검정) 버튼 + 초록 포인트 1색 */
+ :root {
+-  // Brand & Accents
+-  --brand-primary: #6366f1;
+-  --brand-primary-hover: #4f46e5;
+-  --brand-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+-  --gold-gradient: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+-  --success: #10b981;
+-  --warning: #f59e0b;
+-  --danger: #ef4444;
+-  --holiday: #f43f5e;
+-
+-  // Light Theme (Default)
+-  --bg-canvas: #f8fafc;
++  color-scheme: light;
++
++  /* 포인트: 완료/진행/EXP 에만 사용 */
++  --accent: #0e9f6e;
++  --accent-text: #0a7a54;
++  --accent-soft: rgba(14, 159, 110, 0.12);
++  --streak: #e8590c;
++  --holiday: #d6336c;
++  --holiday-soft: rgba(214, 51, 108, 0.1);
++  --danger: #e03131;
++  --danger-soft: rgba(224, 49, 49, 0.1);
++
++  /* 카테고리 아이콘 색 */
++  --cat-exercise: #1c7ed6;
++  --cat-learning: #7048e8;
++  --cat-self-care: #0c8599;
++  --cat-habit: #d9730d;
++
++  /* 기본 버튼(잉크) */
++  --ink: #101418;
++  --ink-text: #ffffff;
++  --ink-hover: #2a3038;
++
++  /* 표면 */
++  --bg-canvas: #f5f6f8;
+   --bg-surface: #ffffff;
+-  --bg-surface-elevated: #f1f5f9;
+-  --bg-surface-glass: rgba(255, 255, 255, 0.85);
+-  --border-subtle: rgba(0, 0, 0, 0.08);
+-  --border-medium: rgba(0, 0, 0, 0.14);
+-  --border-focus: rgba(99, 102, 241, 0.5);
+-  --text-primary: #0f172a;
+-  --text-secondary: #475569;
+-  --text-muted: #94a3b8;
+-  --shadow-sm: 0 0.1rem 0.4rem rgba(0, 0, 0, 0.05);
+-  --shadow-md: 0 0.4rem 1.6rem rgba(0, 0, 0, 0.08);
+-  --shadow-lg: 0 1rem 3rem rgba(0, 0, 0, 0.12);
+-  --glow-indigo: 0 0 1.6rem rgba(99, 102, 241, 0.15);
+-  --glow-emerald: 0 0 1.6rem rgba(16, 185, 129, 0.15);
+-  --glow-gold: 0 0 1.6rem rgba(245, 158, 11, 0.15);
++  --bg-surface-elevated: #f0f2f5;
++  --bg-surface-glass: rgba(255, 255, 255, 0.82);
++  --bg-overlay: rgba(16, 20, 24, 0.45);
++
++  /* 선 / 텍스트 */
++  --border-subtle: #e8eaee;
++  --border-medium: #d5d9e0;
++  --text-primary: #101418;
++  --text-secondary: #4b5563;
++  --text-muted: #6b7280;
++
++  /* 그림자는 모달/토스트에만 사용 */
++  --shadow-md: 0 0.8rem 2.4rem rgba(16, 20, 24, 0.1);
++  --shadow-lg: 0 2rem 5rem rgba(16, 20, 24, 0.18);
++
++  /* 반경 */
++  --radius-control: 1rem;
++  --radius-panel: 1.6rem;
+ }
+ 
+ [data-theme='dark'] {
+-  --bg-canvas: #090c16;
+-  --bg-surface: #121727;
+-  --bg-surface-elevated: #1a2035;
+-  --bg-surface-glass: rgba(18, 23, 39, 0.75);
+-  --border-subtle: rgba(255, 255, 255, 0.08);
+-  --border-medium: rgba(255, 255, 255, 0.14);
+-  --border-focus: rgba(99, 102, 241, 0.6);
+-  --text-primary: #f8fafc;
+-  --text-secondary: #94a3b8;
+-  --text-muted: #64748b;
+-  --shadow-sm: 0 0.2rem 0.8rem rgba(0, 0, 0, 0.3);
+-  --shadow-md: 0 0.6rem 2rem rgba(0, 0, 0, 0.4);
+-  --shadow-lg: 0 1.2rem 3.6rem rgba(0, 0, 0, 0.5);
+-  --glow-indigo: 0 0 2.4rem rgba(99, 102, 241, 0.25);
+-  --glow-emerald: 0 0 2rem rgba(16, 185, 129, 0.25);
+-  --glow-gold: 0 0 2rem rgba(245, 158, 11, 0.25);
++  color-scheme: dark;
++
++  --accent: #2dd4a0;
++  --accent-text: #3ddcab;
++  --accent-soft: rgba(45, 212, 160, 0.14);
++  --streak: #ff8a4c;
++  --holiday: #ff7aa8;
++  --holiday-soft: rgba(255, 122, 168, 0.14);
++  --danger: #ff7b7b;
++  --danger-soft: rgba(255, 123, 123, 0.14);
++
++  --cat-exercise: #5aa9f0;
++  --cat-learning: #a78bfa;
++  --cat-self-care: #3cc3d6;
++  --cat-habit: #f5a524;
++
++  --ink: #eef0f3;
++  --ink-text: #0c0e12;
++  --ink-hover: #ffffff;
++
++  --bg-canvas: #0c0e12;
++  --bg-surface: #14171c;
++  --bg-surface-elevated: #1b1f26;
++  --bg-surface-glass: rgba(12, 14, 18, 0.8);
++  --bg-overlay: rgba(0, 0, 0, 0.6);
++
++  --border-subtle: #23272f;
++  --border-medium: #343a45;
++  --text-primary: #eef0f3;
++  --text-secondary: #b4bbc6;
++  --text-muted: #8b93a1;
++
++  --shadow-md: 0 0.8rem 2.4rem rgba(0, 0, 0, 0.4);
++  --shadow-lg: 0 2rem 5rem rgba(0, 0, 0, 0.55);
+ }
+diff --git a/packages/ui/src/Icon.tsx b/packages/ui/src/Icon.tsx
+new file mode 100644
+index 0000000..0af0737
+--- /dev/null
++++ b/packages/ui/src/Icon.tsx
+@@ -0,0 +1,171 @@
++import React from 'react';
++import { RoutineCategory } from '@routine-challenger/types';
++
++/**
++ * 24x24 stroke 기반 아이콘 모음.
++ * 외부 아이콘 라이브러리 없이 필요한 것만 직접 관리한다.
++ * 색상은 currentColor를 따르므로 부모의 color 로 제어한다.
++ */
++const ICON_PATHS = {
++  // 공통 동작
++  check: <path d="M5 12.5l4.5 4.5L19 7.5" />,
++  plus: <path d="M12 5v14M5 12h14" />,
++  x: <path d="M6 6l12 12M18 6L6 18" />,
++  'chevron-left': <path d="M15 5l-7 7 7 7" />,
++  'chevron-right': <path d="M9 5l7 7-7 7" />,
++  'arrow-up': <path d="M12 19V5M6 11l6-6 6 6" />,
++  pause: <path d="M9 5v14M15 5v14" />,
++  play: <path d="M8 5l11 7-11 7V5z" />,
++  trash: <path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v5M14 11v5" />,
++  sun: (
++    <>
++      <circle cx="12" cy="12" r="4" />
++      <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />
++    </>
++  ),
++  moon: <path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" />,
++  info: (
++    <>
++      <circle cx="12" cy="12" r="9" />
++      <path d="M12 11v5M12 8h.01" />
++    </>
++  ),
++  lock: (
++    <>
++      <rect x="5" y="11" width="14" height="9" rx="2" />
++      <path d="M8 11V8a4 4 0 0 1 8 0v3" />
++    </>
++  ),
++  calendar: (
++    <>
++      <rect x="4" y="5" width="16" height="15" rx="2" />
++      <path d="M4 10h16M8 3v4M16 3v4" />
++    </>
++  ),
++  clock: (
++    <>
++      <circle cx="12" cy="12" r="9" />
++      <path d="M12 7v5l3 2" />
++    </>
++  ),
++  target: (
++    <>
++      <circle cx="12" cy="12" r="9" />
++      <circle cx="12" cy="12" r="5" />
++      <circle cx="12" cy="12" r="1" />
++    </>
++  ),
++
++  // 성장 지표
++  zap: <path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z" />,
++  flame: (
++    <path d="M12 3c1 3.5 5 5.5 5 10a5 5 0 0 1-10 0c0-2 1-3.2 2-4.2.3 1.2 1 2 2 2.2C11 8 11 5.5 12 3z" />
++  ),
++  trophy: (
++    <>
++      <path d="M8 4h8v5a4 4 0 0 1-8 0V4z" />
++      <path d="M8 6H5a2 2 0 0 0 0 4h3M16 6h3a2 2 0 0 1 0 4h-3M12 13v4M8 21h8M10 17h4" />
++    </>
++  ),
++  sparkles: (
++    <path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3zM19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8L19 16z" />
++  ),
++  sprout: (
++    <path d="M12 21v-8M12 13c0-4-3-6-7-6 0 4 3 6 7 6zM12 15c0-3 2-5 6-5 0 3-2 5-6 5z" />
++  ),
++  layers: <path d="M12 3l9 5-9 5-9-5 9-5zM3 13l9 5 9-5" />,
++  gem: <path d="M6 4h12l4 6-10 11L2 10l4-6zM2 10h20M9 4l-2 6 5 11 5-11-2-6" />,
++  crown: <path d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5L3 8z" />,
++
++  // 카테고리 / 템플릿
++  dumbbell: <path d="M6 8v8M3 10v4M18 8v8M21 10v4M6 12h12" />,
++  'book-open': <path d="M12 7c-2-1.5-5-2-8-2v13c3 0 6 .5 8 2 2-1.5 5-2 8-2V5c-3 0-6 .5-8 2zM12 7v13" />,
++  leaf: <path d="M5 19c0-8 5-14 14-14 0 9-6 14-14 14zM5 19c3-5 6-8 10-10" />,
++  repeat: (
++    <path d="M17 3l3 3-3 3M4 11V9a3 3 0 0 1 3-3h13M7 21l-3-3 3-3M20 13v2a3 3 0 0 1-3 3H4" />
++  ),
++  activity: <path d="M3 12h4l3-8 4 16 3-8h4" />,
++  heart: <path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.5-7 10-7 10z" />,
++  message: <path d="M4 5h16v11H9l-5 4V5z" />,
++  code: <path d="M9 8l-5 4 5 4M15 8l5 4-5 4" />,
++  droplet: <path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z" />,
++  pen: <path d="M4 20l1-4L16 5l3 3L8 19l-4 1zM14 7l3 3" />,
++} satisfies Record<string, React.ReactNode>;
++
++export type IconName = keyof typeof ICON_PATHS;
++
++export interface IconProps {
++  name: IconName;
++  /** px 단위 크기 (기본 16) */
++  size?: number;
++  strokeWidth?: number;
++  className?: string;
++  /** 의미 있는 아이콘일 때만 지정한다. 없으면 장식용으로 스크린리더에서 숨긴다. */
++  label?: string;
++}
++
++export const Icon: React.FC<IconProps> = ({
++  name,
++  size = 16,
++  strokeWidth = 1.75,
++  className,
++  label,
++}) => (
++  <svg
++    width={size}
++    height={size}
++    viewBox="0 0 24 24"
++    fill="none"
++    stroke="currentColor"
++    strokeWidth={strokeWidth}
++    strokeLinecap="round"
++    strokeLinejoin="round"
++    className={className}
++    role={label ? 'img' : undefined}
++    aria-label={label}
++    aria-hidden={label ? undefined : true}
++    focusable="false"
++  >
++    {ICON_PATHS[name]}
++  </svg>
++);
++
++/* ---- 데이터(타이틀/템플릿/카테고리)와 아이콘 이름 매핑 ---- */
++/* 데이터 파일의 이모지는 그대로 두고, 화면에서만 SVG 아이콘으로 대체한다. */
++
++export const CATEGORY_ICON_NAMES: Record<RoutineCategory, IconName> = {
++  EXERCISE: 'dumbbell',
++  LEARNING: 'book-open',
++  SELF_CARE: 'leaf',
++  HABIT: 'repeat',
++};
++
++const TITLE_ICON_NAMES: Record<string, IconName> = {
++  first_step: 'sprout',
++  small_achiever: 'zap',
++  steady_achiever: 'flame',
++  habit_builder: 'layers',
++  diligent_challenger: 'trophy',
++  unshakeable_will: 'gem',
++  self_care_expert: 'crown',
++};
++
++const TEMPLATE_ICON_NAMES: Record<string, IconName> = {
++  tpl_exercise_1: 'heart',
++  tpl_exercise_2: 'dumbbell',
++  tpl_exercise_3: 'activity',
++  tpl_learning_1: 'book-open',
++  tpl_learning_2: 'message',
++  tpl_learning_3: 'code',
++  tpl_selfcare_1: 'droplet',
++  tpl_selfcare_2: 'pen',
++  tpl_selfcare_3: 'leaf',
++  tpl_habit_1: 'sparkles',
++  tpl_habit_2: 'moon',
++};
++
++export const getTitleIconName = (titleId: string): IconName =>
++  TITLE_ICON_NAMES[titleId] ?? 'trophy';
++
++export const getTemplateIconName = (templateId: string, category: RoutineCategory): IconName =>
++  TEMPLATE_ICON_NAMES[templateId] ?? CATEGORY_ICON_NAMES[category];
+diff --git a/packages/ui/src/badges.module.scss b/packages/ui/src/badges.module.scss
+index 6e37482..4cf73ec 100644
+--- a/packages/ui/src/badges.module.scss
++++ b/packages/ui/src/badges.module.scss
+@@ -1,135 +1,126 @@
++/* 배지 공통: 색은 카테고리 아이콘/EXP 칩에만 사용하고 나머지는 중립색으로 둔다. */
+ .categoryBadge,
+ .difficultyBadge,
+ .expBadge,
+ .holidayBadge,
+ .weekdayBadge {
+   display: inline-flex;
+-  align-items: center;
+   flex: none;
++  align-items: center;
++  gap: 0.5rem;
++  font-size: 1.2rem;
++  font-weight: 500;
++  line-height: 1.2;
++  white-space: nowrap;
+ }
+ 
+ .categoryBadge {
+-  gap: 0.4rem;
+-  padding: 0.3rem 0.8rem;
+-  font-size: 1.2rem;
+-  font-weight: 600;
+-  letter-spacing: -0.02rem;
+-  border: 0.1rem solid transparent;
+-  border-radius: 0.6rem;
++  color: var(--text-secondary);
+ 
+   &[data-category='EXERCISE'] {
+-    color: #06b6d4;
+-    background-color: rgba(6, 182, 212, 0.12);
+-    border-color: rgba(6, 182, 212, 0.28);
++    --cat-color: var(--cat-exercise);
+   }
+ 
+   &[data-category='LEARNING'] {
+-    color: #a855f7;
+-    background-color: rgba(168, 85, 247, 0.12);
+-    border-color: rgba(168, 85, 247, 0.28);
++    --cat-color: var(--cat-learning);
+   }
+ 
+   &[data-category='SELF_CARE'] {
+-    color: #10b981;
+-    background-color: rgba(16, 185, 129, 0.12);
+-    border-color: rgba(16, 185, 129, 0.28);
++    --cat-color: var(--cat-self-care);
+   }
+ 
+   &[data-category='HABIT'] {
+-    color: #f59e0b;
+-    background-color: rgba(245, 158, 11, 0.12);
+-    border-color: rgba(245, 158, 11, 0.28);
++    --cat-color: var(--cat-habit);
+   }
+ }
+ 
++.categoryIcon {
++  color: var(--cat-color);
++}
++
+ .difficultyBadge {
+-  gap: 0.3rem;
+-  padding: 0.2rem 0.7rem;
+-  font-size: 1.1rem;
+-  font-weight: 600;
+-  border: 0.1rem solid transparent;
+-  border-radius: 0.6rem;
++  color: var(--text-secondary);
++}
++
++.difficultyBars {
++  display: inline-flex;
++  align-items: flex-end;
++  gap: 0.2rem;
++  height: 1.2rem;
+ 
+-  &[data-level='1'] {
+-    color: #10b981;
+-    background-color: rgba(16, 185, 129, 0.08);
+-    border-color: rgba(16, 185, 129, 0.21);
++  span {
++    width: 0.3rem;
++    border-radius: 0.2rem;
+   }
+ 
+-  &[data-level='2'] {
+-    color: #06b6d4;
+-    background-color: rgba(6, 182, 212, 0.08);
+-    border-color: rgba(6, 182, 212, 0.21);
++  span:nth-child(1) {
++    height: 0.4rem;
+   }
+ 
+-  &[data-level='3'] {
+-    color: #6366f1;
+-    background-color: rgba(99, 102, 241, 0.08);
+-    border-color: rgba(99, 102, 241, 0.21);
++  span:nth-child(2) {
++    height: 0.6rem;
+   }
+ 
+-  &[data-level='4'] {
+-    color: #f59e0b;
+-    background-color: rgba(245, 158, 11, 0.08);
+-    border-color: rgba(245, 158, 11, 0.21);
++  span:nth-child(3) {
++    height: 0.8rem;
+   }
+ 
+-  &[data-level='5'] {
+-    color: #ec4899;
+-    background-color: rgba(236, 72, 153, 0.08);
+-    border-color: rgba(236, 72, 153, 0.21);
++  span:nth-child(4) {
++    height: 1rem;
++  }
++
++  span:nth-child(5) {
++    height: 1.2rem;
+   }
+ }
+ 
+-.expBadge {
+-  gap: 0.3rem;
+-  padding: 0.2rem 0.8rem;
+-  font-size: 1.1rem;
+-  font-weight: 700;
+-  border: 0.1rem solid transparent;
+-  border-radius: 1.2rem;
++.barOn {
++  background-color: var(--text-primary);
+ }
+ 
+-.positiveExp {
+-  color: #10b981;
+-  background-color: rgba(16, 185, 129, 0.12);
+-  border-color: rgba(16, 185, 129, 0.28);
++.barOff {
++  background-color: var(--border-medium);
+ }
+ 
+-.negativeExp {
+-  color: #ef4444;
+-  background-color: rgba(239, 68, 68, 0.12);
+-  border-color: rgba(239, 68, 68, 0.28);
++/* EXP 칩: 화면에서 유일하게 배경색이 있는 배지 */
++.expBadge {
++  gap: 0.4rem;
++  padding: 0.4rem 0.8rem;
++  font-variant-numeric: tabular-nums;
++  font-weight: 600;
++  border-radius: 99.9rem;
+ }
+ 
+-.holidayExp,
+-.holidayBadge {
+-  color: #f43f5e;
+-  background-color: rgba(244, 63, 94, 0.12);
+-  border-color: rgba(244, 63, 94, 0.3);
++.positiveExp {
++  color: var(--accent-text);
++  background-color: var(--accent-soft);
+ }
+ 
+-.holidayBadge,
+-.weekdayBadge {
+-  gap: 0.4rem;
+-  padding: 0.3rem 0.9rem;
+-  border: 0.1rem solid transparent;
+-  border-radius: 999.9rem;
+-  font-size: 1.1rem;
++.holidayExp {
++  color: var(--holiday);
++  background-color: var(--holiday-soft);
+ }
+ 
+-.holidayBadge {
+-  font-weight: 700;
++.negativeExp {
++  color: var(--danger);
++  background-color: var(--danger-soft);
+ }
+ 
+-.weekdayBadge {
+-  color: #94a3b8;
+-  background-color: rgba(148, 163, 184, 0.1);
+-  border-color: rgba(148, 163, 184, 0.2);
++.holidayBadge {
++  padding: 0.6rem 1rem;
+   font-weight: 600;
++  color: var(--holiday);
++  background-color: var(--holiday-soft);
++  border-radius: 99.9rem;
+ }
+ 
+ .bonusNote {
+-  font-size: 1rem;
++  padding-left: 0.6rem;
++  font-weight: 500;
++  border-left: 0.1rem solid currentColor;
+   opacity: 0.8;
+ }
++
++.weekdayBadge {
++  color: var(--text-muted);
++}
+diff --git a/packages/ui/src/badges.tsx b/packages/ui/src/badges.tsx
+index 16ae161..5383c90 100644
+--- a/packages/ui/src/badges.tsx
++++ b/packages/ui/src/badges.tsx
+@@ -1,6 +1,7 @@
+ import React from 'react';
+ import { RoutineCategory, DifficultyLevel } from '@routine-challenger/types';
+ import { CATEGORY_METADATA, DIFFICULTY_METADATA } from './tokens';
++import { Icon } from './Icon';
+ import styles from './badges.module.scss';
+ 
+ export interface CategoryBadgeProps {
+@@ -16,11 +17,8 @@ export const CategoryBadge: React.FC<CategoryBadgeProps> = ({
+ }) => {
+   const meta = CATEGORY_METADATA[category];
+   return (
+-    <span
+-      className={`${styles.categoryBadge} ${className}`}
+-      data-category={category}
+-    >
+-      {showIcon && <span>{meta.icon}</span>}
++    <span className={`${styles.categoryBadge} ${className}`} data-category={category}>
++      {showIcon && <Icon name={meta.icon} size={14} className={styles.categoryIcon} />}
+       <span>{meta.label}</span>
+     </span>
+   );
+@@ -31,14 +29,18 @@ export interface DifficultyBadgeProps {
+   className?: string;
+ }
+ 
++const DIFFICULTY_STEPS = [1, 2, 3, 4, 5];
++
+ export const DifficultyBadge: React.FC<DifficultyBadgeProps> = ({ level, className = '' }) => {
+   const meta = DIFFICULTY_METADATA[level];
+   return (
+-    <span
+-      className={`${styles.difficultyBadge} ${className}`}
+-      data-level={level}
+-    >
+-      <span>{meta.badge}</span>
++    <span className={`${styles.difficultyBadge} ${className}`}>
++      {/* 난이도 단계 막대: 텍스트로 같은 정보를 제공하므로 장식용 */}
++      <span className={styles.difficultyBars} aria-hidden="true">
++        {DIFFICULTY_STEPS.map(step => (
++          <span key={step} className={step <= level ? styles.barOn : styles.barOff} />
++        ))}
++      </span>
+       <span>
+         Lv.{meta.level} {meta.name}
+       </span>
+@@ -65,11 +67,9 @@ export const ExpBadge: React.FC<ExpBadgeProps> = ({
+       : styles.negativeExp;
+ 
+   return (
+-    <span
+-      className={`${styles.expBadge} ${toneClass} ${className}`}
+-    >
++    <span className={`${styles.expBadge} ${toneClass} ${className}`}>
++      <Icon name={isHolidayBonus ? 'sparkles' : 'zap'} size={12} />
+       <span>{isPositive ? `+${amount}` : amount} EXP</span>
+-      {isHolidayBonus && <span>✨</span>}
+     </span>
+   );
+ };
+@@ -87,21 +87,17 @@ export const HolidayBadge: React.FC<HolidayBadgeProps> = ({
+ }) => {
+   if (isHoliday) {
+     return (
+-      <span
+-        className={`${styles.holidayBadge} ${className}`}
+-      >
+-        <span>🇰🇷</span>
++      <span className={`${styles.holidayBadge} ${className}`}>
++        <Icon name="calendar" size={14} />
+         <span>{holidayName || '휴식일'}</span>
+-        <span className={styles.bonusNote}>(보너스 2배)</span>
++        <span className={styles.bonusNote}>보너스 2배</span>
+       </span>
+     );
+   }
+ 
+   return (
+-    <span
+-      className={`${styles.weekdayBadge} ${className}`}
+-    >
+-      <span>🏃</span>
++    <span className={`${styles.weekdayBadge} ${className}`}>
++      <Icon name="calendar" size={14} />
+       <span>일반일</span>
+     </span>
+   );
+diff --git a/packages/ui/src/index.ts b/packages/ui/src/index.ts
+index 2c54744..3b53d3d 100644
+--- a/packages/ui/src/index.ts
++++ b/packages/ui/src/index.ts
+@@ -1,2 +1,3 @@
+ export * from './tokens';
++export * from './Icon';
+ export * from './badges';
+diff --git a/packages/ui/src/tokens.ts b/packages/ui/src/tokens.ts
+index d06f2d2..f2cddda 100644
+--- a/packages/ui/src/tokens.ts
++++ b/packages/ui/src/tokens.ts
+@@ -1,55 +1,28 @@
+ import { RoutineCategory, DifficultyLevel } from '@routine-challenger/types';
++import { CATEGORY_ICON_NAMES, IconName } from './Icon';
+ 
+ export interface CategoryMeta {
+   label: string;
+-  icon: string;
+-  color: string;
+-  bgColor: string;
+-  borderColor: string;
++  icon: IconName;
+ }
+ 
++// 카테고리 색상은 테마별로 달라야 하므로 CSS 변수(--cat-*)로 관리한다. (variables.scss)
+ export const CATEGORY_METADATA: Record<RoutineCategory, CategoryMeta> = {
+-  EXERCISE: {
+-    label: '운동',
+-    icon: '🏃',
+-    color: '#06b6d4', // cyan-500
+-    bgColor: 'rgba(6, 182, 212, 0.12)',
+-    borderColor: 'rgba(6, 182, 212, 0.28)',
+-  },
+-  LEARNING: {
+-    label: '학습',
+-    icon: '📚',
+-    color: '#a855f7', // purple-500
+-    bgColor: 'rgba(168, 85, 247, 0.12)',
+-    borderColor: 'rgba(168, 85, 247, 0.28)',
+-  },
+-  SELF_CARE: {
+-    label: '자기관리',
+-    icon: '🌿',
+-    color: '#10b981', // emerald-500
+-    bgColor: 'rgba(16, 185, 129, 0.12)',
+-    borderColor: 'rgba(16, 185, 129, 0.28)',
+-  },
+-  HABIT: {
+-    label: '생활습관',
+-    icon: '⏰',
+-    color: '#f59e0b', // amber-500
+-    bgColor: 'rgba(245, 158, 11, 0.12)',
+-    borderColor: 'rgba(245, 158, 11, 0.28)',
+-  },
++  EXERCISE: { label: '운동', icon: CATEGORY_ICON_NAMES.EXERCISE },
++  LEARNING: { label: '학습', icon: CATEGORY_ICON_NAMES.LEARNING },
++  SELF_CARE: { label: '자기관리', icon: CATEGORY_ICON_NAMES.SELF_CARE },
++  HABIT: { label: '생활습관', icon: CATEGORY_ICON_NAMES.HABIT },
+ };
+ 
+ export interface DifficultyMeta {
+   level: DifficultyLevel;
+   name: string;
+-  badge: string;
+-  color: string;
+ }
+ 
+ export const DIFFICULTY_METADATA: Record<DifficultyLevel, DifficultyMeta> = {
+-  1: { level: 1, name: '입문', badge: '🌱', color: '#10b981' },
+-  2: { level: 2, name: '초급', badge: '⭐', color: '#06b6d4' },
+-  3: { level: 3, name: '중급', badge: '🌟', color: '#6366f1' },
+-  4: { level: 4, name: '상급', badge: '🔥', color: '#f59e0b' },
+-  5: { level: 5, name: '마스터', badge: '👑', color: '#ec4899' },
++  1: { level: 1, name: '입문' },
++  2: { level: 2, name: '초급' },
++  3: { level: 3, name: '중급' },
++  4: { level: 4, name: '상급' },
++  5: { level: 5, name: '마스터' },
+ };

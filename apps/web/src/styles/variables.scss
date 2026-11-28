@@ -1,48 +1,84 @@
+/* 디자인 토큰: 중립 회색 + 잉크(검정) 버튼 + 초록 포인트 1색 */
 :root {
-  // Brand & Accents
-  --brand-primary: #6366f1;
-  --brand-primary-hover: #4f46e5;
-  --brand-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
-  --gold-gradient: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
-  --success: #10b981;
-  --warning: #f59e0b;
-  --danger: #ef4444;
-  --holiday: #f43f5e;
+  color-scheme: light;
 
-  // Light Theme (Default)
-  --bg-canvas: #f8fafc;
+  /* 포인트: 완료/진행/EXP 에만 사용 */
+  --accent: #0e9f6e;
+  --accent-text: #0a7a54;
+  --accent-soft: rgba(14, 159, 110, 0.12);
+  --streak: #e8590c;
+  --holiday: #d6336c;
+  --holiday-soft: rgba(214, 51, 108, 0.1);
+  --danger: #e03131;
+  --danger-soft: rgba(224, 49, 49, 0.1);
+
+  /* 카테고리 아이콘 색 */
+  --cat-exercise: #1c7ed6;
+  --cat-learning: #7048e8;
+  --cat-self-care: #0c8599;
+  --cat-habit: #d9730d;
+
+  /* 기본 버튼(잉크) */
+  --ink: #101418;
+  --ink-text: #ffffff;
+  --ink-hover: #2a3038;
+
+  /* 표면 */
+  --bg-canvas: #f5f6f8;
   --bg-surface: #ffffff;
-  --bg-surface-elevated: #f1f5f9;
-  --bg-surface-glass: rgba(255, 255, 255, 0.85);
-  --border-subtle: rgba(0, 0, 0, 0.08);
-  --border-medium: rgba(0, 0, 0, 0.14);
-  --border-focus: rgba(99, 102, 241, 0.5);
-  --text-primary: #0f172a;
-  --text-secondary: #475569;
-  --text-muted: #94a3b8;
-  --shadow-sm: 0 0.1rem 0.4rem rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 0.4rem 1.6rem rgba(0, 0, 0, 0.08);
-  --shadow-lg: 0 1rem 3rem rgba(0, 0, 0, 0.12);
-  --glow-indigo: 0 0 1.6rem rgba(99, 102, 241, 0.15);
-  --glow-emerald: 0 0 1.6rem rgba(16, 185, 129, 0.15);
-  --glow-gold: 0 0 1.6rem rgba(245, 158, 11, 0.15);
+  --bg-surface-elevated: #f0f2f5;
+  --bg-surface-glass: rgba(255, 255, 255, 0.82);
+  --bg-overlay: rgba(16, 20, 24, 0.45);
+
+  /* 선 / 텍스트 */
+  --border-subtle: #e8eaee;
+  --border-medium: #d5d9e0;
+  --text-primary: #101418;
+  --text-secondary: #4b5563;
+  --text-muted: #6b7280;
+
+  /* 그림자는 모달/토스트에만 사용 */
+  --shadow-md: 0 0.8rem 2.4rem rgba(16, 20, 24, 0.1);
+  --shadow-lg: 0 2rem 5rem rgba(16, 20, 24, 0.18);
+
+  /* 반경 */
+  --radius-control: 1rem;
+  --radius-panel: 1.6rem;
 }
 
 [data-theme='dark'] {
-  --bg-canvas: #090c16;
-  --bg-surface: #121727;
-  --bg-surface-elevated: #1a2035;
-  --bg-surface-glass: rgba(18, 23, 39, 0.75);
-  --border-subtle: rgba(255, 255, 255, 0.08);
-  --border-medium: rgba(255, 255, 255, 0.14);
-  --border-focus: rgba(99, 102, 241, 0.6);
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
-  --shadow-sm: 0 0.2rem 0.8rem rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 0.6rem 2rem rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 1.2rem 3.6rem rgba(0, 0, 0, 0.5);
-  --glow-indigo: 0 0 2.4rem rgba(99, 102, 241, 0.25);
-  --glow-emerald: 0 0 2rem rgba(16, 185, 129, 0.25);
-  --glow-gold: 0 0 2rem rgba(245, 158, 11, 0.25);
+  color-scheme: dark;
+
+  --accent: #2dd4a0;
+  --accent-text: #3ddcab;
+  --accent-soft: rgba(45, 212, 160, 0.14);
+  --streak: #ff8a4c;
+  --holiday: #ff7aa8;
+  --holiday-soft: rgba(255, 122, 168, 0.14);
+  --danger: #ff7b7b;
+  --danger-soft: rgba(255, 123, 123, 0.14);
+
+  --cat-exercise: #5aa9f0;
+  --cat-learning: #a78bfa;
+  --cat-self-care: #3cc3d6;
+  --cat-habit: #f5a524;
+
+  --ink: #eef0f3;
+  --ink-text: #0c0e12;
+  --ink-hover: #ffffff;
+
+  --bg-canvas: #0c0e12;
+  --bg-surface: #14171c;
+  --bg-surface-elevated: #1b1f26;
+  --bg-surface-glass: rgba(12, 14, 18, 0.8);
+  --bg-overlay: rgba(0, 0, 0, 0.6);
+
+  --border-subtle: #23272f;
+  --border-medium: #343a45;
+  --text-primary: #eef0f3;
+  --text-secondary: #b4bbc6;
+  --text-muted: #8b93a1;
+
+  --shadow-md: 0 0.8rem 2.4rem rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 2rem 5rem rgba(0, 0, 0, 0.55);
 }

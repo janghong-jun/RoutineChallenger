@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useState } from 'react';
+import React, { useId, useRef, useState } from 'react';
 import {
   DayOfWeek,
   Routine,
@@ -11,7 +11,7 @@ import {
 import { ROUTINE_TEMPLATES_DATA, RoutineTemplate } from '@routine-challenger/data';
 import { useAppDispatch, addRoutine } from '@routine-challenger/store';
 import { getStorageContainer } from '@routine-challenger/storage';
-import { CategoryBadge } from '@routine-challenger/ui';
+import { CategoryBadge, Icon, getTemplateIconName } from '@routine-challenger/ui';
 import { useModalAccessibility } from '@/hooks/useModalAccessibility';
 import styles from './CreateRoutineModal.module.scss';
 
@@ -29,6 +29,7 @@ export const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({
 }) => {
   const dispatch = useAppDispatch();
   const dialogRef = useRef<HTMLDivElement>(null);
+  const formId = useId();
   const [activeTab, setActiveTab] = useState<'templates' | 'custom'>('templates');
 
   // Custom Routine Form State
@@ -141,21 +142,16 @@ export const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({
         className={styles.modal}
         role="dialog"
         aria-modal="true"
-        aria-labelledby="create-routine-title"
+        aria-labelledby={`${formId}-heading`}
         tabIndex={-1}
         onClick={e => e.stopPropagation()}
       >
         <div className={styles.header}>
-          <h2 className={styles.title} id="create-routine-title">
+          <h2 id={`${formId}-heading`} className={styles.title}>
             새 루틴 추가
           </h2>
-          <button
-            type="button"
-            className={styles.closeButton}
-            aria-label="새 루틴 추가 창 닫기"
-            onClick={onClose}
-          >
-            ✕
+          <button type="button" className={styles.closeButton} onClick={onClose} aria-label="닫기">
+            <Icon name="x" size={18} />
           </button>
         </div>
 
@@ -180,33 +176,32 @@ export const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({
 
         <div className={styles.body}>
           {activeTab === 'templates' ? (
-            <div className={styles.templateList}>
+            <ul className={styles.templateList}>
               {ROUTINE_TEMPLATES_DATA.length > 0 ? (
                 ROUTINE_TEMPLATES_DATA.map(tpl => (
-                  <div key={tpl.templateId} className={styles.templateCard}>
+                  <li key={tpl.templateId} className={styles.templateCard}>
+                    <span className={styles.tplIcon} data-category={tpl.category}>
+                      <Icon name={getTemplateIconName(tpl.templateId, tpl.category)} size={20} />
+                    </span>
                     <div className={styles.tplInfo}>
-                      <div className={styles.tplHeader}>
-                        <span className={styles.tplCategory}>
-                          <CategoryBadge category={tpl.category} />
-                        </span>
-                        <span className={styles.tplIcon} aria-hidden="true">
-                          {tpl.icon}
-                        </span>
-                        <span className={styles.tplTitle}>{tpl.title}</span>
-                      </div>
+                      <span className={styles.tplTitle}>{tpl.title}</span>
                       {tpl.description && <span className={styles.tplDesc}>{tpl.description}</span>}
+                      <span className={styles.tplCategory}>
+                        <CategoryBadge category={tpl.category} showIcon={false} />
+                      </span>
                     </div>
                     <button
                       type="button"
                       className={styles.tplAddBtn}
                       onClick={() => handleAddFromTemplate(tpl)}
+                      aria-label={`${tpl.title} 추가하기`}
                     >
-                      추가하기
+                      추가
                     </button>
-                  </div>
+                  </li>
                 ))
               ) : (
-                <div className={styles.templateEmptyState}>
+                <li className={styles.templateEmptyState}>
                   <p>등록된 추천 템플릿이 없습니다.</p>
                   <button
                     type="button"
@@ -215,15 +210,15 @@ export const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({
                   >
                     직접 루틴 만들기
                   </button>
-                </div>
+                </li>
               )}
-            </div>
+            </ul>
           ) : (
             <form id="custom-routine-form" className={styles.form} onSubmit={handleCreateCustom}>
               <div className={styles.formGroup}>
-                <label htmlFor="routine-title">루틴 이름</label>
+                <label htmlFor={`${formId}-title`}>루틴 이름</label>
                 <input
-                  id="routine-title"
+                  id={`${formId}-title`}
                   type="text"
                   placeholder="예: 하루 30분 기술 독서"
                   value={title}
@@ -233,9 +228,9 @@ export const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({
               </div>
 
               <div className={styles.formGroup}>
-                <label htmlFor="routine-description">설명 (선택)</label>
+                <label htmlFor={`${formId}-desc`}>설명 (선택)</label>
                 <input
-                  id="routine-description"
+                  id={`${formId}-desc`}
                   type="text"
                   placeholder="예: 꾸준한 개발 역량 강화를 위한 독서"
                   value={description}
@@ -245,23 +240,23 @@ export const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({
 
               <div className={styles.row}>
                 <div className={styles.formGroup}>
-                  <label htmlFor="routine-category">카테고리</label>
+                  <label htmlFor={`${formId}-category`}>카테고리</label>
                   <select
-                    id="routine-category"
+                    id={`${formId}-category`}
                     value={category}
                     onChange={e => setCategory(e.target.value as RoutineCategory)}
                   >
-                    <option value="EXERCISE">🏃 운동</option>
-                    <option value="LEARNING">📚 학습</option>
-                    <option value="SELF_CARE">🌿 자기관리</option>
-                    <option value="HABIT">⏰ 생활습관</option>
+                    <option value="EXERCISE">운동</option>
+                    <option value="LEARNING">학습</option>
+                    <option value="SELF_CARE">자기관리</option>
+                    <option value="HABIT">생활습관</option>
                   </select>
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label htmlFor="routine-target-type">목표 형태</label>
+                  <label htmlFor={`${formId}-type`}>목표 형태</label>
                   <select
-                    id="routine-target-type"
+                    id={`${formId}-type`}
                     value={targetType}
                     onChange={e => {
                       const type = e.target.value as TargetType;
@@ -277,9 +272,9 @@ export const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({
 
               <div className={styles.row}>
                 <div className={styles.formGroup}>
-                  <label htmlFor="routine-target-value">목표 수치</label>
+                  <label htmlFor={`${formId}-value`}>목표 수치</label>
                   <input
-                    id="routine-target-value"
+                    id={`${formId}-value`}
                     type="number"
                     min="1"
                     value={targetValue}
@@ -289,9 +284,9 @@ export const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label htmlFor="routine-target-unit">단위</label>
+                  <label htmlFor={`${formId}-unit`}>단위</label>
                   <input
-                    id="routine-target-unit"
+                    id={`${formId}-unit`}
                     type="text"
                     value={targetUnit}
                     onChange={e => setTargetUnit(e.target.value)}
@@ -301,9 +296,9 @@ export const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({
               </div>
 
               <div className={styles.formGroup}>
-                <label htmlFor="routine-frequency">반복 일정</label>
+                <label htmlFor={`${formId}-frequency`}>반복 일정</label>
                 <select
-                  id="routine-frequency"
+                  id={`${formId}-frequency`}
                   value={frequencyType}
                   onChange={e => setFrequencyType(e.target.value as RoutineFrequency)}
                 >
@@ -313,15 +308,11 @@ export const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({
               </div>
 
               {frequencyType === 'WEEKLY_DAYS' && (
-                <div className={styles.formGroup}>
-                  <span className={styles.formLabel} id="routine-days-label">
+                <div className={styles.formGroup} role="group" aria-labelledby={`${formId}-days`}>
+                  <span id={`${formId}-days`} className={styles.groupLabel}>
                     실천 요일 선택
                   </span>
-                  <div
-                    className={styles.daysSelector}
-                    role="group"
-                    aria-labelledby="routine-days-label"
-                  >
+                  <div className={styles.daysSelector}>
                     {dayLabels.map(d => (
                       <button
                         type="button"

@@ -1,102 +1,104 @@
+/* 7일을 하나의 세그먼트 컨트롤처럼 묶는다. */
 .container {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.8rem;
-  padding: 1.2rem 2rem;
-  border-bottom: 0.1rem solid var(--border-subtle);
-  background-color: var(--bg-surface-elevated);
-  overflow-x: auto;
-
-  @media (max-width: 64rem) {
-    padding: 1rem 1.4rem;
-  }
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.4rem;
+  padding: 0.4rem;
+  background-color: var(--bg-surface);
+  border: 0.1rem solid var(--border-subtle);
+  border-radius: var(--radius-panel);
 }
 
 .dayCard {
-  flex: 1;
-  min-width: 4.4rem;
-  max-width: 8rem;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.4rem;
-  padding: 0.8rem 0.4rem;
-  cursor: pointer;
-  background-color: var(--bg-surface);
-  border: 0.1rem solid var(--border-subtle);
+  gap: 0.2rem;
+  padding: 1rem 0 0.8rem;
   border-radius: 1.2rem;
-  transition: all 0.2s ease;
+  transition: background-color 0.15s ease;
 
-  &:first-child {
-    .dayName {
-      color: #f87171;
-    }
-  }
-  &:last-child {
-    .dayName {
-      color: #818cf8;
-    }
-  }
   &:hover {
-    border-color: var(--brand-primary);
-    transform: translateY(-0.2rem);
+    background-color: var(--bg-surface-elevated);
   }
 
   &.isSelected {
-    background: rgba(99, 102, 241, 0.15);
-    border-color: var(--brand-primary);
-    box-shadow: var(--glow-indigo);
-  }
+    background-color: var(--ink);
 
-  &.isToday {
-    .dateNum::after {
-      position: absolute;
-      right: 50%;
-      bottom: -1rem;
-      width: 0.6rem;
-      height: 0.6rem;
-      border-radius: 999.9rem;
-      background: var(--brand-primary);
-      content: '';
-      transform: translateX(50%);
+    .dayName,
+    .dateNum {
+      color: var(--ink-text);
     }
 
-    border-color: var(--brand-primary);
+    .dayName {
+      opacity: 0.7;
+    }
+
+    .indicator {
+      background-color: var(--ink-text);
+      opacity: 0.35;
+    }
+
+    .hasDone {
+      background-color: var(--accent);
+      opacity: 1;
+    }
   }
 
-  &.isToday.isSelected {
-    box-shadow:
-      var(--glow-indigo),
-      inset 0 0 0 0.1rem var(--brand-primary);
+  /* 오늘 표시: 선택 여부와 관계없이 날짜 숫자에 링 */
+  &.isToday .dateNum {
+    box-shadow: inset 0 0 0 0.2rem var(--accent);
   }
 }
 
 .dayName {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--text-secondary);
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: var(--text-muted);
+
+  &.isWeekend {
+    color: var(--holiday);
+  }
+}
+
+.dayCard:first-child .dayName {
+  color: var(--holiday);
+}
+
+.dayCard:last-child .dayName {
+  color: #818cf8;
+}
+
+.dayCard.isSelected .dayName.isWeekend {
+  color: var(--ink-text);
 }
 
 .dateNum {
-  position: relative;
-  font-size: 1.5rem;
-  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  font-size: 1.6rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
   color: var(--text-primary);
+  border-radius: 99.9rem;
 }
 
 .indicator {
-  width: 0.6rem;
-  height: 0.6rem;
-  border-radius: 999.9rem;
+  width: 0.5rem;
+  height: 0.5rem;
   background-color: transparent;
+  border-radius: 99.9rem;
+  transition: background-color 0.2s ease;
 
   &.hasDone {
-    background-color: #10b981;
-    box-shadow: 0 0 0.6rem rgba(16, 185, 129, 0.8);
+    background-color: var(--accent);
   }
 
   &.isHoliday {
-    background-color: #f43f5e;
+    background-color: var(--holiday);
+    opacity: 0.6;
   }
 }

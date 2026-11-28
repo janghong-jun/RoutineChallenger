@@ -3,6 +3,7 @@
 import React, { useRef } from 'react';
 import { useAppDispatch, useAppSelector, setSelectedTitle } from '@routine-challenger/store';
 import { getStorageContainer } from '@routine-challenger/storage';
+import { Icon, getTitleIconName } from '@routine-challenger/ui';
 import { useModalAccessibility } from '@/hooks/useModalAccessibility';
 import styles from './TitleGalleryModal.module.scss';
 
@@ -13,11 +14,9 @@ interface TitleGalleryModalProps {
 
 export const TitleGalleryModal: React.FC<TitleGalleryModalProps> = ({ isOpen, onClose }) => {
   const dispatch = useAppDispatch();
-  const dialogRef = useRef<HTMLDivElement>(null);
-  const { titles, selectedTitleId, unlockedTitleIds, totalExp } = useAppSelector(
-    state => state.user
-  );
+  const { titles, selectedTitleId, unlockedTitleIds, totalExp } = useAppSelector(state => state.user);
 
+  const dialogRef = useRef<HTMLDivElement>(null);
   useModalAccessibility(isOpen, dialogRef, onClose);
 
   if (!isOpen) return null;
@@ -49,42 +48,36 @@ export const TitleGalleryModal: React.FC<TitleGalleryModalProps> = ({ isOpen, on
         onClick={e => e.stopPropagation()}
       >
         <div className={styles.header}>
-          <h2 className={styles.title} id="title-gallery-heading">
-            🏆 타이틀 갤러리
+          <h2 id="title-gallery-heading" className={styles.title}>
+            타이틀 갤러리
           </h2>
-          <button
-            type="button"
-            className={styles.closeButton}
-            aria-label="타이틀 갤러리 닫기"
-            onClick={onClose}
-          >
-            ✕
+          <button type="button" className={styles.closeButton} onClick={onClose} aria-label="닫기">
+            <Icon name="x" size={18} />
           </button>
         </div>
 
         <div className={styles.notice} id="title-gallery-notice">
-          <span aria-hidden="true">💡</span>
+          <Icon name="info" size={16} />
           <span>
             한 번 획득한 타이틀은 경험치가 차감되더라도 절대 회수되지 않으며 영구 보존됩니다.
           </span>
         </div>
 
-        <div className={styles.grid} role="list">
+        <ul className={styles.grid}>
           {titles.map(title => {
             const isUnlocked = unlockedTitleIds.includes(title.id);
             const isEquipped = selectedTitleId === title.id;
 
             return (
-              <div
+              <li
                 key={title.id}
                 className={`${styles.titleCard} ${isEquipped ? styles.isEquipped : ''} ${
                   !isUnlocked ? styles.isLocked : ''
                 }`}
-                role="listitem"
               >
                 <div className={styles.left}>
-                  <div className={styles.icon} aria-hidden="true">
-                    {title.icon}
+                  <div className={styles.icon}>
+                    <Icon name={isUnlocked ? getTitleIconName(title.id) : 'lock'} size={20} />
                   </div>
                   <div className={styles.info}>
                     <div className={styles.nameRow}>
@@ -100,21 +93,19 @@ export const TitleGalleryModal: React.FC<TitleGalleryModalProps> = ({ isOpen, on
                     <button
                       type="button"
                       className={styles.equipBtn}
-                      aria-label={`대표 타이틀을 ${title.name}(으)로 설정`}
                       onClick={() => handleEquip(title.id)}
+                      aria-label={`${title.name} 대표 타이틀로 설정`}
                     >
                       대표 설정
                     </button>
                   )
                 ) : (
-                  <span className={styles.lockedBadge}>
-                    <span aria-hidden="true">🔒</span> 미획득
-                  </span>
+                  <span className={styles.lockedBadge}>미해금</span>
                 )}
-              </div>
+              </li>
             );
           })}
-        </div>
+        </ul>
       </div>
     </div>
   );
