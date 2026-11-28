@@ -14,13 +14,15 @@ const ReactECharts = dynamic(() => import('echarts-for-react'), { ssr: false });
 interface ChartColors {
   accent: string;
   track: string;
+  trackHover: string;
   surface: string;
   text: string;
 }
 
 const DEFAULT_CHART_COLORS: ChartColors = {
   accent: '#0e9f6e',
-  track: '#e8eaee',
+  track: '#d5d9e0',
+  trackHover: '#4b5563',
   surface: '#ffffff',
   text: '#101418',
 };
@@ -30,7 +32,8 @@ const readChartColors = (): ChartColors => {
   const read = (name: string, fallback: string) => style.getPropertyValue(name).trim() || fallback;
   return {
     accent: read('--accent', DEFAULT_CHART_COLORS.accent),
-    track: read('--border-subtle', DEFAULT_CHART_COLORS.track),
+    track: read('--border-medium', DEFAULT_CHART_COLORS.track),
+    trackHover: read('--text-secondary', DEFAULT_CHART_COLORS.trackHover),
     surface: read('--bg-surface', DEFAULT_CHART_COLORS.surface),
     text: read('--text-primary', DEFAULT_CHART_COLORS.text),
   };
@@ -45,14 +48,22 @@ const useChartColors = () => {
     update();
 
     const observer = new MutationObserver(update);
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-theme'],
+    });
     return () => observer.disconnect();
   }, []);
 
   return colors;
 };
 
-const STAT_ITEMS: { key: 'exp' | 'streak' | 'days'; label: string; icon: IconName; tone: string }[] = [
+const STAT_ITEMS: {
+  key: 'exp' | 'streak' | 'days';
+  label: string;
+  icon: IconName;
+  tone: string;
+}[] = [
   { key: 'exp', label: '총 누적 경험치', icon: 'zap', tone: 'expTone' },
   { key: 'streak', label: '연속 실천일', icon: 'flame', tone: 'streakTone' },
   { key: 'days', label: '총 실천 일수', icon: 'calendar', tone: 'daysTone' },
@@ -124,7 +135,12 @@ export const StatsOverview: React.FC = () => {
         data: hasScheduledToday
           ? [
               { value: completedToday, name: '완료', itemStyle: { color: colors.accent } },
-              { value: pendingToday, name: '남음', itemStyle: { color: colors.track } },
+              {
+                value: pendingToday,
+                name: '남음',
+                itemStyle: { color: colors.track },
+                emphasis: { itemStyle: { color: colors.trackHover } },
+              },
             ]
           : [],
       },
